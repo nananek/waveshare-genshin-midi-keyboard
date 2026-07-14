@@ -18,10 +18,18 @@ echo "== building image: $IMAGE"
 docker build -t "$IMAGE" -f "$ROOT/docker/Dockerfile" "$ROOT/docker"
 
 echo "== building firmware"
+# rootless docker では container-root が呼び出しユーザにマップされるので --user を
+# 付けてはいけない (bind mount に書けなくなる)。rootful docker では逆に --user で
+# ホストユーザに合わせ、root 所有の成果物が生成されるのを防ぐ。
+USER_ARGS=""
+if ! docker info 2>/dev/null | grep -qi rootless; then
+    USER_ARGS="--user $(id -u):$(id -g) -e HOME=/tmp"
+fi
+
+# shellcheck disable=SC2086
 docker run --rm \
     -v "$ROOT:/work" -w /work \
-    -e HOME=/tmp \
-    --user "$(id -u):$(id -g)" \
+    $USER_ARGS \
     "$IMAGE" \
     sh -c './scripts/fetch_deps.sh && cmake -B build -DPICO_BOARD=pico2 && cmake --build build -j "$(nproc)"'
 

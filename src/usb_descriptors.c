@@ -96,7 +96,7 @@ enum { ITF_NUM_HID = 0, ITF_NUM_TOTAL };
 static uint8_t const desc_configuration[] = {
     // Config: number, interface count, string index, total length, attribute, power (mA)
     TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN,
-                          TUSB_DESC_CONFIG_ATTR_REMOTE_WAKEUP, 100),
+                          TUSB_DESC_CONFIG_ATT_REMOTE_WAKEUP, 100),
 
     // HID: interface, string, protocol, report desc len, EP in, size, polling(ms)
     TUD_HID_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE, sizeof(desc_hid_report),
