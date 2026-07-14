@@ -81,6 +81,21 @@ pico_sdk_import.cmake
 
 ## 3. ビルド & 書き込み
 
+### 3.A Docker でビルド(推奨・ホストに ARM ツールチェーン不要)
+
+ARM ツールチェーン・pico-sdk・picotool を含むイメージを作り、コンテナ内でビルドする。
+`build/genshin_midi_kbd.uf2` がホスト側に生成される(この手順は実際に検証済み)。
+
+```sh
+./scripts/build_docker.sh
+```
+
+- 初回はイメージ構築(arm-none-eabi 12.2 + pico-sdk 2.1.1 + picotool)で数分かかる。
+- 依存ライブラリ(`lib/tinyusb`, `lib/Pico-PIO-USB`)はコンテナ内で自動取得される。
+- rootless / rootful どちらの Docker でも成果物がホストユーザ所有になるよう uid を調整済み。
+
+### 3.B ネイティブツールチェーンでビルド
+
 ```sh
 # 0) ARM ツールチェーン + pico-sdk が必要
 #    Arch: pacman -S arm-none-eabi-gcc arm-none-eabi-newlib cmake
@@ -93,10 +108,12 @@ export PICO_SDK_PATH=/path/to/pico-sdk
 # 2) ビルド
 cmake -B build -DPICO_BOARD=pico2
 cmake --build build -j
-
-# 3) 書き込み: BOOTSEL を押しながら USB-C 接続 → build/genshin_midi_kbd.uf2 を
-#    RPI-RP2 ドライブへコピー(または picotool load build/genshin_midi_kbd.uf2)
 ```
+
+### 書き込み
+
+BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI-RP2 ドライブへ
+コピー(または `picotool load build/genshin_midi_kbd.uf2`)。
 
 デバッグログは **UART**(GP0=TX, GP1=RX, 115200)に出る(native USB は HID が占有)。
 
