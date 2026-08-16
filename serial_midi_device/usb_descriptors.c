@@ -39,7 +39,9 @@ uint8_t const *tud_descriptor_device_cb(void) {
 //  接続を生成する (標準 MIDI streaming、usbd.h)。
 // ===========================================================================
 
-enum { ITF_NUM_MIDI = 0, ITF_NUM_TOTAL };
+// TUD_MIDI_DESCRIPTOR は Audio Control + MIDI Streaming の 2 インタフェースを
+// 生成するため、bNumInterfaces (TUD_CONFIG_DESCRIPTOR 第 2 引数) は 2 にする。
+enum { ITF_NUM_MIDI = 0, ITF_NUM_MIDI_STREAMING, ITF_NUM_TOTAL };
 
 #define EPNUM_MIDI_OUT 0x01
 #define EPNUM_MIDI_IN  0x81
