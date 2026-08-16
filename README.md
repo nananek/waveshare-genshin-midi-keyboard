@@ -14,6 +14,22 @@ PC 上の原神・演奏 UI(諧律のチェンバロ等)を弾けるようにす
 
 ---
 
+## 0. 2 ボード構成(本リポジトリが生成する 2 本のファーム)
+
+このリポジトリは同一ビルドで **2 本の uf2** を生成する。
+
+| uf2 | ボード | 機能 |
+|-----|--------|------|
+| `build/genshin_midi_kbd.uf2` | ボード1 (Waveshare RP2350-USB-A) | MIDI→HID コンバータ(本 README の主対象)。加えて**受信 MIDI を RAW で UART ミラー出力** |
+| `build/serial_midi_device.uf2` | ボード2 (同型ボード) | シリアル→USB-MIDI ブリッジ。ボード1 の UART ミラーを USB-MIDI デバイスとして PC/DAW に見せる |
+
+ボード1 の UART ミラー出力 (GP4 / UART1 / 31250 baud) とボード2 の UART 入力
+(GP5 / UART1 / 31250 baud) を直結し、GND 同士を繋ぐと、PC は「MIDI→HID の出力」と
+「USB-MIDI の出力」を同時に受けられる(DAW での録音と原神の演奏を並行できる)。
+詳細は **§7 実機配線** を参照。
+
+---
+
 ## 1. ハードウェア
 
 対象ボード: **Waveshare RP2350-USB-A**(RP2350 + USB-A ホストポート)。素の Pico 2 +
@@ -56,8 +72,14 @@ src/
   midi_host.c/.h    # tuh_midi コールバック(idx ベース)
   midi_parse.c/.h   # 生 MIDI バイト列 → Note On/Off(純粋・単体テスト可能)
   note_mapper.c/.h  # MIDI ノート → キースロット変換(3 章の仕様、純粋・単体テスト可能)
+  midi_mirror.c/.h  # RAW MIDI の UART ミラー出力(UART1/GP4/31250、config.h で無効化可)
   config.h          # 全設定パラメータ(4 章)
   tusb_config.h     # TinyUSB デュアルロール設定
+serial_midi_device/ # ボード2: シリアル→USB-MIDI ブリッジ(UART1/GP5 RX → USB-MIDI)
+  main.c            #   シングルコア: UART RX ドレイン → tud_midi_stream_write
+  usb_descriptors.c #   USB-MIDI デバイスディスクリプタ(PID 0x4D49)
+  config.h          #   MIDI_UART_RX_PIN / MIDI_UART_BAUD / MIDI_UART_INDEX
+  tusb_config.h     #   デバイス専用 TinyUSB 設定(CFG_TUD_MIDI=1)
 tests/              # ホスト側ユニットテスト(ARM 不要、cc で実行)
 lib/                # 外部ライブラリ(fetch_deps.sh が配置)
 scripts/fetch_deps.sh
@@ -84,7 +106,8 @@ pico_sdk_import.cmake
 ### 3.A Docker でビルド(推奨・ホストに ARM ツールチェーン不要)
 
 ARM ツールチェーン・pico-sdk・picotool を含むイメージを作り、コンテナ内でビルドする。
-`build/genshin_midi_kbd.uf2` がホスト側に生成される(この手順は実際に検証済み)。
+`build/genshin_midi_kbd.uf2` と `build/serial_midi_device.uf2` の 2 本がホスト側に
+生成される(この手順は実際に検証済み)。
 
 ```sh
 ./scripts/build_docker.sh
@@ -130,6 +153,14 @@ BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI
 | `CHROMATIC_SNAP_POLICY` | `DOWN` | 黒鍵: `DOWN`=直下白鍵 / `UP`=直上白鍵 / `IGNORE`=無視 |
 | `PIN_USB_HOST_DP` | `12` | PIO-USB ホストの D+ GPIO(D− は +1) |
 | `MIDI_CHANNEL_FILTER` | `0` | 0=全ch / 1..16=指定chのみ |
+| `MIDI_UART_MIRROR_ENABLE` | `1` | RAW MIDI の UART ミラー出力を有効にする(0=コンパイルアウト) |
+| `MIDI_UART_MIRROR_BAUD` | `31250` | ミラー出力ボーレート(標準 MIDI over UART) |
+| `MIDI_UART_MIRROR_UART` | `1` | ミラーに使う UART インスタンス(0=uart0 / 1=uart1) |
+| `MIDI_UART_MIRROR_TX_PIN` | `4` | ミラー出力 TX ピン(UART1 の GP4) |
+
+ボード2 (serial_midi_device) の設定は `serial_midi_device/config.h`:
+`MIDI_UART_RX_PIN`(既定 `5`=UART1 RX)、`MIDI_UART_BAUD`(既定 `31250`)、
+`MIDI_UART_INDEX`(既定 `1`)。
 
 ### キー対応表(既定・指示書 3.1)
 
@@ -171,7 +202,36 @@ make clean
 
 ---
 
-## 7. 既知の制約 / 残リスク
+## 7. 2 ボード実機配線(ミラー + シリアル→USB-MIDI ブリッジ)
+
+```
+[MIDI keyboard] --USB-A--> [ボード1 (コンバータ)] --USB-C--> [PC] (HID: 既存機能)
+                              | GP4 (UART1 TX, 31250)  ← ミラー出力
+                              | GP5 (UART1 RX, 31250)  → ミラー入力
+                              | GND -------------------→ GND
+                             [ボード2 (ブリッジ)] --USB-C--> [PC] (USB-MIDI)
+```
+
+確認項目:
+
+1. ボード1 で既存 HID 出力が従来どおり動く(デバッグログ UART0 も出ている)。
+2. PC がボード2 を「Serial MIDI Bridge」(USB-MIDI デバイス)として認識する
+   (`aconnect -l` や DAW の MIDI 入力一覧、Windows ならデバイスマネージャーで確認)。
+3. キーボードを弾くと DAW 側で Note On/Off が見える。さらに CC ノブ・ピッチベンドも
+   通ること(フルフィディリティ確認)。
+4. ボード1 の UART1 を FTDI 等に繋いでも 31250 baud で同じバイト列が見える
+   (ミラー単体確認、任意)。
+5. `MIDI_UART_MIRROR_ENABLE 0` でビルドするとミラーが消え既存動作に戻る(設定ガード確認)。
+
+### ミラーの既知のトレードオフ
+
+`uart_write_blocking` は TX FIFO に詰めるまで core1 の `tuh_task` を止める
+(31250 baud では 1 バイト ≈ 320µs)。Note On/Off や CC クラスは 1ms 未満で実害はないが、
+大きな SysEx ダンプ(64 バイト)では ~20ms ほどホスト処理が止まる。ミラー用途として許容。
+
+---
+
+## 8. 既知の制約 / 残リスク
 
 - **TinyUSB × Pico-PIO-USB のリンク統合**が唯一の要実機確認ポイント。本 CMake は
   Pico-PIO-USB 公式サンプル(native device + PIO host)と同じ方式:
@@ -183,7 +243,7 @@ make clean
 - PIO-USB の MIDI クラス相性検証事例は少ない。列挙に失敗する機種があれば
   `tuh_midi` のデバッグログを有効化して切り分ける。
 
-## 8. 受け入れ基準(指示書 7章)
+## 9. 受け入れ基準(指示書 7章)
 
 - [ ] 3 オクターブのダイアトニック音が、原神の楽譜表示・発音と対応キー通り一致
 - [ ] 3 和音以上を同時に弾いても全音が正しく発音(NKRO)
