@@ -89,3 +89,8 @@ pico_enable_stdio_uart(${PROJECT_NAME} 1)
 pico_enable_stdio_usb(${PROJECT_NAME} 0)
 
 pico_add_extra_outputs(${PROJECT_NAME})
+
+# ---- 2 つ目のファーム: シリアル→USB-MIDI デバイス (機能 B) ----
+# 別 executable として同一ビルドツリーに定義。固有の tusb_config.h を
+# 持ち、PIO-USB ホストは使わない (TinyUSB は executable ごとに再コンパイルされる)。
+add_subdirectory(serial_midi_device)
