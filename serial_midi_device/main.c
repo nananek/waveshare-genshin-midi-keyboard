@@ -40,7 +40,7 @@ static void flush_carry(void) {
 
 int main(void) {
     stdio_init_all(); // デバッグログ: UART0 (GP0/GP1) @115200
-    printf("\r\n[boot] Serial MIDI Bridge: RX=GP%u @%u\r\n",
+    printf("\r\n[boot] Serial MIDI Bridge: RX=GP%d @%d\r\n",
            MIDI_UART_RX_PIN, MIDI_UART_BAUD);
 
     // MIDI RX: UART (GP5) @31250 8N1。デバッグ UART0 と分離。
