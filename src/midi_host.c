@@ -2,6 +2,7 @@
 #include "tusb.h"
 #include "midi_host.h"
 #include "midi_parse.h"
+#include "midi_mirror.h"
 #include "config.h"
 
 #ifdef PICO_DEFAULT_LED_PIN
@@ -21,6 +22,7 @@ static void led_set(bool on) {
 
 void midi_host_init(void) {
     midi_parser_init(&s_parser);
+    midi_mirror_init();
 #ifdef PICO_DEFAULT_LED_PIN
     gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
@@ -73,6 +75,7 @@ void tuh_midi_rx_cb(uint8_t idx, uint32_t xferred_bytes) {
         if (n == 0) {
             break;
         }
+        midi_mirror_send(buffer, n); // 生バイト列をそのまま UART へ (パース・変換は通さない)
         midi_parser_push(&s_parser, buffer, n, on_note, NULL);
     }
 }
