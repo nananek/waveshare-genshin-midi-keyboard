@@ -69,4 +69,26 @@
 #define MIDI_CHANNEL_FILTER 0
 #endif
 
+// ---------------------------------------------------------------------------
+//  RAW MIDI の UART ミラー出力
+//  MIDI キーボードから受信したバイト列をそのまま別 UART へ 31250 baud で
+//  ミラー出力する (Note/CC/ピッチベンド/SysEx 等すべて、パース・変換は通さない)。
+//  デバッグログ (stdio-uart) は UART0 (GP0/GP1) を占有しているため、
+//  既定で UART1 (TX=GP4) を使う。シリアル→USB-MIDI ブリッジ (ボード2) は
+//  RX=GP5 で受ける。0 にするとミラーはコンパイルアウトされる。
+// ---------------------------------------------------------------------------
+#ifndef MIDI_UART_MIRROR_ENABLE
+#define MIDI_UART_MIRROR_ENABLE 1
+#endif
+#ifndef MIDI_UART_MIRROR_BAUD
+#define MIDI_UART_MIRROR_BAUD 31250
+#endif
+// 0 = uart0 / 1 = uart1 (デバッグ uart0 と分離するため 1 が既定)
+#ifndef MIDI_UART_MIRROR_UART
+#define MIDI_UART_MIRROR_UART 1
+#endif
+#ifndef MIDI_UART_MIRROR_TX_PIN
+#define MIDI_UART_MIRROR_TX_PIN 4
+#endif
+
 #endif // CONFIG_H
