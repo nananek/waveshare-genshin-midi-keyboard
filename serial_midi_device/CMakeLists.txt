@@ -18,6 +18,7 @@ target_include_directories(${EXEC} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(${EXEC} PRIVATE
     pico_stdlib
+    pico_unique_id        # usb_descriptors.c が pico_get_unique_board_id_string を使用
     tinyusb_device        # SDK の INTERFACE ライブラリ。midi_device.c を含む
 )
 
