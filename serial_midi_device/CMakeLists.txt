@@ -12,6 +12,17 @@ add_executable(${EXEC}
     usb_descriptors.c
 )
 
+# 成果物 (elf/uf2/bin/hex/dis/map) を build/ 直下に置く。
+# サブディレクトリ target は既定では build/serial_midi_device/ に生成され、
+# scripts/build_docker.sh や README/CLAUDE.md の記載パス (build/serial_midi_device.uf2) と
+# 食い違うため、明示的に揃える。
+#   - .uf2 は ARCHIVE_OUTPUT_DIRECTORY に従う (pico-sdk tools/CMakeLists.txt)
+#   - .elf/.bin/.hex/.dis/.map は RUNTIME_OUTPUT_DIRECTORY に従う
+set_target_properties(${EXEC} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
 # 自身のディレクトリの tusb_config.h / config.h を解決する (src/ は含めない:
 # src/tusb_config.h を拾うと HID 用設定になり衝突する)
 target_include_directories(${EXEC} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
