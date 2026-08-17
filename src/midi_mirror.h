@@ -12,4 +12,7 @@ void midi_mirror_init(void);
 // data[0..len) をそのままミラー UART へ書き出す。ブロッキング送信。
 void midi_mirror_send(const uint8_t *data, uint32_t len);
 
+// 接続デバイス変更時 (リマウント) に内部状態 (ランニングステータス等) をリセットする。
+void midi_mirror_reset(void);
+
 #endif // MIDI_MIRROR_H

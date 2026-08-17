@@ -91,4 +91,52 @@
 #define MIDI_UART_MIRROR_TX_PIN 4
 #endif
 
+// ---------------------------------------------------------------------------
+//  ミュートスイッチ (ボード1: MIDI→HID 変換板)
+//  スイッチを ON (ミュート) にすると HID キーボード出力を無効化する
+//  (原神側にキー入力が送られない)。UART ミラー出力 (midi_mirror) は
+//  そのまま動作し、DAW 用の serial_midi_device ボード (ボード2) だけを鳴らせる。
+//  既定配線: GP28 ↔ GND をトグルスイッチで開閉 (内部プルアップを常時有効化)。
+//  0 = ピン LOW でミュート (スイッチ閉) / 1 = ピン HIGH でミュート。
+//  0 にするとミュート機能はコンパイルアウトされる。
+// ---------------------------------------------------------------------------
+#ifndef MUTE_SWITCH_ENABLE
+#define MUTE_SWITCH_ENABLE 1
+#endif
+#ifndef MUTE_SWITCH_PIN
+#define MUTE_SWITCH_PIN 28
+#endif
+// 0 = LOW でミュート (内部プルアップ + スイッチを GND へ閉じる配線が既定)
+#ifndef MUTE_SWITCH_ACTIVE_LEVEL
+#define MUTE_SWITCH_ACTIVE_LEVEL 0
+#endif
+// デバウンス時間 (ms)。この時間連続して同じレベルを観測したら状態を確定する。
+#ifndef MUTE_SWITCH_DEBOUNCE_MS
+#define MUTE_SWITCH_DEBOUNCE_MS 20
+#endif
+
+// ---------------------------------------------------------------------------
+//  UART ミラーの「原神鍵盤のみフィルター」モードスイッチ (ボード1)
+//  ON (ミュート) にするとミラー出力が「note_mapper がゲームキーへマップする
+//  ノートの Note On/Off のみ」に絞られる (ランニングステータス対応、出力は
+//  明示ステータス 3 バイトで再構成)。OFF なら従来どおり完全パススルー。
+//  既定配線: GP29 ↔ GND をトグルスイッチで開閉 (内部プルアップを常時有効化)。
+//  0 = ピン LOW でフィルター ON / 1 = ピン HIGH でフィルター ON。
+//  0 にするとフィルター適用とスイッチ処理はコンパイルアウトされる。
+// ---------------------------------------------------------------------------
+#ifndef MIRROR_FILTER_SWITCH_ENABLE
+#define MIRROR_FILTER_SWITCH_ENABLE 1
+#endif
+#ifndef MIRROR_FILTER_SWITCH_PIN
+#define MIRROR_FILTER_SWITCH_PIN 29
+#endif
+// 0 = LOW でフィルター ON (内部プルアップ + スイッチを GND へ閉じる配線が既定)
+#ifndef MIRROR_FILTER_SWITCH_ACTIVE_LEVEL
+#define MIRROR_FILTER_SWITCH_ACTIVE_LEVEL 0
+#endif
+// デバウンス時間 (ms)。ミュートスイッチと同じ値。
+#ifndef MIRROR_FILTER_SWITCH_DEBOUNCE_MS
+#define MIRROR_FILTER_SWITCH_DEBOUNCE_MS 20
+#endif
+
 #endif // CONFIG_H

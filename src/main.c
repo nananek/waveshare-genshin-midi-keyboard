@@ -9,7 +9,9 @@
 
 #include "config.h"
 #include "hid_device.h"
+#include "hid_mute.h"
 #include "midi_host.h"
+#include "mirror_filter_switch.h"
 
 // ===========================================================================
 //  MIDI(host, core1) → HID(device, core0) の一方向パイプライン
@@ -76,13 +78,34 @@ int main(void) {
     // core0 でデバイススタックを起動。
     tud_init(BOARD_TUD_RHPORT);
     hid_device_init();
+    hid_mute_init();
+    mirror_filter_switch_init();
 
     for (;;) {
         tud_task();
 
+        // --- ミュートスイッチ: デバウンス済みエッジを検出 ---
+        hid_mute_edge_t edge = hid_mute_poll();
+        if (edge == HID_MUTE_ENTER) {
+            printf("[mute] ON\r\n");
+            // 全キー解放 → 空レポート送信 (原神側の固着キー解除)。
+            // 送信はループ末尾の hid_device_task() が行う (busy 中は次回リトライ)。
+            hid_device_release_all();
+        } else if (edge == HID_MUTE_EXIT) {
+            printf("[mute] OFF\r\n");
+        }
+
+        // --- ミラーフィルタースイッチ: デバウンス + 共有フラグ反映 (core1 は読み取り側) ---
+        mirror_filter_switch_poll();
+
         // core1 から届いた MIDI イベントを反映。
+        // ミュート中はキューを排出しつつ HID 状態に反映しない (溢れ防止)。
+        bool muted = hid_mute_is_muted();
         midi_evt_t e;
         while (queue_try_remove(&s_evt_queue, &e)) {
+            if (muted) {
+                continue;
+            }
             if (e.note == EVT_RELEASE_ALL) {
                 hid_device_release_all();
             } else if (e.on) {
@@ -92,6 +115,8 @@ int main(void) {
             }
         }
 
+        // 保留中レポートの送信。ミュート中は新規のキー出力は発生しないため、
+        // 実質エッジ時点の空レポート送信のみが走り、それ以外は no-op。
         hid_device_task();
     }
 }
