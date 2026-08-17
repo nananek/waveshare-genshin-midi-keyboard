@@ -14,10 +14,11 @@ PC に送って原神「諧律のチェンバロ」を弾けるようにする�
 ## コマンド
 
 ### ホスト側ユニットテスト(ARM 不要・最速の検証手段)
-純粋ロジック 3 モジュール(`note_mapper` / `midi_parse` / `nkro_report`)はホスト `cc` で検証する。
+純粋ロジック 4 モジュール(`note_mapper` / `midi_parse` / `nkro_report` / `midi_note_filter`)は
+ホスト `cc` で検証する。
 これがこのリポジトリで最も速く回せる検証ループなので、それらを触ったらまずここを回す。
 ```sh
-cd tests && make            # 3 スイートをビルド&実行
+cd tests && make            # 4 スイートをビルド&実行
 make t_note_mapper && ./t_note_mapper   # 単体スイートだけ
 # ポリシー別ビルドは config.h の既定値を -D で上書き:
 cc -I../src -I. -DCHROMATIC_SNAP_POLICY=1 -DOUT_OF_RANGE_POLICY=1 \
@@ -47,7 +48,9 @@ export PICO_SDK_PATH=/path/to/pico-sdk
 
 **モジュールは「純粋 / TinyUSB 依存」で二層に分けている**(だからテストが速い):
 - 純粋・テスト可能: `note_mapper`(ノート→キースロット変換)、`midi_parse`(生 MIDI バイト列→
-  Note On/Off、running status / realtime / SysEx 対応)、`nkro_report`(レポート状態)。
+  Note On/Off、running status / realtime / SysEx 対応)、`nkro_report`(レポート状態)、
+  `midi_note_filter`(ミラー用のバイト列状態機械。ランニングステータス対応で
+  Note On/Off を明示ステータス 3 バイトへ再構成、ダイアトニック判定は note_mapper を利用)。
 - TinyUSB 依存(実機/Docker ビルドでのみ検証): `hid_device` / `midi_host` / `usb_descriptors` / `main`。
 - **`midi_mirror` もハード依存層**(`hardware/uart.h` を直接使う)なのでホストテスト対象外。
   無効時(`MIDI_UART_MIRROR_ENABLE=0`)は関数本体ごと `#if` でコンパイルアウトされる。
@@ -61,8 +64,11 @@ export PICO_SDK_PATH=/path/to/pico-sdk
 
 **RAW MIDI ミラー**(`midi_host.c` → `midi_mirror.c`):`tuh_midi_rx_cb` の読出しループで
 `tuh_midi_stream_read` が返す**生バイト列**を `uart_write_blocking` で別 UART へ流す
-(パース・変換は通さない。CIN 除去済みの MIDI 1.0 ストリーム)。ブロッキング送信のため
-大きな SysEx 中は core1 の `tuh_task` が数十 ms 止まり得る(既知のトレードオフ)。
+(パース・変換は通さない。CIN 除去済みの MIDI 1.0 ストリーム)。フィルタースイッチ
+(`mirror_filter_switch.h`、GP29、core0 がデバウンスして volatile フラグで共有)が ON のときは
+`midi_note_filter`(純粋モジュール)が Note On/Off を明示ステータス 3 バイトへ再構成して
+絞り込む。ブロッキング送信のため大きな SysEx 中は core1 の `tuh_task` が数十 ms 止まり得る
+(既知のトレードオフ)。リマウント時は `midi_mirror_reset()` でフィルター状態をリセットする。
 
 **ボード2**(`serial_midi_device/`):PIO-USB・デュアルコア不要のシングルコア・デバイスのみ。
 UART1(RX=GP5/31250)で受けた生 MIDI バイト列を `tud_midi_stream_write` で USB-MIDI へ。

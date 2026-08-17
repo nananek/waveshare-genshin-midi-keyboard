@@ -56,7 +56,9 @@ add_executable(${PROJECT_NAME}
     src/hid_mute.c
     src/midi_host.c
     src/midi_mirror.c
+    src/midi_note_filter.c
     src/midi_parse.c
+    src/mirror_filter_switch.c
     src/note_mapper.c
     src/nkro_report.c
 

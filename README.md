@@ -179,6 +179,10 @@ BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI
 | `MUTE_SWITCH_PIN` | `28` | ミュートスイッチ接続 GPIO |
 | `MUTE_SWITCH_ACTIVE_LEVEL` | `0` | 0=LOW でミュート (スイッチ閉) / 1=HIGH でミュート |
 | `MUTE_SWITCH_DEBOUNCE_MS` | `20` | ミュートスイッチのデバウンス時間 (ms) |
+| `MIRROR_FILTER_SWITCH_ENABLE` | `1` | ミラーフィルタースイッチ機能を有効にする (0=コンパイルアウト) |
+| `MIRROR_FILTER_SWITCH_PIN` | `29` | フィルタースイッチ接続 GPIO |
+| `MIRROR_FILTER_SWITCH_ACTIVE_LEVEL` | `0` | 0=LOW でフィルター ON (スイッチ閉) / 1=HIGH でフィルター ON |
+| `MIRROR_FILTER_SWITCH_DEBOUNCE_MS` | `20` | フィルタースイッチのデバウンス時間 (ms) |
 
 ボード2 (serial_midi_device) の設定は `serial_midi_device/config.h`:
 `MIDI_UART_RX_PIN`(既定 `5`=UART1 RX)、`MIDI_UART_BAUD`(既定 `31250`)、
@@ -200,7 +204,7 @@ BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI
 
 ```sh
 cd tests
-make          # 3 スイートをビルドして実行 (全て ALL PASS になるはず)
+make          # 4 スイートをビルドして実行 (全て ALL PASS になるはず)
 make clean
 ```
 
@@ -209,6 +213,8 @@ make clean
 - `midi_parse`: Note On/Off、vel0=Off、ランニングステータス、リアルタイム混在、SysEx、和音
 - `nkro_report`: 単音/和音のビット配置、エイリアス参照カウント(黒鍵スナップで同一キーに
   丸まった 2 音)、retrigger べき等、range 外無視、`release_all`
+- `midi_note_filter`: ミラーフィルターのバイト列状態機械 (ダイアトニック Note 素通し、
+  範囲外/CC/PB/PC/SysEx/リアルタイムの破棄、ランニングステータス再構成、チャンク分断、移調オフセット)
 
 ---
 
@@ -231,6 +237,8 @@ make clean
                               | GP4 (UART1 TX, 31250)  ← ミラー出力
                               | GP5 (UART1 RX, 31250)  → ミラー入力
                               | GND -------------------→ GND
+                              | GP28 ↔ GND              ← ミュートスイッチ (閉 = HID 出力 OFF)
+                              | GP29 ↔ GND              ← フィルタースイッチ (閉 = 原神鍵盤のみ)
                              [ボード2 (ブリッジ)] --USB-C--> [PC] (USB-MIDI)
 ```
 

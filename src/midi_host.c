@@ -54,6 +54,7 @@ void tuh_midi_mount_cb(uint8_t idx, const tuh_midi_mount_cb_t *mount_cb_data) {
            idx, mount_cb_data->daddr,
            mount_cb_data->rx_cable_count, mount_cb_data->tx_cable_count);
     midi_parser_init(&s_parser); // 新デバイス: ランニングステータス等をリセット
+    midi_mirror_reset();         // ミラーのフィルター状態もリセット
     led_set(true);
 }
 

@@ -115,4 +115,28 @@
 #define MUTE_SWITCH_DEBOUNCE_MS 20
 #endif
 
+// ---------------------------------------------------------------------------
+//  UART ミラーの「原神鍵盤のみフィルター」モードスイッチ (ボード1)
+//  ON (ミュート) にするとミラー出力が「note_mapper がゲームキーへマップする
+//  ノートの Note On/Off のみ」に絞られる (ランニングステータス対応、出力は
+//  明示ステータス 3 バイトで再構成)。OFF なら従来どおり完全パススルー。
+//  既定配線: GP29 ↔ GND をトグルスイッチで開閉 (内部プルアップを常時有効化)。
+//  0 = ピン LOW でフィルター ON / 1 = ピン HIGH でフィルター ON。
+//  0 にするとフィルター適用とスイッチ処理はコンパイルアウトされる。
+// ---------------------------------------------------------------------------
+#ifndef MIRROR_FILTER_SWITCH_ENABLE
+#define MIRROR_FILTER_SWITCH_ENABLE 1
+#endif
+#ifndef MIRROR_FILTER_SWITCH_PIN
+#define MIRROR_FILTER_SWITCH_PIN 29
+#endif
+// 0 = LOW でフィルター ON (内部プルアップ + スイッチを GND へ閉じる配線が既定)
+#ifndef MIRROR_FILTER_SWITCH_ACTIVE_LEVEL
+#define MIRROR_FILTER_SWITCH_ACTIVE_LEVEL 0
+#endif
+// デバウンス時間 (ms)。ミュートスイッチと同じ値。
+#ifndef MIRROR_FILTER_SWITCH_DEBOUNCE_MS
+#define MIRROR_FILTER_SWITCH_DEBOUNCE_MS 20
+#endif
+
 #endif // CONFIG_H

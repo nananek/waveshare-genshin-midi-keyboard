@@ -11,6 +11,7 @@
 #include "hid_device.h"
 #include "hid_mute.h"
 #include "midi_host.h"
+#include "mirror_filter_switch.h"
 
 // ===========================================================================
 //  MIDI(host, core1) → HID(device, core0) の一方向パイプライン
@@ -78,6 +79,7 @@ int main(void) {
     tud_init(BOARD_TUD_RHPORT);
     hid_device_init();
     hid_mute_init();
+    mirror_filter_switch_init();
 
     for (;;) {
         tud_task();
@@ -92,6 +94,9 @@ int main(void) {
         } else if (edge == HID_MUTE_EXIT) {
             printf("[mute] OFF\r\n");
         }
+
+        // --- ミラーフィルタースイッチ: デバウンス + 共有フラグ反映 (core1 は読み取り側) ---
+        mirror_filter_switch_poll();
 
         // core1 から届いた MIDI イベントを反映。
         // ミュート中はキューを排出しつつ HID 状態に反映しない (溢れ防止)。

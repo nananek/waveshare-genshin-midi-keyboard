@@ -1,6 +1,8 @@
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "midi_mirror.h"
+#include "midi_note_filter.h"
+#include "mirror_filter_switch.h"
 #include "config.h"
 
 // ===========================================================================
@@ -22,22 +24,41 @@
 #define MIRROR_UART uart1
 #endif
 
+// フィルターは入力チャンクをまたいで状態を保つため、ミラー全体で 1 個保持する。
+static midi_note_filter_t s_filter;
+
 void midi_mirror_init(void) {
     uart_init(MIRROR_UART, MIDI_UART_MIRROR_BAUD); // 8N1 がデフォルト
     gpio_set_function(MIDI_UART_MIRROR_TX_PIN, GPIO_FUNC_UART);
     uart_set_fifo_enabled(MIRROR_UART, true);
+    midi_note_filter_init(&s_filter);
+}
+
+// デバイス再マウント時に呼ぶ (midi_host の mount cb から)。ランニングステータス等をリセット。
+void midi_mirror_reset(void) {
+    midi_note_filter_init(&s_filter);
 }
 
 void midi_mirror_send(const uint8_t *data, uint32_t len) {
     if (len == 0) {
         return;
     }
-    uart_write_blocking(MIRROR_UART, data, len);
+    if (mirror_filter_switch_is_enabled()) {
+        uint8_t filtered[64]; // ランニングステータス入力では出力が入力を上回り得るが、
+                              // 容量超過分は midi_note_filter が切り詰めて破棄する
+        uint32_t n = midi_note_filter_process(&s_filter, data, len, filtered, sizeof(filtered));
+        if (n > 0) {
+            uart_write_blocking(MIRROR_UART, filtered, n);
+        }
+    } else {
+        uart_write_blocking(MIRROR_UART, data, len); // 従来どおり完全パススルー
+    }
 }
 
 #else // 無効時は no-op (コードは残すが何もしない)
 
 void midi_mirror_init(void) {}
 void midi_mirror_send(const uint8_t *data, uint32_t len) { (void)data; (void)len; }
+void midi_mirror_reset(void) {}
 
 #endif

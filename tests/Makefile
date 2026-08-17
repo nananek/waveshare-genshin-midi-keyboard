@@ -5,7 +5,7 @@ CC      ?= cc
 CFLAGS  ?= -Wall -Wextra -Wno-unused-function -O2 -I../src -I.
 SRC      = ../src
 
-TESTS = t_note_mapper t_midi_parse t_nkro_report
+TESTS = t_note_mapper t_midi_parse t_nkro_report t_midi_note_filter
 
 .PHONY: all clean
 all: run
@@ -17,6 +17,9 @@ t_midi_parse: test_midi_parse.c $(SRC)/midi_parse.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 t_nkro_report: test_nkro_report.c $(SRC)/nkro_report.c $(SRC)/note_mapper.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+t_midi_note_filter: test_midi_note_filter.c $(SRC)/midi_note_filter.c $(SRC)/note_mapper.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 run: $(TESTS)
