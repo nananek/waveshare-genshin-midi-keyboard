@@ -91,4 +91,28 @@
 #define MIDI_UART_MIRROR_TX_PIN 4
 #endif
 
+// ---------------------------------------------------------------------------
+//  ミュートスイッチ (ボード1: MIDI→HID 変換板)
+//  スイッチを ON (ミュート) にすると HID キーボード出力を無効化する
+//  (原神側にキー入力が送られない)。UART ミラー出力 (midi_mirror) は
+//  そのまま動作し、DAW 用の serial_midi_device ボード (ボード2) だけを鳴らせる。
+//  既定配線: GP28 ↔ GND をトグルスイッチで開閉 (内部プルアップを常時有効化)。
+//  0 = ピン LOW でミュート (スイッチ閉) / 1 = ピン HIGH でミュート。
+//  0 にするとミュート機能はコンパイルアウトされる。
+// ---------------------------------------------------------------------------
+#ifndef MUTE_SWITCH_ENABLE
+#define MUTE_SWITCH_ENABLE 1
+#endif
+#ifndef MUTE_SWITCH_PIN
+#define MUTE_SWITCH_PIN 28
+#endif
+// 0 = LOW でミュート (内部プルアップ + スイッチを GND へ閉じる配線が既定)
+#ifndef MUTE_SWITCH_ACTIVE_LEVEL
+#define MUTE_SWITCH_ACTIVE_LEVEL 0
+#endif
+// デバウンス時間 (ms)。この時間連続して同じレベルを観測したら状態を確定する。
+#ifndef MUTE_SWITCH_DEBOUNCE_MS
+#define MUTE_SWITCH_DEBOUNCE_MS 20
+#endif
+
 #endif // CONFIG_H

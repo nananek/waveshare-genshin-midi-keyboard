@@ -51,6 +51,9 @@ export PICO_SDK_PATH=/path/to/pico-sdk
 - TinyUSB 依存(実機/Docker ビルドでのみ検証): `hid_device` / `midi_host` / `usb_descriptors` / `main`。
 - **`midi_mirror` もハード依存層**(`hardware/uart.h` を直接使う)なのでホストテスト対象外。
   無効時(`MIDI_UART_MIRROR_ENABLE=0`)は関数本体ごと `#if` でコンパイルアウトされる。
+- **`hid_mute` / `mirror_filter_switch` もハード依存層**(`hardware/gpio.h` を直接使う)なので
+  ホストテスト対象外。無効時(`MUTE_SWITCH_ENABLE=0` / `MIRROR_FILTER_SWITCH_ENABLE=0`)は
+  no-op になり、`#if` でコンパイルアウトされる。
 - 新しいロジックは可能な限り純粋層へ置き、`tests/` を足すこと。
 
 **変換パイプライン**(`note_mapper.c`):移調(`OCTAVE_OFFSET`)→ 範囲外ポリシー → 黒鍵スナップ
@@ -96,6 +99,9 @@ UART1(RX=GP5/31250)で受けた生 MIDI バイト列を `tud_midi_stream_write` 
 - ネイティブ USB(USB-C)= HID デバイス側。2 ポートは物理的に別。
 - ボード1 のミラー出力は **UART1 TX=GP4**、ボード2 のミラー入力は **UART1 RX=GP5**、両者を直結
   (+GND 共有)。ボード2 のデバッグログは UART0 なので衝突しない。GP12/13(PIO-USB)は使わない。
+- 任意スイッチ: **GP28 = ミュートスイッチ** (LOW アクティブ、内部プルアップ、閉=HID 出力 OFF。
+  UART ミラーは継続)、**GP29 = フィルタースイッチ** (LOW アクティブ、閉=ミラーを原神鍵盤の
+  Note On/Off のみに絞る)。どちらも `config.h` で無効化可。
 
 ## キャリブレーション
 

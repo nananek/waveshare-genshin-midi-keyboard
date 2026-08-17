@@ -39,6 +39,7 @@ PC 上の原神・演奏 UI(諧律のチェンバロ等)を弾けるようにす
 |------|------|------|
 | MIDI 入力 (ホスト) | USB-A ポート = **D+ = GP12 / D− = GP13** | PIO-USB。`PIN_USB_HOST_DP` で変更可 |
 | PC 出力 (デバイス) | USB-C(ネイティブ USB) | HID キーボードとして認識される |
+| ミュートスイッチ (任意) | GP28 ↔ GND (内部プルアップ、トグルスイッチ) | 閉 = ミュート (HID 出力 OFF)。UART ミラーは継続 |
 
 ### ⚠️ 必須ハードウェア改造(Waveshare RP2350-USB-A)
 
@@ -51,6 +52,23 @@ USB-A ポートの **D+ にはデバイス動作用のプルアップ抵抗 R13 
 
 > 指示書 1章の「D+ のプルダウン抵抗を外す改造」は、実際には当ボードでは
 > **D+ のプルアップ R13 の除去**に相当する。
+
+### ミュートスイッチ (任意) / フィルタースイッチ (任意)
+
+ボード1 には 2 つのラッチ式トグルスイッチを追加できる (どちらも任意、未配線でも動作する)。
+
+- **ミュートスイッチ (GP28 ↔ GND)**: 閉 (ON) にすると HID キーボード出力が無効化され、
+  原神側にキー入力が送られなくなる。ミュート突入時に全キー解放 + 空レポートが送信される
+  (固着キー解除)。**UART ミラー出力は継続**するため、ボード2 (serial_midi_device) 経由の
+  DAW 側だけを鳴らせる。開 (OFF) で通常の HID 出力に復帰。
+- **フィルタースイッチ (GP29 ↔ GND)**: 閉 (ON) にすると UART ミラー出力が「原神で使える鍵盤
+  (ダイアトニック 21 音) の Note On/Off のみ」に絞られる (ランニングステータス対応、出力は
+  明示ステータス 3 バイトで再構成)。開 (OFF) なら従来どおり完全パススルー
+  (CC・ピッチベンド・SysEx もすべて通す)。
+
+内部プルアップを常時有効化しているため外部抵抗は不要で、GP ピンと GND の間を
+スイッチで開閉するだけの配線になる。`MUTE_SWITCH_ENABLE 0` / `MIRROR_FILTER_SWITCH_ENABLE 0`
+でビルドすると各機能ごと無効化できる。
 
 ---
 
@@ -157,6 +175,10 @@ BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI
 | `MIDI_UART_MIRROR_BAUD` | `31250` | ミラー出力ボーレート(標準 MIDI over UART) |
 | `MIDI_UART_MIRROR_UART` | `1` | ミラーに使う UART インスタンス(0=uart0 / 1=uart1) |
 | `MIDI_UART_MIRROR_TX_PIN` | `4` | ミラー出力 TX ピン(UART1 の GP4) |
+| `MUTE_SWITCH_ENABLE` | `1` | ミュートスイッチ機能を有効にする (0=コンパイルアウト) |
+| `MUTE_SWITCH_PIN` | `28` | ミュートスイッチ接続 GPIO |
+| `MUTE_SWITCH_ACTIVE_LEVEL` | `0` | 0=LOW でミュート (スイッチ閉) / 1=HIGH でミュート |
+| `MUTE_SWITCH_DEBOUNCE_MS` | `20` | ミュートスイッチのデバウンス時間 (ms) |
 
 ボード2 (serial_midi_device) の設定は `serial_midi_device/config.h`:
 `MIDI_UART_RX_PIN`(既定 `5`=UART1 RX)、`MIDI_UART_BAUD`(既定 `31250`)、
