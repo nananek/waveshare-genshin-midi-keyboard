@@ -69,7 +69,7 @@ void tuh_midi_rx_cb(uint8_t idx, uint32_t xferred_bytes) {
         return;
     }
     // stream_read は USB-MIDI パケットを 1.0 バイトストリームへ復元して返す。
-    uint8_t buffer[64];
+    uint8_t buffer[MIDI_STREAM_CHUNK_MAX];
     uint8_t cable = 0;
     for (;;) {
         uint32_t n = tuh_midi_stream_read(idx, &cable, buffer, (uint16_t)sizeof(buffer));

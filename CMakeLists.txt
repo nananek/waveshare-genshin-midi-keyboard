@@ -52,6 +52,7 @@ add_subdirectory(${PICO_PIO_USB_PATH} pico_pio_usb)
 add_executable(${PROJECT_NAME}
     src/main.c
     src/usb_descriptors.c
+    src/debounced_switch.c
     src/hid_device.c
     src/hid_mute.c
     src/midi_host.c

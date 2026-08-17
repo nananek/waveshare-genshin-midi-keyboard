@@ -37,13 +37,8 @@ static void expect_split(const char *name,
     midi_note_filter_init(&f);
     uint8_t out[128];
     uint32_t n1 = midi_note_filter_process(&f, a, alen, out, sizeof(out));
-    uint32_t n2 = midi_note_filter_process(&f, b, blen, out, sizeof(out));
+    uint32_t n2 = midi_note_filter_process(&f, b, blen, out + n1, sizeof(out) - n1);
     uint32_t n = n1 + n2;
-    if (n1 != 0) {
-        printf("  FAIL %s: first chunk produced %u bytes (want 0)\n", name, n1);
-        failures++;
-        return;
-    }
     if (n != want_len || (n > 0 && memcmp(out, want, n) != 0)) {
         printf("  FAIL %s: want %u bytes got %u\n", name, want_len, n);
         printf("    want:");
@@ -97,6 +92,21 @@ int main(void) {
     { uint8_t b[] = {0xE0, 0x00, 0x40}; expect_output("pitch-bend", b, sizeof b, NULL, 0); }
     { uint8_t b[] = {0xC0, 0x05};       expect_output("program-change", b, sizeof b, NULL, 0); }
 
+    // 7b. システムコモン (F1 MTC quarter frame=1byte / F2 song position=2byte /
+    //     F4,F5 未定義=0byte) の破棄バイト数が正しく、直後の明示ステータス Note は
+    //     正常に通る
+    { uint8_t b[] = {0xF1, 0x00, 0x90, 0x3C, 0x64}; uint8_t w[] = {0x90, 0x3C, 0x64};
+      expect_output("f1-mtc-quarter-frame", b, sizeof b, w, sizeof w); }
+    { uint8_t b[] = {0xF2, 0x00, 0x00, 0x90, 0x3C, 0x64}; uint8_t w[] = {0x90, 0x3C, 0x64};
+      expect_output("f2-song-position", b, sizeof b, w, sizeof w); }
+    { uint8_t b[] = {0xF4, 0x90, 0x3C, 0x64}; uint8_t w[] = {0x90, 0x3C, 0x64};
+      expect_output("f4-undefined", b, sizeof b, w, sizeof w); }
+    { uint8_t b[] = {0xF5, 0x90, 0x3C, 0x64}; uint8_t w[] = {0x90, 0x3C, 0x64};
+      expect_output("f5-undefined", b, sizeof b, w, sizeof w); }
+    // F4 (0 バイト破棄のシステムコモン) がランニングステータスを解除することの確認
+    { uint8_t b[] = {0x90, 0x3C, 0x64, 0xF4, 0x3E, 0x40}; uint8_t w[] = {0x90, 0x3C, 0x64};
+      expect_output("f4-breaks-running", b, sizeof b, w, sizeof w); }
+
     // 8. SysEx の破棄と状態リセット: 直後の Note は正常に通る
     { uint8_t b[] = {0xF0, 0x01, 0x02, 0x03, 0xF7, 0x90, 0x3C, 0x64};
       uint8_t w[] = {0x90, 0x3C, 0x64};
@@ -109,6 +119,13 @@ int main(void) {
     // 10. チャンク分断: status+note と velocity が別チャンクに来ても状態保持
     { uint8_t a[] = {0x90, 0x3C}; uint8_t b[] = {0x64}; uint8_t w[] = {0x90, 0x3C, 0x64};
       expect_split("chunk-split", a, sizeof a, b, sizeof b, w, sizeof w); }
+
+    // 10b. チャンク分断: 1 音目が前チャンクで確定出力され (n1 != 0)、
+    //      2 音目がランニングステータス継続で後チャンクに来ても running_status を
+    //      正しく持ち越して再構成できる (expect_split の追記ロジックの検証も兼ねる)
+    { uint8_t a[] = {0x90, 0x3C, 0x64}; uint8_t b[] = {0x3E, 0x40};
+      uint8_t w[] = {0x90, 0x3C, 0x64, 0x90, 0x3E, 0x40};
+      expect_split("chunk-split-running", a, sizeof a, b, sizeof b, w, sizeof w); }
 
     // 11. Note On vel=0 (実質 Note Off) の素通し
     { uint8_t b[] = {0x90, 0x3C, 0x00}; uint8_t w[] = {0x90, 0x3C, 0x00};

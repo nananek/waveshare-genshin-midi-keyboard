@@ -27,6 +27,10 @@ typedef struct {
 
 static queue_t s_evt_queue;
 
+// MIDI 側から見た「現在押されているノート」(ミュート中も含め常時更新)。
+// ミュート解除時、押しっぱなしのまま新規 Note On が来ないノートを再送するために使う。
+static bool s_note_held[128];
+
 // ---- midi_host.c (core1) から呼ばれるシーム実装 ----
 void app_on_midi_note(uint8_t note, bool on) {
     midi_evt_t e = { .note = note, .on = on ? 1u : 0u };
@@ -72,14 +76,15 @@ int main(void) {
 
     queue_init(&s_evt_queue, sizeof(midi_evt_t), 128);
 
-    // 先に core1 で PIO-USB ホストを起動。
-    multicore_launch_core1(core1_main);
-
-    // core0 でデバイススタックを起動。
+    // core0 のデバイススタック・GPIO/共有フラグ初期化を終えてから core1 (PIO-USB
+    // ホスト) を起動する。逆順だと、USB 列挙が早く終わった場合に core1 が
+    // mirror_filter_switch_is_enabled() を未初期化の既定値で読む窓ができる。
     tud_init(BOARD_TUD_RHPORT);
     hid_device_init();
     hid_mute_init();
     mirror_filter_switch_init();
+
+    multicore_launch_core1(core1_main);
 
     for (;;) {
         tud_task();
@@ -93,22 +98,38 @@ int main(void) {
             hid_device_release_all();
         } else if (edge == HID_MUTE_EXIT) {
             printf("[mute] OFF\r\n");
+            // ミュート中も押しっぱなしのノートは MIDI 側から Note On が再送されないため、
+            // 現在の保持状態を元に HID へ再アサートする (取りこぼし防止)。
+            for (int i = 0; i < 128; i++) {
+                if (s_note_held[i]) {
+                    hid_device_note_on((uint8_t)i);
+                }
+            }
         }
 
         // --- ミラーフィルタースイッチ: デバウンス + 共有フラグ反映 (core1 は読み取り側) ---
         mirror_filter_switch_poll();
 
         // core1 から届いた MIDI イベントを反映。
-        // ミュート中はキューを排出しつつ HID 状態に反映しない (溢れ防止)。
+        // ミュート中もキューは排出しつつ保持状態 (s_note_held) だけは更新し、
+        // HID 状態への反映のみ止める (溢れ防止 + unmute 時の再アサートに使う)。
         bool muted = hid_mute_is_muted();
         midi_evt_t e;
         while (queue_try_remove(&s_evt_queue, &e)) {
+            if (e.note == EVT_RELEASE_ALL) {
+                for (int i = 0; i < 128; i++) {
+                    s_note_held[i] = false;
+                }
+                if (!muted) {
+                    hid_device_release_all();
+                }
+                continue;
+            }
+            s_note_held[e.note] = e.on;
             if (muted) {
                 continue;
             }
-            if (e.note == EVT_RELEASE_ALL) {
-                hid_device_release_all();
-            } else if (e.on) {
+            if (e.on) {
                 hid_device_note_on(e.note);
             } else {
                 hid_device_note_off(e.note);

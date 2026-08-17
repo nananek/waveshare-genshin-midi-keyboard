@@ -5,7 +5,8 @@
 
 // ミラーフィルタースイッチの入力管理。
 // GPIO 初期化・デバウンスは core0 (メインループ) で行い、結果を volatile フラグで
-// core1 (midi_mirror) に公開する。単語サイズの volatile 読み書きは RP2350 でアトミック。
+// core1 (midi_mirror) に公開する。共有フラグは bool (1 バイト) なので RP2350 上の
+// 単純な読み書きはアトミック (マルチバイトの値をこの手法で共有する場合は別途排他が要る)。
 
 void mirror_filter_switch_init(void);   // core0、メインループ開始前に 1 回
 void mirror_filter_switch_poll(void);   // core0、各メインループイテレーションで 1 回

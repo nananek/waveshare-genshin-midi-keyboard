@@ -20,13 +20,22 @@ typedef struct {
 
 void midi_note_filter_init(midi_note_filter_t *f);
 
-// in[0..len) を処理し、通過分を out に追記する。out には len バイト分の容量を
-// 渡すこと (出力は入力長を超えない)。返り値は out に書いたバイト数。
+// in[0..len) を処理し、通過分を out に追記する。ランニングステータスで圧縮された
+// 2 バイトのノートは明示ステータス 3 バイトへ展開されるため、出力は入力長の
+// 最大 1.5 倍 (+ 前回呼び出しから持ち越した note 1 個分) まで増え得る。
+// out_cap が不足する場合、超過分は破棄される (呼び出し側が十分な容量を
+// 確保すること)。返り値は out に書いたバイト数。
 uint32_t midi_note_filter_process(midi_note_filter_t *f,
                                   const uint8_t *in, uint32_t len,
                                   uint8_t *out, uint32_t out_cap);
 
 // このノートが原神で使える鍵盤に対応するか (note_mapper の判定をそのまま使用)。
 bool midi_note_filter_is_diatonic(uint8_t note);
+
+// f が現在メッセージ境界 (次に来るバイトが新しい MIDI メッセージの先頭になり得る
+// 状態) にあるか。ステータス+note を受領済みで velocity 待ちの間や SysEx/ドロップ
+// 中は false。呼び出し側がフィルターの有効/無効をメッセージ途中で切り替えて
+// 出力を破損させないためのタイミング判定に使う。
+bool midi_note_filter_is_ready(const midi_note_filter_t *f);
 
 #endif // MIDI_NOTE_FILTER_H

@@ -90,6 +90,11 @@
 #ifndef MIDI_UART_MIRROR_TX_PIN
 #define MIDI_UART_MIRROR_TX_PIN 4
 #endif
+// tuh_midi_stream_read を 1 回に読み出す最大バイト数 (midi_host.c の受信バッファと
+// midi_mirror.c のフィルター出力バッファのサイズ計算が共有する)。
+#ifndef MIDI_STREAM_CHUNK_MAX
+#define MIDI_STREAM_CHUNK_MAX 64
+#endif
 
 // ---------------------------------------------------------------------------
 //  ミュートスイッチ (ボード1: MIDI→HID 変換板)
@@ -134,9 +139,9 @@
 #ifndef MIRROR_FILTER_SWITCH_ACTIVE_LEVEL
 #define MIRROR_FILTER_SWITCH_ACTIVE_LEVEL 0
 #endif
-// デバウンス時間 (ms)。ミュートスイッチと同じ値。
+// デバウンス時間 (ms)。既定値はミュートスイッチと共有 (個別に -D で上書き可)。
 #ifndef MIRROR_FILTER_SWITCH_DEBOUNCE_MS
-#define MIRROR_FILTER_SWITCH_DEBOUNCE_MS 20
+#define MIRROR_FILTER_SWITCH_DEBOUNCE_MS MUTE_SWITCH_DEBOUNCE_MS
 #endif
 
 #endif // CONFIG_H

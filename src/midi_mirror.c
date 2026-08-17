@@ -24,34 +24,58 @@
 #define MIRROR_UART uart1
 #endif
 
+// ランニングステータス展開 (最大 1.5 倍) + 前回呼び出しからの持ち越し 1 note 分を
+// 見込んだ安全な上限。MIDI_STREAM_CHUNK_MAX (= tuh_midi_stream_read の 1 回の
+// 最大読み出しバイト数、midi_host.c と共有) に対して計算する。
+#define MIRROR_FILTERED_BUF_LEN ((MIDI_STREAM_CHUNK_MAX * 3) / 2 + 3)
+
 // フィルターは入力チャンクをまたいで状態を保つため、ミラー全体で 1 個保持する。
 static midi_note_filter_t s_filter;
+
+// 実際に適用中のモード (true = フィルター済み 3 バイト再構成 / false = 完全パススルー)。
+// mirror_filter_switch_is_enabled() の生値をそのまま使わず、s_filter がメッセージ
+// 境界 (READY) にあるときだけここへ反映する。メッセージ途中で切り替えると
+// バッファ済みのステータス+note が宙に浮いてバイト列が破損するため。
+static bool s_filter_active;
+
+static void sync_filter_mode(void) {
+    if (midi_note_filter_is_ready(&s_filter)) {
+        s_filter_active = mirror_filter_switch_is_enabled();
+    }
+}
 
 void midi_mirror_init(void) {
     uart_init(MIRROR_UART, MIDI_UART_MIRROR_BAUD); // 8N1 がデフォルト
     gpio_set_function(MIDI_UART_MIRROR_TX_PIN, GPIO_FUNC_UART);
     uart_set_fifo_enabled(MIRROR_UART, true);
     midi_note_filter_init(&s_filter);
+    s_filter_active = mirror_filter_switch_is_enabled();
 }
 
 // デバイス再マウント時に呼ぶ (midi_host の mount cb から)。ランニングステータス等をリセット。
 void midi_mirror_reset(void) {
     midi_note_filter_init(&s_filter);
+    s_filter_active = mirror_filter_switch_is_enabled();
 }
 
 void midi_mirror_send(const uint8_t *data, uint32_t len) {
     if (len == 0) {
         return;
     }
-    if (mirror_filter_switch_is_enabled()) {
-        uint8_t filtered[64]; // ランニングステータス入力では出力が入力を上回り得るが、
-                              // 容量超過分は midi_note_filter が切り詰めて破棄する
-        uint32_t n = midi_note_filter_process(&s_filter, data, len, filtered, sizeof(filtered));
+    // モード切替はメッセージ境界でのみ反映する (上の s_filter_active コメント参照)。
+    sync_filter_mode();
+
+    // パススルー中もランニングステータス等の内部状態を追跡し続けるため、
+    // モードに関わらず毎回 process を通す (境界判定を常に正確に保つ)。
+    uint8_t filtered[MIRROR_FILTERED_BUF_LEN];
+    uint32_t n = midi_note_filter_process(&s_filter, data, len, filtered, sizeof(filtered));
+
+    if (s_filter_active) {
         if (n > 0) {
             uart_write_blocking(MIRROR_UART, filtered, n);
         }
     } else {
-        uart_write_blocking(MIRROR_UART, data, len); // 従来どおり完全パススルー
+        uart_write_blocking(MIRROR_UART, data, len); // 完全パススルー (バイト同一)
     }
 }
 

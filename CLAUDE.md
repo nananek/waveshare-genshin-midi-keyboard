@@ -56,7 +56,9 @@ export PICO_SDK_PATH=/path/to/pico-sdk
   無効時(`MIDI_UART_MIRROR_ENABLE=0`)は関数本体ごと `#if` でコンパイルアウトされる。
 - **`hid_mute` / `mirror_filter_switch` もハード依存層**(`hardware/gpio.h` を直接使う)なので
   ホストテスト対象外。無効時(`MUTE_SWITCH_ENABLE=0` / `MIRROR_FILTER_SWITCH_ENABLE=0`)は
-  no-op になり、`#if` でコンパイルアウトされる。
+  no-op になり、`#if` でコンパイルアウトされる。デバウンス本体(3 段ステートマシン +
+  active_level に応じた内部プル選択)は両者で共通の `debounced_switch.c` に切り出してある
+  ので、デバウンス周りの修正はそこ 1 箇所で足りる。
 - 新しいロジックは可能な限り純粋層へ置き、`tests/` を足すこと。
 
 **変換パイプライン**(`note_mapper.c`):移調(`OCTAVE_OFFSET`)→ 範囲外ポリシー → 黒鍵スナップ
@@ -69,6 +71,13 @@ export PICO_SDK_PATH=/path/to/pico-sdk
 `midi_note_filter`(純粋モジュール)が Note On/Off を明示ステータス 3 バイトへ再構成して
 絞り込む。ブロッキング送信のため大きな SysEx 中は core1 の `tuh_task` が数十 ms 止まり得る
 (既知のトレードオフ)。リマウント時は `midi_mirror_reset()` でフィルター状態をリセットする。
+フィルターの ON/OFF 切替はメッセージ途中で反映するとバイト列が破損するため、
+`midi_note_filter_is_ready()` でメッセージ境界にあることを確認してから切り替える
+(`midi_mirror.c` の `s_filter_active`)。パススルー中も `midi_note_filter_process` は
+常に呼び続けて内部状態(ランニングステータス等)を追従させ、境界判定を正確に保つ。
+出力バッファは `MIDI_STREAM_CHUNK_MAX`(`config.h`、`midi_host.c` の受信バッファと共有)
+から計算した安全マージン付きサイズ(`MIRROR_FILTERED_BUF_LEN`)を使う
+(ランニングステータス展開で出力が入力の最大 1.5 倍に増えるため)。
 
 **ボード2**(`serial_midi_device/`):PIO-USB・デュアルコア不要のシングルコア・デバイスのみ。
 UART1(RX=GP5/31250)で受けた生 MIDI バイト列を `tud_midi_stream_write` で USB-MIDI へ。
