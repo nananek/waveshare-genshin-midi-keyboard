@@ -67,9 +67,9 @@ int main(void) {
     { uint8_t b[] = {0x90, 0x54, 0x64}; expect_output("out-high", b, sizeof b, NULL, 0); }
 #endif
 
-    // 範囲内の黒鍵 (C#4=61) はスナップされてゲームキーにマップされるため通過する
-    { uint8_t b[] = {0x90, 0x3D, 0x64}; uint8_t w[] = {0x90, 0x3D, 0x64};
-      expect_output("blackkey-snap", b, sizeof b, w, sizeof w); }
+    // 範囲内の黒鍵 (C#4=61) はゲームキーに対応しないため破棄される
+    { uint8_t b[] = {0x90, 0x3D, 0x64};
+      expect_output("blackkey-drop", b, sizeof b, NULL, 0); }
 
     // 4. ランニングステータス: 2 音目が明示ステータス 3 バイトで再構成される
     { uint8_t b[] = {0x90, 0x3C, 0x64, 0x3E, 0x40};

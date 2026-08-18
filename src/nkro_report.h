@@ -19,7 +19,7 @@ void nkro_report_init(void);
 
 // MIDI Note On / Off を反映。レポートが変化して送信が必要なら true。
 // 同じノートの多重 Note On はべき等 (retrigger で二重カウントしない)。
-// 別々のノートが同じゲームキーへ丸められた場合 (黒鍵スナップ / WRAP) は
+// 別々のノートが同じゲームキーへ丸められた場合 (OUT_OF_RANGE_WRAP) は
 // 参照カウントで管理し、片方を離しても押下が維持される。
 bool nkro_report_note_on(uint8_t midi_note);
 bool nkro_report_note_off(uint8_t midi_note);

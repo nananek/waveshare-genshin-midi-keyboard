@@ -10,8 +10,8 @@
 #define NOTE_MAP_NONE 0xFFu
 
 // MIDI ノート番号 (0..127) を 0..20 のキースロット番号へ変換する純粋関数。
-// config.h のポリシー (OCTAVE_OFFSET / OUT_OF_RANGE_POLICY /
-// CHROMATIC_SNAP_POLICY) に従う。出力しない場合は NOTE_MAP_NONE を返す。
+// config.h のポリシー (OCTAVE_OFFSET / OUT_OF_RANGE_POLICY) に従う。
+// 黒鍵 (半音) は常にドロップし NOTE_MAP_NONE を返す (原神の楽器に黒鍵が無いため)。
 // 状態を持たないので Note On / Note Off どちらの経路からも同じ結果になる。
 uint8_t note_to_key_index(uint8_t midi_note);
 

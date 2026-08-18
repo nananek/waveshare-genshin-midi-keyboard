@@ -58,26 +58,15 @@ uint8_t note_to_key_index(uint8_t midi_note) {
 #endif
     }
 
-    // 3. 半音 (黒鍵) ポリシー。ここで n は必ず [48,83] に収まっている。
+    // 3. 半音 (黒鍵) は常にドロップ。ここで n は必ず [48,83] に収まっている。
     int pc = n % 12; // 48 % 12 == 0 なので pc は C 基準で正しい
-    if (DEGREE_OF_PC[pc] < 0) {
-#if CHROMATIC_SNAP_POLICY == CHROMATIC_SNAP_UP
-        n += 1;
-#elif CHROMATIC_SNAP_POLICY == CHROMATIC_SNAP_IGNORE
+    int degree = DEGREE_OF_PC[pc];
+    if (degree < 0) {
         return NOTE_MAP_NONE;
-#else // CHROMATIC_SNAP_DOWN (デフォルト)
-        n -= 1;
-#endif
-        pc = n % 12;
-        // スナップ先は必ず白鍵かつ [48,83] 内 (境界: 49→48, 82→83)。念のため確認。
-        if (DEGREE_OF_PC[pc] < 0) {
-            return NOTE_MAP_NONE;
-        }
     }
 
     // 4. スロット算出
     int octave = (n - NOTE_RANGE_LOW) / 12; // 0..2
-    int degree = DEGREE_OF_PC[pc];          // 0..6
     int slot = octave * 7 + degree;
     if (slot < 0 || slot >= NOTE_MAP_KEY_COUNT) {
         return NOTE_MAP_NONE; // 到達不能だが保険

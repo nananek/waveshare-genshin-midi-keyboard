@@ -1,8 +1,11 @@
-// nkro_report.c のホスト側ユニットテスト (デフォルト設定: snap-down, ignore, offset0)。
+// nkro_report.c のホスト側ユニットテスト (デフォルト設定: OUT_OF_RANGE_POLICY=ignore, offset0)。
+// エイリアス/参照カウントのテストは OUT_OF_RANGE_POLICY=WRAP ビルド限定
+// (`make t_nkro_report_wrap`。詳細は tests/Makefile)。
 //   cc -Wall -Wextra -I../src test_nkro_report.c ../src/nkro_report.c ../src/note_mapper.c -o t && ./t
 #include <stdio.h>
 #include "nkro_report.h"
 #include "note_mapper.h"
+#include "config.h"
 
 static int failures;
 
@@ -57,15 +60,17 @@ int main(void) {
     nkro_report_note_off(64); // D を離す → 0x49 & ~0x08 = 0x41
     expect_byte("chord-rel-D", 1, 0x41);
 
-    // --- エイリアス: note60(C→A) と note61(C#→snap down→C→A) は同じキー ---
+#if OUT_OF_RANGE_POLICY == OUT_OF_RANGE_WRAP
+    // --- エイリアス: note24 と note36 は WRAP で同じキー (48=Z) に丸まる ---
     nkro_report_init();
-    expect_bool("alias-on60", nkro_report_note_on(60), true);   // A 押下
-    expect_bool("alias-on61", nkro_report_note_on(61), false);  // 同じ A、変化なし
-    expect_byte("alias-set", 1, 0x01);
-    expect_bool("alias-off60", nkro_report_note_off(60), false); // まだ 61 が保持
-    expect_byte("alias-hold", 1, 0x01);
-    expect_bool("alias-off61", nkro_report_note_off(61), true);  // ここで解放
+    expect_bool("alias-on24", nkro_report_note_on(24), true);   // Z 押下
+    expect_bool("alias-on36", nkro_report_note_on(36), false);  // 同じ Z、変化なし
+    expect_byte("alias-set", 4, 0x02);
+    expect_bool("alias-off24", nkro_report_note_off(24), false); // まだ 36 が保持
+    expect_byte("alias-hold", 4, 0x02);
+    expect_bool("alias-off36", nkro_report_note_off(36), true);  // ここで解放
     expect_zero("alias-clear");
+#endif
 
     // --- べき等: 同じノートの二重 Note On ---
     nkro_report_init();
@@ -74,10 +79,14 @@ int main(void) {
     expect_bool("idem-off1", nkro_report_note_off(72), true);
     expect_bool("idem-off2", nkro_report_note_off(72), false);
 
-    // --- 対象外ノート: 範囲外 47 (IGNORE) と MIDI 上限超え ---
+    // --- 対象外ノート: MIDI 上限超え (200) はどのポリシーでも対象外 ---
     nkro_report_init();
+#if OUT_OF_RANGE_POLICY == OUT_OF_RANGE_IGNORE
+    // 範囲外 47 は IGNORE のときのみ対象外
+    // (WRAP だと 59=B に丸め込まれて対象になるため、この節は IGNORE 限定)
     expect_bool("oor-on47", nkro_report_note_on(47), false);
     expect_bool("oor-off47", nkro_report_note_off(47), false);
+#endif
     expect_bool("oor-on200", nkro_report_note_on(200), false);
     expect_zero("oor");
 

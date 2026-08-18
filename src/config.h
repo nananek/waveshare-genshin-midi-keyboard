@@ -37,19 +37,6 @@
 #endif
 
 // ---------------------------------------------------------------------------
-//  半音 (黒鍵 = C#, D#, F#, G#, A#) のポリシー (指示書 3.3)
-//    DOWN   : 直下の白鍵へ丸める (C#→C, D#→D)  … デフォルト
-//    UP     : 直上の白鍵へ丸める (C#→D, D#→E)
-//    IGNORE : 黒鍵入力は無視して HID 出力しない
-// ---------------------------------------------------------------------------
-#define CHROMATIC_SNAP_DOWN   0
-#define CHROMATIC_SNAP_UP     1
-#define CHROMATIC_SNAP_IGNORE 2
-#ifndef CHROMATIC_SNAP_POLICY
-#define CHROMATIC_SNAP_POLICY CHROMATIC_SNAP_DOWN
-#endif
-
-// ---------------------------------------------------------------------------
 //  PIO-USB ホスト (MIDI 入力側) の GPIO
 //  D+ を PIN_USB_HOST_DP、D- は必ずその隣 (DP+1) を使うこと。
 //  Waveshare RP2350-USB-A の USB-A ポートは D+=GP12 / D-=GP13 に配線されている。
