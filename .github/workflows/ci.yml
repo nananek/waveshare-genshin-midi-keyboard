@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: ホスト側ユニットテスト
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: cd tests && make
+
+  build-firmware:
+    name: ファームウェアビルド (Docker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: ./scripts/build_docker.sh
+      - uses: actions/upload-artifact@v7
+        with:
+          name: firmware-uf2
+          path: |
+            build/genshin_midi_kbd.uf2
+            build/serial_midi_device.uf2
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release 作成
+    needs: [test, build-firmware]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: firmware-uf2
+          path: build
+      - name: create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            build/genshin_midi_kbd.uf2 build/serial_midi_device.uf2 \
+            --title "${{ github.ref_name }}" \
+            --generate-notes
