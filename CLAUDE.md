@@ -18,10 +18,10 @@ PC に送って原神「諧律のチェンバロ」を弾けるようにする�
 ホスト `cc` で検証する。
 これがこのリポジトリで最も速く回せる検証ループなので、それらを触ったらまずここを回す。
 ```sh
-cd tests && make            # 4 スイートをビルド&実行
+cd tests && make            # 4 モジュール分 + WRAP ポリシー専用ビルド(t_nkro_report_wrap)を実行
 make t_note_mapper && ./t_note_mapper   # 単体スイートだけ
 # ポリシー別ビルドは config.h の既定値を -D で上書き:
-cc -I../src -I. -DCHROMATIC_SNAP_POLICY=1 -DOUT_OF_RANGE_POLICY=1 \
+cc -I../src -I. -DOUT_OF_RANGE_POLICY=1 \
    test_note_mapper.c ../src/note_mapper.c -o t && ./t
 ```
 
@@ -61,8 +61,8 @@ export PICO_SDK_PATH=/path/to/pico-sdk
   ので、デバウンス周りの修正はそこ 1 箇所で足りる。
 - 新しいロジックは可能な限り純粋層へ置き、`tests/` を足すこと。
 
-**変換パイプライン**(`note_mapper.c`):移調(`OCTAVE_OFFSET`)→ 範囲外ポリシー → 黒鍵スナップ
-→ スロット算出。全ポリシーは `config.h` のコンパイル時定数。対応表・キーコードもここに集約。
+**変換パイプライン**(`note_mapper.c`):移調(`OCTAVE_OFFSET`)→ 範囲外ポリシー → 黒鍵ドロップ
+→ スロット算出。範囲外ポリシーは `config.h` のコンパイル時定数。対応表・キーコードもここに集約。
 
 **RAW MIDI ミラー**(`midi_host.c` → `midi_mirror.c`):`tuh_midi_rx_cb` の読出しループで
 `tuh_midi_stream_read` が返す**生バイト列**を `uart_write_blocking` で別 UART へ流す
@@ -89,7 +89,10 @@ UART1(RX=GP5/31250)で受けた生 MIDI バイト列を `tud_midi_stream_write` 
   の 26 ビット + 6 パディング = 全 5 バイト。
 - `nkro_report.c` は「キーコード `c` のビット位置 = `c - 0x04`」で同じ配置に書く。
   片方を変えたら必ずもう片方も直す。`nkro_report` は MIDI ノート単位のべき等(`note_active[128]`)
-  + スロット単位の参照カウント(黒鍵スナップ/WRAP で 2 音が同一ゲームキーに丸まる場合の対策)を持つ。
+  + スロット単位の参照カウント(`OUT_OF_RANGE_WRAP` で 2 音が同一ゲームキーに丸まる場合の対策)
+  を持つ。黒鍵ドロップ後、この参照カウント経路は既定ビルド(`OUT_OF_RANGE_POLICY=IGNORE`)では
+  到達不能なため、`tests/Makefile` の `t_nkro_report_wrap`(`-DOUT_OF_RANGE_POLICY=1` で
+  `test_nkro_report.c` を再ビルド)だけがカバーする。
 
 ## ビルド依存で必ず踏む落とし穴
 
@@ -121,4 +124,4 @@ UART1(RX=GP5/31250)で受けた生 MIDI バイト列を `tud_midi_stream_write` 
 ## キャリブレーション
 
 暫定 C4=MIDI60 基準。実機で原神と鳴らし比べてズレたら `config.h` の `OCTAVE_OFFSET`(半音単位、
-12=1oct)で移調補正。黒鍵の丸め方は `CHROMATIC_SNAP_POLICY` を実際に弾いて選ぶ。手順は `README.md` §6。
+12=1oct)で移調補正。黒鍵は常にドロップされる(原神の楽器に黒鍵が無いため)。手順は `README.md` §6。

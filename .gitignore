@@ -15,6 +15,7 @@
 /tests/t_note_mapper
 /tests/t_midi_parse
 /tests/t_nkro_report
+/tests/t_nkro_report_wrap
 /tests/t_midi_note_filter
 
 # editor / OS

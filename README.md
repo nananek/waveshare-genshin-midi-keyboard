@@ -168,7 +168,6 @@ BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI
 |-----------|------|------|
 | `OCTAVE_OFFSET` | `0` | 入力ノートに加算する**半音数**(12=1oct)。実機キャリブレーション用 |
 | `OUT_OF_RANGE_POLICY` | `IGNORE` | 範囲外(47以下/84以上): `IGNORE`=無視 / `WRAP`=最寄りオクターブへ折返し |
-| `CHROMATIC_SNAP_POLICY` | `DOWN` | 黒鍵: `DOWN`=直下白鍵 / `UP`=直上白鍵 / `IGNORE`=無視 |
 | `PIN_USB_HOST_DP` | `12` | PIO-USB ホストの D+ GPIO(D− は +1) |
 | `MIDI_CHANNEL_FILTER` | `0` | 0=全ch / 1..16=指定chのみ |
 | `MIDI_UART_MIRROR_ENABLE` | `1` | RAW MIDI の UART ミラー出力を有効にする(0=コンパイルアウト) |
@@ -204,15 +203,16 @@ BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI
 
 ```sh
 cd tests
-make          # 4 スイートをビルドして実行 (全て ALL PASS になるはず)
+make          # 4 モジュール分 + WRAP ポリシー専用ビルドを実行 (全て ALL PASS になるはず)
 make clean
 ```
 
 カバー範囲:
-- `note_mapper`: 3.1 対応表、黒鍵 3 ポリシー、範囲外 2 ポリシー、移調オフセット
+- `note_mapper`: 3.1 対応表、黒鍵ドロップ、範囲外 2 ポリシー、移調オフセット
 - `midi_parse`: Note On/Off、vel0=Off、ランニングステータス、リアルタイム混在、SysEx、和音
-- `nkro_report`: 単音/和音のビット配置、エイリアス参照カウント(黒鍵スナップで同一キーに
-  丸まった 2 音)、retrigger べき等、range 外無視、`release_all`
+- `nkro_report`: 単音/和音のビット配置、エイリアス参照カウント(`OUT_OF_RANGE_WRAP` で同一キーに
+  丸まった 2 音。既定ビルドでは到達不能な経路のため `t_nkro_report_wrap` で別途検証)、
+  retrigger べき等、range 外無視、`release_all`
 - `midi_note_filter`: ミラーフィルターのバイト列状態機械 (ダイアトニック Note 素通し、
   範囲外/CC/PB/PC/SysEx/リアルタイムの破棄、ランニングステータス再構成、チャンク分断、移調オフセット)
 
@@ -225,7 +225,7 @@ make clean
 3. 原神の演奏画面を開き、MIDI で「ド」を弾いて画面上の対応キーと発音が一致するか確認。
    ズレていたら `OCTAVE_OFFSET` を ±12(オクターブ)や ±1(半音)で調整。
 4. 3 和音以上を弾いて全音が発音される(NKRO)ことを確認。
-5. 黒鍵を弾いて `CHROMATIC_SNAP_POLICY` の挙動が好みか確認、必要なら変更。
+5. 黒鍵を弾いても発音されない(無視される)ことを確認。
 6. MIDI キーボードを抜き差ししても復帰する(切断時は全キー解放される)ことを確認。
 
 ---

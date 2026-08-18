@@ -35,8 +35,8 @@ static void expect_none(uint8_t note) {
 }
 
 int main(void) {
-    printf("config: OCTAVE_OFFSET=%d OUT_OF_RANGE_POLICY=%d CHROMATIC_SNAP_POLICY=%d\n",
-           OCTAVE_OFFSET, OUT_OF_RANGE_POLICY, CHROMATIC_SNAP_POLICY);
+    printf("config: OCTAVE_OFFSET=%d OUT_OF_RANGE_POLICY=%d\n",
+           OCTAVE_OFFSET, OUT_OF_RANGE_POLICY);
 
 #if OCTAVE_OFFSET == 0
     // --- 指示書 3.1 の対応表 (デフォルト設定でのみ厳密一致) ---
@@ -50,20 +50,10 @@ int main(void) {
     expect_key(72,'Q'); expect_key(74,'W'); expect_key(76,'E'); expect_key(77,'R');
     expect_key(79,'T'); expect_key(81,'Y'); expect_key(83,'U');
 
-    // --- 黒鍵ポリシー ---
+    // --- 黒鍵は常にドロップ ---
     // C#4=61, D#4=63, F#4=66, G#4=68, A#4=70
-#  if CHROMATIC_SNAP_POLICY == CHROMATIC_SNAP_DOWN
-    expect_key(61,'A'); expect_key(63,'S'); expect_key(66,'F');
-    expect_key(68,'G'); expect_key(70,'H');
-#  elif CHROMATIC_SNAP_POLICY == CHROMATIC_SNAP_UP
-    expect_key(61,'S'); expect_key(63,'D'); expect_key(66,'G');
-    expect_key(68,'H'); expect_key(70,'J');
-    // 上端の A#5=82 は UP で B5→U に収まる
-    expect_key(82,'U');
-#  elif CHROMATIC_SNAP_POLICY == CHROMATIC_SNAP_IGNORE
     expect_none(61); expect_none(63); expect_none(66);
     expect_none(68); expect_none(70);
-#  endif
 
     // --- 範囲外ポリシー ---
     // 47 以下 / 84 以上
@@ -74,10 +64,8 @@ int main(void) {
     expect_key(36,'Z'); expect_key(84,'Q');
     // 24 (C1) → +12+12 → 48 = Z
     expect_key(24,'Z');
-    // 85 (C#6) は WRAP→73(C#5) 後に黒鍵ポリシー適用
-#    if CHROMATIC_SNAP_POLICY == CHROMATIC_SNAP_DOWN
-    expect_key(85,'Q'); // C#5→C5=Q
-#    endif
+    // 85 (C#6) は WRAP→73(C#5) だが黒鍵は常にドロップされるため NONE
+    expect_none(85);
 #  endif
 #endif // OCTAVE_OFFSET == 0
 
