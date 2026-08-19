@@ -1,0 +1,10 @@
+Reference,Qty,Value,Footprint(assigned),秋月候補(型番/通販コード),備考
+J1,1,RP2350-Zero用ピンソケット(20pin想定),Connector_PinSocket_2.54mm:PinSocket_1x20_P2.54mm_Vertical,FH-1×20 / 103077,実際は1×20を2本または2×10へ分割の可能性あり。要現物のRP2350-Zeroヘッダー形状確認
+J1(Zero側オス),1,RP2350-Zero用ピンヘッダー,(RP2350-Zero本体にはんだ付け。基板側フットプリントなし),PH-2×10SG / 100078,RP2350-Zeroがヘッダー同梱の場合は購入不要な可能性あり要確認
+J2,1,USB-Aメスコネクタ(基板取付・スルーホール),(未割当。現物データシート待ち),通販コード 100160,footprint未割当。KiCad標準ライブラリに実部品と一致するものが無いため要現物データシート確認/カスタムフットプリント作成
+R1,1,22Ω(USB D+直列抵抗),Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal,秋月扱い汎用THT抵抗(型番問わず),1/4W級で可
+R2,1,22Ω(USB D-直列抵抗),Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal,秋月扱い汎用THT抵抗(型番問わず),1/4W級で可
+F1,1,リセッタブルヒューズ(PTC・ラジアルリード),(未割当。現物データシート待ち),MF-R050相当,footprint未割当。保持電流/リード間隔要現物確認
+SW1,1,スライドスイッチSPST(ミュート用),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP28に接続
+SW2,1,スライドスイッチSPST(フィルター用),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP29に接続
+SW3,1,スライドスイッチSPST(予備),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP27に接続。ファーム未対応(別タスク)
