@@ -4,7 +4,7 @@ J1(Zero側オス),1,RP2350-Zero用ピンヘッダー,(RP2350-Zero本体にはん
 J2,1,USB-Aメスコネクタ(基板取付・スルーホール),rp2350_zero_carrier:USB_A_Neltron_5075AR-04-WH,Neltron 5075AR-04-WH / 通販コード 100160,実図面ベースでカスタムfootprint作成済み(信号ピン⌀0.92mm丸穴×4・ピッチ2.50/2.00/2.50mm、シェル固定ペグ⌀2.3mm×2・間隔13.14mm・信号ピン列から2.70mmオフセット)
 R1,1,22Ω(USB D+直列抵抗),Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal,秋月扱い汎用THT抵抗(型番問わず),1/4W級で可
 R2,1,22Ω(USB D-直列抵抗),Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal,秋月扱い汎用THT抵抗(型番問わず),1/4W級で可
-F1,1,リセッタブルヒューズ(PTC・ラジアルリード),(未割当。現物データシート待ち),MF-R050相当,footprint未割当。保持電流/リード間隔要現物確認
+F1,1,リセッタブルヒューズ(PTC・ラジアルリード),rp2350_zero_carrier:Fuse_Bourns_MF-R050_Radial,Bourns MF-R050 / 通販コード 112628,型番確定(前回計画書の「MF-R050相当」から確定)。実データシートベースでカスタムfootprint作成済み(ピッチ5.1mm・リード径⌀0.51mm→ドリル0.8mm丸穴)
 SW1,1,スライドスイッチSPST(ミュート用),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP28に接続
 SW2,1,スライドスイッチSPST(フィルター用),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP29に接続
 SW3,1,スライドスイッチSPST(予備),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP27に接続。ファーム未対応(別タスク)
