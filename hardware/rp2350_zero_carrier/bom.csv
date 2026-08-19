@@ -5,6 +5,6 @@ J2,1,USB-Aメスコネクタ(基板取付・スルーホール),rp2350_zero_carr
 R1,1,22Ω(USB D+直列抵抗),Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal,秋月扱い汎用THT抵抗(型番問わず),1/4W級で可
 R2,1,22Ω(USB D-直列抵抗),Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal,秋月扱い汎用THT抵抗(型番問わず),1/4W級で可
 F1,1,リセッタブルヒューズ(PTC・ラジアルリード),rp2350_zero_carrier:Fuse_Bourns_MF-R050_Radial,Bourns MF-R050 / 通販コード 112628,型番確定(前回計画書の「MF-R050相当」から確定)。実データシートベースでカスタムfootprint作成済み(ピッチ5.1mm・リード径⌀0.51mm→ドリル0.8mm丸穴)
-SW1,1,スライドスイッチSPST(ミュート用),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP28に接続
-SW2,1,スライドスイッチSPST(フィルター用),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP29に接続
-SW3,1,スライドスイッチSPST(予備),(未割当。現物データシート待ち),SS-12SDP2 / 115643,footprint未割当。GP27に接続。ファーム未対応(別タスク)
+SW1,1,1回路2接点スイッチ(3ピン)をON-OFF用途で使用(ミュート用),rp2350_zero_carrier:SW_SPDT_NKK_115643_Slide,NKKスイッチズ / 通販コード 115643,訂正:秋月に基板用SPST(2pin)は無く3pin(1回路2接点)品を使用。中央コモンをGP28へ、片側接点をGNDへ、残り1接点はNC。端子が平角(0.6×0.4mm)のため角形パッドのカスタムfootprint作成済み
+SW2,1,1回路2接点スイッチ(3ピン)をON-OFF用途で使用(フィルター用),rp2350_zero_carrier:SW_SPDT_NKK_115643_Slide,NKKスイッチズ / 通販コード 115643,同上。中央コモンをGP29へ、片側接点をGNDへ、残り1接点はNC
+SW3,1,1回路2接点スイッチ(3ピン)をON-OFF用途で使用(予備),rp2350_zero_carrier:SW_SPDT_NKK_115643_Slide,NKKスイッチズ / 通販コード 115643,同上。中央コモンをGP27へ、片側接点をGNDへ、残り1接点はNC。ファーム未対応(別タスク)
