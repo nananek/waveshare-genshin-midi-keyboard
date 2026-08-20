@@ -8,6 +8,7 @@
 // core0 (tud_task を回すコア) からのみ呼ぶこと。内部状態に排他は無い。
 
 void hid_device_init(void);
+void hid_device_set_sumeru_mode(bool enabled);
 
 // MIDI Note On / Off を NKRO レポート状態へ反映する。
 void hid_device_note_on(uint8_t midi_note);

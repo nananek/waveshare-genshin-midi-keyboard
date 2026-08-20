@@ -33,6 +33,14 @@ static const int8_t DEGREE_OF_PC[12] = {
     6,  // 11 B
 };
 
+// スメール音階は低音域だけレ、ラも自然音、それ以外の音域は
+// レ♭、ミ♭、ラ♭、シ♭を使う。添字は音域内のスロット番号。
+static const int8_t SUMERU_DEGREE_OF_PC[3][12] = {
+    { 0, -1, 1, 2, -1, 3, -1, 4, -1, 5, 6, -1 },
+    { 0, -1, 1, 2, -1, 3, -1, 4, -1, 5, 6, -1 },
+    { 0, 1, -1, 2, -1, 3, -1, 4, 5, -1, 6, -1 },
+};
+
 uint8_t key_index_to_hid_code(uint8_t key_index) {
     if (key_index >= NOTE_MAP_KEY_COUNT) {
         return 0;
@@ -41,6 +49,10 @@ uint8_t key_index_to_hid_code(uint8_t key_index) {
 }
 
 uint8_t note_to_key_index(uint8_t midi_note) {
+    return note_to_key_index_mode(midi_note, false);
+}
+
+uint8_t note_to_key_index_mode(uint8_t midi_note, bool sumeru_mode) {
     // 1. 移調 (キャリブレーション)
     int n = (int)midi_note + (OCTAVE_OFFSET);
 
@@ -60,13 +72,13 @@ uint8_t note_to_key_index(uint8_t midi_note) {
 
     // 3. 半音 (黒鍵) は常にドロップ。ここで n は必ず [48,83] に収まっている。
     int pc = n % 12; // 48 % 12 == 0 なので pc は C 基準で正しい
-    int degree = DEGREE_OF_PC[pc];
+    int octave = (n - NOTE_RANGE_LOW) / 12; // 0..2
+    int degree = sumeru_mode ? SUMERU_DEGREE_OF_PC[octave][pc] : DEGREE_OF_PC[pc];
     if (degree < 0) {
         return NOTE_MAP_NONE;
     }
 
     // 4. スロット算出
-    int octave = (n - NOTE_RANGE_LOW) / 12; // 0..2
     int slot = octave * 7 + degree;
     if (slot < 0 || slot >= NOTE_MAP_KEY_COUNT) {
         return NOTE_MAP_NONE; // 到達不能だが保険

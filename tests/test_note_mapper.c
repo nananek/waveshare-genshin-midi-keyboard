@@ -34,6 +34,16 @@ static void expect_none(uint8_t note) {
     }
 }
 
+static void expect_mode_key(uint8_t note, char want, bool sumeru_mode) {
+    uint8_t idx = note_to_key_index_mode(note, sumeru_mode);
+    char got = (idx == NOTE_MAP_NONE) ? '.' : code_to_letter(key_index_to_hid_code(idx));
+    if (got != want) {
+        printf("  FAIL mode note %3u: want '%c' got '%c' (slot=%u)\n",
+               note, want, got, idx);
+        failures++;
+    }
+}
+
 int main(void) {
     printf("config: OCTAVE_OFFSET=%d OUT_OF_RANGE_POLICY=%d\n",
            OCTAVE_OFFSET, OUT_OF_RANGE_POLICY);
@@ -68,6 +78,23 @@ int main(void) {
     expect_none(85);
 #  endif
 #endif // OCTAVE_OFFSET == 0
+
+#if OCTAVE_OFFSET == 0
+    // --- 古びたライアー (スメール音階) ---
+    expect_mode_key(48, 'Z', true); expect_mode_key(50, 'X', true);
+    expect_mode_key(51, 'C', true); expect_mode_key(53, 'V', true);
+    expect_mode_key(55, 'B', true); expect_mode_key(57, 'N', true);
+    expect_mode_key(58, 'M', true);
+    expect_mode_key(60, 'A', true); expect_mode_key(62, 'S', true);
+    expect_mode_key(63, 'D', true); expect_mode_key(65, 'F', true);
+    expect_mode_key(67, 'G', true); expect_mode_key(69, 'H', true);
+    expect_mode_key(70, 'J', true);
+    expect_mode_key(72, 'Q', true); expect_mode_key(73, 'W', true);
+    expect_mode_key(75, 'E', true); expect_mode_key(77, 'R', true);
+    expect_mode_key(79, 'T', true); expect_mode_key(80, 'Y', true);
+    expect_mode_key(82, 'U', true);
+    expect_none(51); // 通常モードでは Eb は黒鍵として対象外
+#endif
 
     if (failures == 0) {
         printf("ALL PASS\n");

@@ -78,11 +78,12 @@ int main(void) {
 
     // core0 のデバイススタック・GPIO/共有フラグ初期化を終えてから core1 (PIO-USB
     // ホスト) を起動する。逆順だと、USB 列挙が早く終わった場合に core1 が
-    // mirror_filter_switch_is_enabled() を未初期化の既定値で読む窓ができる。
+    // 楽器モードスイッチの共有値を未初期化の既定値で読む窓ができる。
     tud_init(BOARD_TUD_RHPORT);
     hid_device_init();
     hid_mute_init();
     mirror_filter_switch_init();
+    hid_device_set_sumeru_mode(mirror_filter_switch_is_enabled());
 
     multicore_launch_core1(core1_main);
 
@@ -107,8 +108,20 @@ int main(void) {
             }
         }
 
-        // --- ミラーフィルタースイッチ: デバウンス + 共有フラグ反映 (core1 は読み取り側) ---
+        // --- 楽器モードスイッチ: デバウンス + 共有フラグ反映 ---
+        bool old_sumeru_mode = mirror_filter_switch_is_enabled();
         mirror_filter_switch_poll();
+        bool new_sumeru_mode = mirror_filter_switch_is_enabled();
+        if (new_sumeru_mode != old_sumeru_mode) {
+            // 押下中ノートを一度解放し、同じ保持状態を新しい音階で再配置する。
+            hid_device_release_all();
+            hid_device_set_sumeru_mode(new_sumeru_mode);
+            for (int i = 0; i < 128; i++) {
+                if (s_note_held[i]) {
+                    hid_device_note_on((uint8_t)i);
+                }
+            }
+        }
 
         // core1 から届いた MIDI イベントを反映。
         // ミュート中もキューは排出しつつ保持状態 (s_note_held) だけは更新し、

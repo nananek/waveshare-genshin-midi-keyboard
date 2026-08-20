@@ -24,6 +24,10 @@ void hid_device_init(void) {
     s_dirty = false;
 }
 
+void hid_device_set_sumeru_mode(bool enabled) {
+    nkro_report_set_sumeru_mode(enabled);
+}
+
 void hid_device_note_on(uint8_t midi_note) {
     if (nkro_report_note_on(midi_note)) {
         s_dirty = true;

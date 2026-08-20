@@ -55,7 +55,9 @@ export PICO_SDK_PATH=/path/to/pico-sdk
 - **`midi_mirror` もハード依存層**(`hardware/uart.h` を直接使う)なのでホストテスト対象外。
   無効時(`MIDI_UART_MIRROR_ENABLE=0`)は関数本体ごと `#if` でコンパイルアウトされる。
 - **`hid_mute` / `mirror_filter_switch` もハード依存層**(`hardware/gpio.h` を直接使う)なので
-  ホストテスト対象外。無効時(`MUTE_SWITCH_ENABLE=0` / `MIRROR_FILTER_SWITCH_ENABLE=0`)は
+  ホストテスト対象外。GP28 の原神モードスイッチはミュート中にミラーをパススルーし、
+  原神演奏中にノートフィルターを有効にする。GP29 の `mirror_filter_switch` は楽器モード
+  (通常 / スメール音階)を共有する。無効時(`MUTE_SWITCH_ENABLE=0` / `LYRE_SWITCH_ENABLE=0`)は
   no-op になり、`#if` でコンパイルアウトされる。デバウンス本体(3 段ステートマシン +
   active_level に応じた内部プル選択)は両者で共通の `debounced_switch.c` に切り出してある
   ので、デバウンス周りの修正はそこ 1 箇所で足りる。
@@ -66,10 +68,10 @@ export PICO_SDK_PATH=/path/to/pico-sdk
 
 **RAW MIDI ミラー**(`midi_host.c` → `midi_mirror.c`):`tuh_midi_rx_cb` の読出しループで
 `tuh_midi_stream_read` が返す**生バイト列**を `uart_write_blocking` で別 UART へ流す
-(パース・変換は通さない。CIN 除去済みの MIDI 1.0 ストリーム)。フィルタースイッチ
-(`mirror_filter_switch.h`、GP29、core0 がデバウンスして volatile フラグで共有)が ON のときは
+(パース・変換は通さない。CIN 除去済みの MIDI 1.0 ストリーム)。原神演奏モードのときは
 `midi_note_filter`(純粋モジュール)が Note On/Off を明示ステータス 3 バイトへ再構成して
-絞り込む。ブロッキング送信のため大きな SysEx 中は core1 の `tuh_task` が数十 ms 止まり得る
+絞り込み、ミュート中はパススルーする。ブロッキング送信のため大きな SysEx 中は core1 の
+`tuh_task` が数十 ms 止まり得る
 (既知のトレードオフ)。リマウント時は `midi_mirror_reset()` でフィルター状態をリセットする。
 フィルターの ON/OFF 切替はメッセージ途中で反映するとバイト列が破損するため、
 `midi_note_filter_is_ready()` でメッセージ境界にあることを確認してから切り替える
@@ -117,9 +119,9 @@ UART1(RX=GP5/31250)で受けた生 MIDI バイト列を `tud_midi_stream_write` 
 - ネイティブ USB(USB-C)= HID デバイス側。2 ポートは物理的に別。
 - ボード1 のミラー出力は **UART1 TX=GP4**、ボード2 のミラー入力は **UART1 RX=GP5**、両者を直結
   (+GND 共有)。ボード2 のデバッグログは UART0 なので衝突しない。GP12/13(PIO-USB)は使わない。
-- 任意スイッチ: **GP28 = ミュートスイッチ** (LOW アクティブ、内部プルアップ、閉=HID 出力 OFF。
-  UART ミラーは継続)、**GP29 = フィルタースイッチ** (LOW アクティブ、閉=ミラーを原神鍵盤の
-  Note On/Off のみに絞る)。どちらも `config.h` で無効化可。
+- 任意スイッチ: **GP28 = 原神モードスイッチ** (LOW アクティブ、内部プルアップ、閉=HID ミュート
+  + UART ミラーパススルー)、**GP29 = 楽器モードスイッチ** (LOW アクティブ、閉=スメール音階)。
+  どちらも `config.h` で無効化可。
 
 ## キャリブレーション
 

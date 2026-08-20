@@ -41,6 +41,12 @@ int main(void) {
     expect_bool("off60", nkro_report_note_off(60), true);
     expect_zero("off60");
 
+    // --- スメール音階: 低音 Eb(note51) → C キー ---
+    nkro_report_init();
+    nkro_report_set_sumeru_mode(true);
+    expect_bool("sumeru-on51", nkro_report_note_on(51), true);
+    expect_byte("sumeru-on51", 1, 0x04);
+
     // --- 高音 note83 → U(0x18) → bi20 → byte3 bit4 (0x10) ---
     nkro_report_init();
     nkro_report_note_on(83);

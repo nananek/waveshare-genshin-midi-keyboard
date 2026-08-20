@@ -16,9 +16,11 @@ typedef struct {
     uint8_t running_status; // 直前の Note Off/On ステータス (0 = なし)
     uint8_t pending_note;   // HAVE_NOTE 時のノート番号
     uint8_t drop_count;     // DROPPING 時に破棄する残データバイト数
+    bool sumeru_mode;
 } midi_note_filter_t;
 
 void midi_note_filter_init(midi_note_filter_t *f);
+void midi_note_filter_set_sumeru_mode(midi_note_filter_t *f, bool enabled);
 
 // in[0..len) を処理し、通過分を out に追記する。ランニングステータスで圧縮された
 // 2 バイトのノートは明示ステータス 3 バイトへ展開されるため、出力は入力長の
@@ -31,6 +33,7 @@ uint32_t midi_note_filter_process(midi_note_filter_t *f,
 
 // このノートが原神で使える鍵盤に対応するか (note_mapper の判定をそのまま使用)。
 bool midi_note_filter_is_diatonic(uint8_t note);
+bool midi_note_filter_is_diatonic_mode(uint8_t note, bool sumeru_mode);
 
 // f が現在メッセージ境界 (次に来るバイトが新しい MIDI メッセージの先頭になり得る
 // 状態) にあるか。ステータス+note を受領済みで velocity 待ちの間や SysEx/ドロップ

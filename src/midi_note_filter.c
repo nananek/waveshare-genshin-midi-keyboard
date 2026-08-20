@@ -11,16 +11,25 @@ bool midi_note_filter_is_diatonic(uint8_t note) {
     return note_to_key_index(note) != NOTE_MAP_NONE;
 }
 
+bool midi_note_filter_is_diatonic_mode(uint8_t note, bool sumeru_mode) {
+    return note_to_key_index_mode(note, sumeru_mode) != NOTE_MAP_NONE;
+}
+
 void midi_note_filter_init(midi_note_filter_t *f) {
     f->phase = PH_READY;
     f->running_status = 0;
     f->pending_note = 0;
     f->drop_count = 0;
+    f->sumeru_mode = false;
 }
 
-static uint32_t emit_note(uint8_t status, uint8_t note, uint8_t vel,
+void midi_note_filter_set_sumeru_mode(midi_note_filter_t *f, bool enabled) {
+    f->sumeru_mode = enabled;
+}
+
+static uint32_t emit_note(uint8_t status, uint8_t note, uint8_t vel, bool sumeru_mode,
                           uint8_t *out, uint32_t cap) {
-    if (!midi_note_filter_is_diatonic(note)) {
+    if (!midi_note_filter_is_diatonic_mode(note, sumeru_mode)) {
         return 0; // 原神鍵盤以外のノートは破棄 (Note Off も同様に破棄される)
     }
     if (cap < 3) {
@@ -87,7 +96,7 @@ uint32_t midi_note_filter_process(midi_note_filter_t *f,
         case PH_HAVE_NOTE: {
             uint8_t st = f->running_status;
             f->phase = PH_READY; // 次はランニングステータス継続で note 待ち
-            o += emit_note(st, f->pending_note, b, out + o, out_cap - o);
+            o += emit_note(st, f->pending_note, b, f->sumeru_mode, out + o, out_cap - o);
             break;
         }
         case PH_DROPPING:
