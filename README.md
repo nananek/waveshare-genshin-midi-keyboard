@@ -30,6 +30,9 @@ PC 上の原神・演奏 UI (諧律のチェンバロ、ライアー等)を、MI
 「USB-MIDI の出力」を同時に受けられる(DAW での録音と原神の演奏を並行できる)。
 詳細は **§7 実機配線** を参照。
 
+ライセンスは `LICENSE`、取得・ビルド依存のライセンスは
+`THIRD_PARTY_NOTICES.md` を参照。
+
 ---
 
 ## 1. ハードウェア
@@ -108,12 +111,12 @@ pico_sdk_import.cmake
 
 ### 依存ライブラリとバージョン(重要)
 
-- **pico-sdk 2.1.1 / 2.2.0**(RP2350 対応)。環境変数 `PICO_SDK_PATH` を設定。
+- **pico-sdk `2.1.1`** (RP2350 対応)。環境変数 `PICO_SDK_PATH` を設定。
 - **hathach/tinyusb `0.20.0`**(⚠️ pico-sdk 同梱の raspberrypi/tinyusb では不可)
   - 同梱版には `midi_host` が無く `tuh_midi_*` をリンクできない。
   - `0.20.0` は idx ベースの `tuh_midi` API・`hcd_edpt_abort_xfer`/`hcd_frame_number`
     実装済み(→ 指示書 2.3 の未実装リンクエラー回避策は不要)。
-- **sekigon-gonnoc/Pico-PIO-USB `main`**(RP2350 対応)。
+- **sekigon-gonnoc/Pico-PIO-USB**(RP2350 対応、`a5a2f5ae91988449ba576ec9d237e806d5cd4416` に固定)。
 
 `scripts/fetch_deps.sh` がこれらを `lib/` に取得する。CMake は `PICO_TINYUSB_PATH`
 を upstream に向けてビルドする。

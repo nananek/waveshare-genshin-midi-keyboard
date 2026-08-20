@@ -1,5 +1,6 @@
 # This is a copy of <PICO_SDK_PATH>/external/pico_sdk_import.cmake
-# It should be copied into a project's directory to enable finding the Pico SDK.
+# It is based on <PICO_SDK_PATH>/external/pico_sdk_import.cmake and pins the
+# optional automatic download to the version documented in this repository.
 
 if (DEFINED ENV{PICO_SDK_PATH} AND (NOT PICO_SDK_PATH))
     set(PICO_SDK_PATH $ENV{PICO_SDK_PATH})
@@ -32,14 +33,14 @@ if (NOT PICO_SDK_PATH)
             FetchContent_Declare(
                     pico_sdk
                     GIT_REPOSITORY https://github.com/raspberrypi/pico-sdk
-                    GIT_TAG master
+                    GIT_TAG 2.1.1
                     GIT_SUBMODULES_RECURSE FALSE
             )
         else ()
             FetchContent_Declare(
                     pico_sdk
                     GIT_REPOSITORY https://github.com/raspberrypi/pico-sdk
-                    GIT_TAG master
+                    GIT_TAG 2.1.1
             )
         endif ()
 
