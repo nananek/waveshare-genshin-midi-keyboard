@@ -2,6 +2,7 @@
 #include "hardware/uart.h"
 #include "midi_mirror.h"
 #include "midi_note_filter.h"
+#include "hid_mute.h"
 #include "mirror_filter_switch.h"
 #include "config.h"
 
@@ -33,14 +34,15 @@
 static midi_note_filter_t s_filter;
 
 // 実際に適用中のモード (true = フィルター済み 3 バイト再構成 / false = 完全パススルー)。
-// mirror_filter_switch_is_enabled() の生値をそのまま使わず、s_filter がメッセージ
+// hid_mute の共有状態をそのまま使わず、s_filter がメッセージ
 // 境界 (READY) にあるときだけここへ反映する。メッセージ途中で切り替えると
 // バッファ済みのステータス+note が宙に浮いてバイト列が破損するため。
 static bool s_filter_active;
 
 static void sync_filter_mode(void) {
     if (midi_note_filter_is_ready(&s_filter)) {
-        s_filter_active = mirror_filter_switch_is_enabled();
+        s_filter_active = hid_mute_should_filter_mirror();
+        midi_note_filter_set_sumeru_mode(&s_filter, mirror_filter_switch_is_enabled());
     }
 }
 
@@ -49,13 +51,15 @@ void midi_mirror_init(void) {
     gpio_set_function(MIDI_UART_MIRROR_TX_PIN, GPIO_FUNC_UART);
     uart_set_fifo_enabled(MIRROR_UART, true);
     midi_note_filter_init(&s_filter);
-    s_filter_active = mirror_filter_switch_is_enabled();
+    s_filter_active = hid_mute_should_filter_mirror();
+    midi_note_filter_set_sumeru_mode(&s_filter, mirror_filter_switch_is_enabled());
 }
 
 // デバイス再マウント時に呼ぶ (midi_host の mount cb から)。ランニングステータス等をリセット。
 void midi_mirror_reset(void) {
     midi_note_filter_init(&s_filter);
-    s_filter_active = mirror_filter_switch_is_enabled();
+    s_filter_active = hid_mute_should_filter_mirror();
+    midi_note_filter_set_sumeru_mode(&s_filter, mirror_filter_switch_is_enabled());
 }
 
 void midi_mirror_send(const uint8_t *data, uint32_t len) {

@@ -1,15 +1,13 @@
-#ifndef MIRROR_FILTER_SWITCH_H
-#define MIRROR_FILTER_SWITCH_H
+#ifndef LYRE_SWITCH_H
+#define LYRE_SWITCH_H
 
 #include <stdbool.h>
 
-// ミラーフィルタースイッチの入力管理。
-// GPIO 初期化・デバウンスは core0 (メインループ) で行い、結果を volatile フラグで
-// core1 (midi_mirror) に公開する。共有フラグは bool (1 バイト) なので RP2350 上の
-// 単純な読み書きはアトミック (マルチバイトの値をこの手法で共有する場合は別途排他が要る)。
+// 古びたライアー (スメール音階) モードスイッチの入力管理。
+// デバウンス済み状態は core0/core1 から参照する。
 
-void mirror_filter_switch_init(void);   // core0、メインループ開始前に 1 回
-void mirror_filter_switch_poll(void);   // core0、各メインループイテレーションで 1 回
-bool mirror_filter_switch_is_enabled(void); // コア跨ぎで読む (true = フィルター ON)
+void mirror_filter_switch_init(void);
+void mirror_filter_switch_poll(void);
+bool mirror_filter_switch_is_enabled(void); // true = スメール音階
 
-#endif // MIRROR_FILTER_SWITCH_H
+#endif // LYRE_SWITCH_H

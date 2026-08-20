@@ -17,6 +17,9 @@
 
 void nkro_report_init(void);
 
+// MIDIノートを解釈する音階モード。押下中のノートを変更する前に切り替える。
+void nkro_report_set_sumeru_mode(bool enabled);
+
 // MIDI Note On / Off を反映。レポートが変化して送信が必要なら true。
 // 同じノートの多重 Note On はべき等 (retrigger で二重カウントしない)。
 // 別々のノートが同じゲームキーへ丸められた場合 (OUT_OF_RANGE_WRAP) は

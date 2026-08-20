@@ -24,4 +24,7 @@ hid_mute_edge_t hid_mute_poll(void);
 // 現在のデバウンス済みミュート状態 (true = ミュート中)。
 bool hid_mute_is_muted(void);
 
+// core1 のミラーから読む。原神演奏中 (false) のときだけフィルターを有効にする。
+bool hid_mute_should_filter_mirror(void);
+
 #endif // HID_MUTE_H

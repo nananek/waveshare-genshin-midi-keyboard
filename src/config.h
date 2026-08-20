@@ -84,13 +84,13 @@
 #endif
 
 // ---------------------------------------------------------------------------
-//  ミュートスイッチ (ボード1: MIDI→HID 変換板)
-//  スイッチを ON (ミュート) にすると HID キーボード出力を無効化する
-//  (原神側にキー入力が送られない)。UART ミラー出力 (midi_mirror) は
-//  そのまま動作し、DAW 用の serial_midi_device ボード (ボード2) だけを鳴らせる。
+//  原神モードスイッチ (ボード1: MIDI→HID 変換板)
+//  スイッチを ON (ミュート) にすると HID キーボード出力を無効化し、
+//  UART ミラーは完全パススルーにする。OFF (原神演奏中) では HID を有効化し、
+//  UART ミラーを原神鍵盤ノートだけに絞る。
 //  既定配線: GP28 ↔ GND をトグルスイッチで開閉 (内部プルアップを常時有効化)。
 //  0 = ピン LOW でミュート (スイッチ閉) / 1 = ピン HIGH でミュート。
-//  0 にするとミュート機能はコンパイルアウトされる。
+//  0 にすると原神モードスイッチ機能はコンパイルアウトされる。
 // ---------------------------------------------------------------------------
 #ifndef MUTE_SWITCH_ENABLE
 #define MUTE_SWITCH_ENABLE 1
@@ -108,27 +108,26 @@
 #endif
 
 // ---------------------------------------------------------------------------
-//  UART ミラーの「原神鍵盤のみフィルター」モードスイッチ (ボード1)
-//  ON (ミュート) にするとミラー出力が「note_mapper がゲームキーへマップする
-//  ノートの Note On/Off のみ」に絞られる (ランニングステータス対応、出力は
-//  明示ステータス 3 バイトで再構成)。OFF なら従来どおり完全パススルー。
+//  楽器モードスイッチ (ボード1)
+//  ON にすると古びたライアー (スメール音階) 用のマッピングを使う。
+//  OFF は通常のチェンバロ／ライアー用マッピング。
 //  既定配線: GP29 ↔ GND をトグルスイッチで開閉 (内部プルアップを常時有効化)。
-//  0 = ピン LOW でフィルター ON / 1 = ピン HIGH でフィルター ON。
-//  0 にするとフィルター適用とスイッチ処理はコンパイルアウトされる。
+//  0 = ピン LOW でスメール音階 ON / 1 = ピン HIGH でスメール音階 ON。
+//  0 にすると通常マッピングに固定される。
 // ---------------------------------------------------------------------------
-#ifndef MIRROR_FILTER_SWITCH_ENABLE
-#define MIRROR_FILTER_SWITCH_ENABLE 1
+#ifndef LYRE_SWITCH_ENABLE
+#define LYRE_SWITCH_ENABLE 1
 #endif
-#ifndef MIRROR_FILTER_SWITCH_PIN
-#define MIRROR_FILTER_SWITCH_PIN 29
+#ifndef LYRE_SWITCH_PIN
+#define LYRE_SWITCH_PIN 29
 #endif
-// 0 = LOW でフィルター ON (内部プルアップ + スイッチを GND へ閉じる配線が既定)
-#ifndef MIRROR_FILTER_SWITCH_ACTIVE_LEVEL
-#define MIRROR_FILTER_SWITCH_ACTIVE_LEVEL 0
+// 0 = LOW でスメール音階 ON (内部プルアップ + スイッチを GND へ閉じる配線が既定)
+#ifndef LYRE_SWITCH_ACTIVE_LEVEL
+#define LYRE_SWITCH_ACTIVE_LEVEL 0
 #endif
-// デバウンス時間 (ms)。既定値はミュートスイッチと共有 (個別に -D で上書き可)。
-#ifndef MIRROR_FILTER_SWITCH_DEBOUNCE_MS
-#define MIRROR_FILTER_SWITCH_DEBOUNCE_MS MUTE_SWITCH_DEBOUNCE_MS
+// デバウンス時間 (ms)。既定値は原神モードスイッチと共有 (個別に -D で上書き可)。
+#ifndef LYRE_SWITCH_DEBOUNCE_MS
+#define LYRE_SWITCH_DEBOUNCE_MS MUTE_SWITCH_DEBOUNCE_MS
 #endif
 
 #endif // CONFIG_H

@@ -10,9 +10,8 @@
 void midi_mirror_init(void);
 
 // data[0..len) をミラー UART へ書き出す。ブロッキング送信。
-// フィルタースイッチ (mirror_filter_switch) が OFF ならバイト同一のパススルー、
-// ON なら原神鍵盤の Note On/Off のみへ絞り込んで明示ステータス 3 バイトへ
-// 再構成した内容を書き出す (data とは長さ・内容とも一致しない)。
+// 原神モードスイッチが演奏中なら原神鍵盤の Note On/Off のみへ絞り込んで
+// 明示ステータス 3 バイトへ再構成し、ミュート中ならバイト同一のパススルーを行う。
 void midi_mirror_send(const uint8_t *data, uint32_t len);
 
 // 接続デバイス変更時 (リマウント) に内部状態 (ランニングステータス等) をリセットする。

@@ -50,6 +50,20 @@ static void expect_split(const char *name,
     }
 }
 
+static void expect_sumeru_note(void) {
+    midi_note_filter_t f;
+    uint8_t in[] = {0x90, 0x33, 0x64, 0x34, 0x64}; // Eb3 is valid, E3 is not
+    uint8_t want[] = {0x90, 0x33, 0x64};
+    uint8_t out[32];
+    midi_note_filter_init(&f);
+    midi_note_filter_set_sumeru_mode(&f, true);
+    uint32_t n = midi_note_filter_process(&f, in, sizeof in, out, sizeof out);
+    if (n != sizeof want || memcmp(out, want, n) != 0) {
+        printf("  FAIL sumeru-filter\n");
+        failures++;
+    }
+}
+
 int main(void) {
     printf("config: OCTAVE_OFFSET=%d\n", OCTAVE_OFFSET);
 
@@ -130,6 +144,8 @@ int main(void) {
     // 11. Note On vel=0 (実質 Note Off) の素通し
     { uint8_t b[] = {0x90, 0x3C, 0x00}; uint8_t w[] = {0x90, 0x3C, 0x00};
       expect_output("noteon-vel0", b, sizeof b, w, sizeof w); }
+
+    expect_sumeru_note();
 
 #if OCTAVE_OFFSET == 12
     // 12. 移調オフセット適用時は 36 (C2) が +12 でゲームキーに一致して通過する

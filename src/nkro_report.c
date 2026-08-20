@@ -8,6 +8,7 @@
 static uint8_t s_report[NKRO_REPORT_LEN];
 static uint8_t s_note_active[128];                  // MIDI ノートごとの押下状態 (べき等用)
 static uint8_t s_slot_refcount[NOTE_MAP_KEY_COUNT]; // ゲームキーごとの参照数 (エイリアス用)
+static bool s_sumeru_mode;
 
 static void set_bit_for_code(uint8_t code, bool on) {
     if (code < KEYMAP_USAGE_MIN || code > KEYMAP_USAGE_MAX) {
@@ -33,6 +34,11 @@ void nkro_report_init(void) {
     for (int i = 0; i < NOTE_MAP_KEY_COUNT; i++) {
         s_slot_refcount[i] = 0;
     }
+    s_sumeru_mode = false;
+}
+
+void nkro_report_set_sumeru_mode(bool enabled) {
+    s_sumeru_mode = enabled;
 }
 
 bool nkro_report_note_on(uint8_t midi_note) {
@@ -42,7 +48,7 @@ bool nkro_report_note_on(uint8_t midi_note) {
     if (s_note_active[midi_note]) {
         return false; // retrigger: 二重カウントしない
     }
-    uint8_t slot = note_to_key_index(midi_note);
+    uint8_t slot = note_to_key_index_mode(midi_note, s_sumeru_mode);
     if (slot == NOTE_MAP_NONE) {
         return false; // 出力対象外 (範囲外 / 黒鍵 IGNORE)
     }
@@ -64,7 +70,7 @@ bool nkro_report_note_off(uint8_t midi_note) {
         return false; // 押されていない (対象外ノートの Note Off も含む)
     }
     s_note_active[midi_note] = 0;
-    uint8_t slot = note_to_key_index(midi_note);
+    uint8_t slot = note_to_key_index_mode(midi_note, s_sumeru_mode);
     if (slot == NOTE_MAP_NONE) {
         return false; // note_active を立てた時点で slot!=NONE のはずなので到達しない
     }
