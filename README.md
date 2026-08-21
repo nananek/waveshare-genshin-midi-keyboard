@@ -189,7 +189,8 @@ BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI
 
 ボード2 (serial_midi_device) の設定は `serial_midi_device/config.h`:
 `MIDI_UART_RX_PIN`(既定 `5`=UART1 RX)、`MIDI_UART_BAUD`(既定 `31250`)、
-`MIDI_UART_INDEX`(既定 `1`)。
+`MIDI_UART_INDEX`(既定 `1`)、`RESET_BUTTON_ENABLE`/`_PIN`(既定 `28`)/
+`_ACTIVE_LEVEL`/`_DEBOUNCE_MS`(MIDI RESETタクトスイッチ、issue #6)。
 
 ### キー対応表(既定・指示書 3.1)
 
@@ -256,6 +257,15 @@ make clean
 4. ボード1 の UART1 を FTDI 等に繋いでも 31250 baud で同じバイト列が見える
    (ミラー単体確認、任意)。
 5. `MIDI_UART_MIRROR_ENABLE 0` でビルドするとミラーが消え既存動作に戻る(設定ガード確認)。
+
+### ボード2の任意スイッチ(MIDI RESETボタン)
+
+| 用途 | 配線 | 動作 |
+|------|------|------|
+| MIDI RESETタクトスイッチ (任意) | GP28 ↔ GND (内部プルアップ、常開タクトスイッチ) | 押下ごとに MIDI System Reset (0xFF) を1回送信 |
+
+`RESET_BUTTON_ENABLE 0`(`serial_midi_device/config.h`)で無効化(コンパイルアウト)
+できる。ボード1のGP28(原神モードスイッチ)とは別基板・別GPIO空間なので混同しないこと。
 
 ### ミラーの既知のトレードオフ
 

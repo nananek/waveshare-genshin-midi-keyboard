@@ -19,4 +19,24 @@
 #define MIDI_UART_INDEX 1
 #endif
 
+// ---------------------------------------------------------------------------
+//  MIDI RESETタクトスイッチ (issue #6)
+//  押下(デバウンス確定)の立ち上がりエッジごとに MIDI System Reset (0xFF、
+//  1バイトSystem Realtimeメッセージ) を1回送信する。ボード1のMUTE_SWITCH_PIN
+//  (GP28、src/config.h)と同一物理ピン番号に揃えている(部品・配線の使い回し用)。
+// ---------------------------------------------------------------------------
+#ifndef RESET_BUTTON_ENABLE
+#define RESET_BUTTON_ENABLE 1
+#endif
+#ifndef RESET_BUTTON_PIN
+#define RESET_BUTTON_PIN 28
+#endif
+// 0 = LOW で押下 (内部プルアップ + タクトスイッチをGNDへ落とす配線が既定)
+#ifndef RESET_BUTTON_ACTIVE_LEVEL
+#define RESET_BUTTON_ACTIVE_LEVEL 0
+#endif
+#ifndef RESET_BUTTON_DEBOUNCE_MS
+#define RESET_BUTTON_DEBOUNCE_MS 20
+#endif
+
 #endif // CONFIG_H

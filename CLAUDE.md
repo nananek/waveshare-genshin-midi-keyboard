@@ -61,6 +61,16 @@ export PICO_SDK_PATH=/path/to/pico-sdk
   no-op になり、`#if` でコンパイルアウトされる。デバウンス本体(3 段ステートマシン +
   active_level に応じた内部プル選択)は両者で共通の `debounced_switch.c` に切り出してある
   ので、デバウンス周りの修正はそこ 1 箇所で足りる。
+- **ボード2にもGPIOハード依存の入力層がある**(`serial_midi_device/reset_button.c`)。
+  デバウンス本体は`src/debounced_switch.c`をボード2からも直接参照して共用している
+  (`target_include_directories`には`src/`を足さず、このファイルだけが相対パス
+  `#include "../src/debounced_switch.h"`で直接参照する。CMakeLists.txtのソース一覧に
+  `../src/debounced_switch.c`を追加)。ボード2のGPIO由来の送信は
+  `tud_midi_stream_write`ではなく**`tud_midi_packet_write`(生の4バイトUSB-MIDI
+  イベント)を使うこと**。`tud_midi_stream_write`はバイト列を跨いで永続する内部状態
+  機械を持ち、UARTパススルー中の未完了メッセージの最中に割り込むとデータバイトとして
+  誤解釈されバイト列を破壊する(vendored `lib/tinyusb/src/class/midi/midi_device.c:189-283`
+  で確認)。`tud_midi_packet_write`はこの状態機械を経由しないため安全。
 - 新しいロジックは可能な限り純粋層へ置き、`tests/` を足すこと。
 
 **変換パイプライン**(`note_mapper.c`):移調(`OCTAVE_OFFSET`)→ 範囲外ポリシー → 黒鍵ドロップ
