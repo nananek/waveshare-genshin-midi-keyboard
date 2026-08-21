@@ -8,3 +8,4 @@ F1,1,リセッタブルヒューズ(PTC・ラジアルリード),rp2350_zero_car
 SW1,1,1回路2接点スイッチ(3ピン)をON-OFF用途で使用(ミュート用),rp2350_zero_carrier:SW_SPDT_NKK_115643_Slide,NKKスイッチズ / 通販コード 115643,訂正:秋月に基板用SPST(2pin)は無く3pin(1回路2接点)品を使用。中央コモンをGP28へ、片側接点をGNDへ、残り1接点はNC。端子が平角(0.6×0.4mm)のため角形パッドのカスタムfootprint作成済み
 SW2,1,1回路2接点スイッチ(3ピン)をON-OFF用途で使用(フィルター用),rp2350_zero_carrier:SW_SPDT_NKK_115643_Slide,NKKスイッチズ / 通販コード 115643,同上。中央コモンをGP29へ、片側接点をGNDへ、残り1接点はNC
 SW3,1,1回路2接点スイッチ(3ピン)をON-OFF用途で使用(予備),rp2350_zero_carrier:SW_SPDT_NKK_115643_Slide,NKKスイッチズ / 通販コード 115643,同上。中央コモンをGP27へ、片側接点をGNDへ、残り1接点はNC。ファーム未対応(別タスク)
+SW4,1,1回路2接点スイッチ(3ピン)をON-OFF用途で使用(USB-A VBUS電源スイッチ),rp2350_zero_carrier:SW_SPDT_NKK_115643_Slide,NKKスイッチズ / 通販コード 115643,新規追加(2026-08-21)。GPIOには接続しない純粋な電源経路スイッチ。RP2350-Zeroの5V→F1→SW4→J2(USB-A)pin1(VBUS)の直列経路。中央コモンをF1側(VBUS_USB_A net)へ、片側接点をJ2側(VBUS_USB_A_SW net)へ、残り1接点はNC
