@@ -5,7 +5,7 @@
   (descr "Slide switch, 1-circle 2-contact (SPDT), used ON-OFF (Akizuki tsuhan-code 115643, NKK). 3 pins inline, 2.54mm pitch, pin2=common(center). Flat rectangular lead 0.6x0.4mm -> 0.9mm round drill w/ rectangular copper pad. Body ref L10.2mm x W6.5mm x H4mm. Source: manufacturer drawing (2026-08-19).")
   (tags "switch SPDT slide 3pin THT")
   (attr through_hole)
-  (fp_text reference "REF**" (at 0 -8) (layer "F.SilkS")
+  (fp_text reference "REF**" (at 0 -4) (layer "F.SilkS")
     (effects (font (size 1 1) (thickness 0.15)))
   )
   (fp_text value "SW_SPDT_NKK_115643_Slide" (at 0 8) (layer "F.Fab")

@@ -23,5 +23,14 @@
 compile_commands.json
 .DS_Store
 
+# KiCad の個人環境ファイル (プロジェクトごとの表示状態・自動バックアップ・ロック)
+*.kicad_prl
+.history/
+*.lck
+
+# KiCad 製造出力 (gerber/drill、kicad-cli export で再生成可能)
+/hardware/*/gerbers/
+*_gerbers_JLCPCB.zip
+
 # worker 間受け渡し用の一時領域 (計画書等)
 /tmp/
