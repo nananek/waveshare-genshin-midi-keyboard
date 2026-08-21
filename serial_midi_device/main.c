@@ -5,6 +5,7 @@
 #include "tusb.h"
 #include "config.h"
 #include "reset_button.h"
+#include "sustain_switch.h"
 
 // ===========================================================================
 //  シリアル→USB-MIDI ブリッジ (ボード2)。
@@ -57,6 +58,16 @@ static void send_realtime_packet(uint8_t status_byte) {
     tud_midi_packet_write(packet);
 }
 
+static void send_cc_packet(uint8_t channel, uint8_t cc_num, uint8_t value) {
+    uint8_t packet[4] = {
+        (uint8_t)((MIDI_CABLE_NUM << 4) | MIDI_CIN_CONTROL_CHANGE),
+        (uint8_t)(0xB0 | (channel & 0x0F)), // Control Change, channel 0-15
+        cc_num,
+        value,
+    };
+    tud_midi_packet_write(packet);
+}
+
 int main(void) {
     stdio_init_all(); // デバッグログ: UART0 (GP0/GP1) @115200
     printf("\r\n[boot] Serial MIDI Bridge: RX=GP%d @%d\r\n",
@@ -68,6 +79,7 @@ int main(void) {
 
     tud_init(BOARD_TUD_RHPORT);
     reset_button_init();
+    sustain_switch_init();
 
     for (;;) {
         tud_task();
@@ -76,6 +88,19 @@ int main(void) {
         if (reset_button_poll()) {
             send_realtime_packet(MIDI_STATUS_SYSREAL_SYSTEM_RESET);
             printf("[reset] MIDI System Reset sent\r\n");
+        }
+
+        switch (sustain_switch_poll()) {
+        case SUSTAIN_SWITCH_ENTER:
+            send_cc_packet(SUSTAIN_MIDI_CHANNEL, 64, 127);
+            printf("[sustain] ON (CC64=127)\r\n");
+            break;
+        case SUSTAIN_SWITCH_EXIT:
+            send_cc_packet(SUSTAIN_MIDI_CHANNEL, 64, 0);
+            printf("[sustain] OFF (CC64=0)\r\n");
+            break;
+        default:
+            break;
         }
 
         // UART RX FIFO をドレインして USB-MIDI へ流す
