@@ -28,5 +28,9 @@ compile_commands.json
 .history/
 *.lck
 
+# KiCad 製造出力 (gerber/drill、kicad-cli export で再生成可能)
+/hardware/*/gerbers/
+*_gerbers_JLCPCB.zip
+
 # worker 間受け渡し用の一時領域 (計画書等)
 /tmp/
