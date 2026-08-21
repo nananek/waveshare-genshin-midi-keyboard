@@ -10,6 +10,9 @@ set(EXEC serial_midi_device)
 add_executable(${EXEC}
     main.c
     usb_descriptors.c
+    reset_button.c
+    sustain_switch.c
+    ${CMAKE_SOURCE_DIR}/src/debounced_switch.c   # ボード1と共用 (single source of truth、1.2参照)
 )
 
 # 成果物 (elf/uf2/bin/hex/dis/map) を build/ 直下に置く。
