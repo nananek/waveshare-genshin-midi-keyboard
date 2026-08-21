@@ -23,5 +23,9 @@
 compile_commands.json
 .DS_Store
 
+# KiCad の個人環境ファイル (プロジェクトごとの表示状態・自動バックアップ)
+*.kicad_prl
+.history/
+
 # worker 間受け渡し用の一時領域 (計画書等)
 /tmp/
