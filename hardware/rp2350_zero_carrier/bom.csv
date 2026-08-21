@@ -1,5 +1,5 @@
 Reference,Qty,Value,Footprint(assigned),秋月候補(型番/通販コード),備考
-J1,1,RP2350-Zero用ピンソケット(20pin想定),Connector_PinSocket_2.54mm:PinSocket_1x20_P2.54mm_Vertical,FH-1×20 / 103077,実際は1×20を2本または2×10へ分割の可能性あり。要現物のRP2350-Zeroヘッダー形状確認
+J1,1,RP2350-Zero用ピンソケット(20pin、実ピン配置確定),rp2350_zero_carrier:RP2350_Zero_Header_20p,FH-1×20等/通販コード103077(実装形態は現物形状に合わせて要調整),ユーザー確定のピン配置表(2026-08-20)に基づきカスタムfootprint作成済み。外形18.0×23.5mm・ピッチ2.54mm・列間15.24mm・穴径1.0mm/パッド径1.6mm。pin10/11=GP14/GP15(USB D+/D-、独立2pin列)。原点=モジュール中心、USB-C/BOOT-RUN側を+Yに向けて実装
 J1(Zero側オス),1,RP2350-Zero用ピンヘッダー,(RP2350-Zero本体にはんだ付け。基板側フットプリントなし),PH-2×10SG / 100078,RP2350-Zeroがヘッダー同梱の場合は購入不要な可能性あり要確認
 J2,1,USB-Aメスコネクタ(基板取付・スルーホール),rp2350_zero_carrier:USB_A_Neltron_5075AR-04-WH,Neltron 5075AR-04-WH / 通販コード 100160,実図面ベースでカスタムfootprint作成済み(信号ピン⌀0.92mm丸穴×4・ピッチ2.50/2.00/2.50mm、シェル固定ペグ⌀2.3mm×2・間隔13.14mm・信号ピン列から2.70mmオフセット)
 R1,1,22Ω(USB D+直列抵抗),Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal,秋月扱い汎用THT抵抗(型番問わず),1/4W級で可。J1側はGP14(訂正: GP12はヘッダーに無いため)
