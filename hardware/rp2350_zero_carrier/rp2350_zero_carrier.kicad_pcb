@@ -1964,6 +1964,298 @@
 		)
 		(embedded_fonts no)
 	)
+	(footprint "rp2350_zero_carrier:MountingHole_NPTH_2.7mm"
+		(layer "F.Cu")
+		(uuid "227c2b8b-f523-463f-8e66-16c29726e9c1")
+		(at -29 14.5)
+		(property "Reference" "H1"
+			(at 0 3 0)
+			(unlocked yes)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "85ffa265-38f6-475f-9195-d24fabbb8e0d")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Value" "MountingHole_NPTH_2.7mm"
+			(at 0 -3 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(uuid "8a347d38-0f7b-47ad-b605-b42036d2690f")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9b2fe8af-d28c-4cbc-b6e6-5b6f7feca274")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c378c96a-3c77-4bea-aa33-3259c5c6be8a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
+		(duplicate_pad_numbers_are_jumpers no)
+		(fp_circle
+			(center 0 0)
+			(end 1.85 0)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.SilkS")
+			(uuid "78c21d05-6b78-4bae-b3bd-9263dfb1bf7d")
+		)
+		(pad "" np_thru_hole circle
+			(at 0 0)
+			(size 2.7 2.7)
+			(drill 2.7)
+			(layers "*.Cu" "*.Mask")
+			(uuid "aa200686-4e81-4115-844b-d4b529cafb70")
+		)
+		(embedded_fonts no)
+	)
+	(footprint "rp2350_zero_carrier:MountingHole_NPTH_2.7mm"
+		(layer "F.Cu")
+		(uuid "7a80f919-ab11-490c-92b0-0af0ca9c5043")
+		(at 19.5 -38)
+		(property "Reference" "H4"
+			(at 0 4 0)
+			(unlocked yes)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "0ca2d46f-ca46-40cb-bfee-2c60114a70fc")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Value" "MountingHole_NPTH_2.7mm"
+			(at 0 -3 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(uuid "a8a824d3-5292-4cd0-979d-326ac93eaba0")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "519d5c78-1eb6-49ae-9930-21471f7d3fb6")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7db2a096-2708-465c-bfec-ae7a5084dd40")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
+		(duplicate_pad_numbers_are_jumpers no)
+		(fp_circle
+			(center 0 0)
+			(end 1.85 0)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.SilkS")
+			(uuid "15065842-0ab4-4c5c-81a3-047f3e0e315f")
+		)
+		(pad "" np_thru_hole circle
+			(at 0 0)
+			(size 2.7 2.7)
+			(drill 2.7)
+			(layers "*.Cu" "*.Mask")
+			(uuid "ddb9c58a-8803-4780-baa7-d963b38bd0c2")
+		)
+		(embedded_fonts no)
+	)
+	(footprint "rp2350_zero_carrier:MountingHole_NPTH_2.7mm"
+		(layer "F.Cu")
+		(uuid "c6a63fef-fb97-40cb-a4a2-c78fe23fc5c4")
+		(at 19.5 14.5)
+		(property "Reference" "H2"
+			(at 0 3 0)
+			(unlocked yes)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "3c98dd5e-8466-4677-9dfe-9339aed3cf51")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Value" "MountingHole_NPTH_2.7mm"
+			(at 0 -3 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(uuid "acbc2b10-cd52-4ba1-b077-dd0ee02fd8c5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f95282bc-44d2-4ce5-b578-8d22826143e3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4870d148-8ce3-4c58-8bf7-07c9f45784ac")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
+		(duplicate_pad_numbers_are_jumpers no)
+		(fp_circle
+			(center 0 0)
+			(end 1.85 0)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.SilkS")
+			(uuid "f1bbb2e9-34a4-4d1d-a9a5-e5c46e73f04a")
+		)
+		(pad "" np_thru_hole circle
+			(at 0 0)
+			(size 2.7 2.7)
+			(drill 2.7)
+			(layers "*.Cu" "*.Mask")
+			(uuid "f6021cb8-cfef-4309-b514-3dab78bcbce3")
+		)
+		(embedded_fonts no)
+	)
+	(footprint "rp2350_zero_carrier:MountingHole_NPTH_2.7mm"
+		(layer "F.Cu")
+		(uuid "d20827e8-e100-4f98-a7f9-81a555fb4aa8")
+		(at -29 -38)
+		(property "Reference" "H3"
+			(at 0 4 0)
+			(unlocked yes)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "b31cd2d0-8f54-4876-b06b-420433861e82")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Value" "MountingHole_NPTH_2.7mm"
+			(at 0 -3 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(uuid "c00438c7-9fdf-41fa-917d-eb82406d6101")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1b3d32af-cd03-4bbf-9ca7-7f264fb6c435")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a82b424f-4ead-4efc-b3d6-2d7eadc304ff")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
+		(duplicate_pad_numbers_are_jumpers no)
+		(fp_circle
+			(center 0 0)
+			(end 1.85 0)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(fill no)
+			(layer "F.SilkS")
+			(uuid "f70a0027-5e80-4c2a-83ae-e1dd2be281ca")
+		)
+		(pad "" np_thru_hole circle
+			(at 0 0)
+			(size 2.7 2.7)
+			(drill 2.7)
+			(layers "*.Cu" "*.Mask")
+			(uuid "1c8559a2-ab42-4708-9c21-8b4b8624bd6e")
+		)
+		(embedded_fonts no)
+	)
 	(gr_line
 		(start -33 -41)
 		(end 23.5 -41)
@@ -1975,7 +2267,7 @@
 		(uuid "00000000-0000-0000-0000-000000000011")
 	)
 	(gr_line
-		(start -33 14.5)
+		(start -33 18.5)
 		(end -33 -41)
 		(stroke
 			(width 0.15)
@@ -1986,7 +2278,7 @@
 	)
 	(gr_line
 		(start 23.5 -41)
-		(end 23.5 14.5)
+		(end 23.5 18.5)
 		(stroke
 			(width 0.15)
 			(type solid)
@@ -1995,8 +2287,8 @@
 		(uuid "00000000-0000-0000-0000-000000000012")
 	)
 	(gr_line
-		(start 23.5 14.5)
-		(end -33 14.5)
+		(start 23.5 18.5)
+		(end -33 18.5)
 		(stroke
 			(width 0.15)
 			(type solid)
