@@ -175,6 +175,62 @@
 			(layer "F.SilkS")
 			(uuid "560597d0-6bb6-4140-a1c1-5b32eea1aa7c")
 		)
+		(fp_text user "USB-C / BOOT"
+			(at 0 16.1)
+			(layer "F.SilkS")
+			(uuid "4e47c3b8-34c5-41c1-98a3-a4fd1016aff3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(fp_text user "1=5V"
+			(at -4.7 12.7)
+			(layer "F.SilkS")
+			(uuid "853b2eb5-7b5c-4e90-9d7a-0a3dbd19233b")
+			(effects
+				(font
+					(size 0.9 0.9)
+					(thickness 0.13)
+				)
+			)
+		)
+		(fp_line
+			(start -1.6 11.75)
+			(end 0 12.5)
+			(stroke
+				(width 0.3)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "9ef00b3c-61a5-4918-a5fe-4f729aa58fca")
+		)
+		(fp_line
+			(start 0 12.5)
+			(end 1.6 11.75)
+			(stroke
+				(width 0.3)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "58ef613f-1cfa-4b9e-a0ab-38fb2199738e")
+		)
+		(fp_poly
+			(pts
+				(xy 0 15.1)
+				(xy -2.4 13.2)
+				(xy 2.4 13.2)
+			)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(fill solid)
+			(layer "F.SilkS")
+			(uuid "07b68797-80f3-488c-b2bd-c7f58e1c22fb")
+		)
 		(pad "1" thru_hole circle
 			(at -7.62 10.16)
 			(size 1.6 1.6)
@@ -1427,6 +1483,62 @@
 			)
 			(layer "F.SilkS")
 			(uuid "a9c7d39f-c390-40d1-b9c1-1b9efda2f56f")
+		)
+		(fp_text user "USB-C / BOOT"
+			(at 0 16.1)
+			(layer "F.SilkS")
+			(uuid "a2a24e88-d2c5-4fd5-984a-56bdf07a4f5b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(fp_text user "1=5V"
+			(at -4.7 12.7)
+			(layer "F.SilkS")
+			(uuid "2e21d64b-47ec-427d-9285-899ea87649c6")
+			(effects
+				(font
+					(size 0.9 0.9)
+					(thickness 0.13)
+				)
+			)
+		)
+		(fp_line
+			(start -1.6 11.75)
+			(end 0 12.5)
+			(stroke
+				(width 0.3)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "41bfa29d-7bc4-46d6-92da-e63835d1e12b")
+		)
+		(fp_line
+			(start 0 12.5)
+			(end 1.6 11.75)
+			(stroke
+				(width 0.3)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "8d5e21b3-aad3-4e92-8d90-67674e61760b")
+		)
+		(fp_poly
+			(pts
+				(xy 0 15.1)
+				(xy -2.4 13.2)
+				(xy 2.4 13.2)
+			)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(fill solid)
+			(layer "F.SilkS")
+			(uuid "4c1c9c1d-8d0e-4a72-a3ba-e4b1f6f9c001")
 		)
 		(pad "1" thru_hole circle
 			(at -7.62 10.16)
