@@ -37,6 +37,9 @@ PC 上の原神・演奏 UI (諧律のチェンバロ、ライアー等)を、MI
 
 ## 1. ハードウェア
 
+RP2350-Zeroを使う専用キャリア基板の組立時は、ソケットの向きが電気的に重大です。
+半田付け前に必ず [RP2350-Zero carrier 組立注記](hardware/rp2350_zero_carrier/README.md) を確認してください。
+
 対象ボード: **Waveshare RP2350-USB-A**(RP2350 + USB-A ホストポート)。素の Pico 2 +
 自作 D+/D− 配線でも可。
 
