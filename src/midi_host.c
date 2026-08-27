@@ -2,7 +2,11 @@
 #include "tusb.h"
 #include "midi_host.h"
 #include "midi_parse.h"
+#ifdef COMPOSITE_MIDI
+#include "midi_bridge.h"
+#else
 #include "midi_mirror.h"
+#endif
 #include "config.h"
 
 #ifdef PICO_DEFAULT_LED_PIN
@@ -22,7 +26,11 @@ static void led_set(bool on) {
 
 void midi_host_init(void) {
     midi_parser_init(&s_parser);
+#ifdef COMPOSITE_MIDI
+    midi_bridge_init();
+#else
     midi_mirror_init();
+#endif
 #ifdef PICO_DEFAULT_LED_PIN
     gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
@@ -54,7 +62,11 @@ void tuh_midi_mount_cb(uint8_t idx, const tuh_midi_mount_cb_t *mount_cb_data) {
            idx, mount_cb_data->daddr,
            mount_cb_data->rx_cable_count, mount_cb_data->tx_cable_count);
     midi_parser_init(&s_parser); // 新デバイス: ランニングステータス等をリセット
+#ifdef COMPOSITE_MIDI
+    midi_bridge_reset();
+#else
     midi_mirror_reset();         // ミラーの状態もリセット
+#endif
     led_set(true);
 }
 
@@ -76,7 +88,11 @@ void tuh_midi_rx_cb(uint8_t idx, uint32_t xferred_bytes) {
         if (n == 0) {
             break;
         }
+#ifdef COMPOSITE_MIDI
+        midi_bridge_push(buffer, n); // 生バイト列を queue 経由で USB-MIDI へ
+#else
         midi_mirror_send(buffer, n); // 生バイト列をそのまま UART へ (パース・変換は通さない)
+#endif
         midi_parser_push(&s_parser, buffer, n, on_note, NULL);
     }
 }

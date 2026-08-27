@@ -98,3 +98,4 @@ pico_add_extra_outputs(${PROJECT_NAME})
 # 別 executable として同一ビルドツリーに定義。固有の tusb_config.h を
 # 持ち、PIO-USB ホストは使わない (TinyUSB は executable ごとに再コンパイルされる)。
 add_subdirectory(serial_midi_device)
+add_subdirectory(composite)
