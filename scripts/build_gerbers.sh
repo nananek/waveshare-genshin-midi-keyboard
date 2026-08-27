@@ -7,12 +7,15 @@ set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 PCB="$ROOT/hardware/rp2350_zero_carrier/rp2350_zero_carrier.kicad_pcb"
+SCH="$ROOT/hardware/rp2350_zero_carrier/rp2350_zero_carrier.kicad_sch"
 OUT="${1:-$ROOT/build/release}"
 GERBERS="$OUT/gerbers"
 BOARD_NAME="rp2350_zero_carrier"
 ZIP="$OUT/${BOARD_NAME}_gerbers_JLCPCB.zip"
 DRC="$OUT/${BOARD_NAME}-drc.rpt"
 SUMS="$OUT/SHA256SUMS.txt"
+SCHEMATIC_PDF="$OUT/${BOARD_NAME}-schematic.pdf"
+PCB_PDF="$OUT/${BOARD_NAME}-layout.pdf"
 
 case "$(kicad-cli --version)" in
     10.0.*) ;;
@@ -36,6 +39,11 @@ kicad-cli pcb export gerbers --output "$GERBERS" \
     "$PCB"
 kicad-cli pcb export drill --output "$GERBERS" --format excellon \
     --generate-report --report-path "$GERBERS/drill-report.rpt" "$PCB"
+
+# Include the requested schematic and board-layout drawings as review assets.
+kicad-cli sch export pdf --output "$SCHEMATIC_PDF" --no-background-color "$SCH"
+kicad-cli pcb export pdf --output "$PCB_PDF" --mode-single \
+    --layers F.Cu,B.Cu,F.Silkscreen,B.Silkscreen,Edge.Cuts "$PCB"
 
 # KiCad writes the .gbrjob alongside the Gerbers.  Archive every generated
 # Gerber/job file plus the Excellon drill file, but not diagnostic reports.
@@ -63,7 +71,8 @@ do
 done
 
 (cd "$OUT" && sha256sum \
-    "$(basename "$ZIP")" "$(basename "$DRC")") > "$SUMS"
+    "$(basename "$ZIP")" "$(basename "$DRC")" \
+    "$(basename "$SCHEMATIC_PDF")" "$(basename "$PCB_PDF")") > "$SUMS"
 
 echo "== release hardware artifacts"
-ls -l "$ZIP" "$DRC" "$SUMS"
+ls -l "$ZIP" "$DRC" "$SCHEMATIC_PDF" "$PCB_PDF" "$SUMS"

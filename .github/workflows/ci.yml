@@ -59,6 +59,8 @@ jobs:
           path: |
             build/release/rp2350_zero_carrier_gerbers_JLCPCB.zip
             build/release/rp2350_zero_carrier-drc.rpt
+            build/release/rp2350_zero_carrier-schematic.pdf
+            build/release/rp2350_zero_carrier-layout.pdf
             build/release/SHA256SUMS.txt
           if-no-files-found: error
 
@@ -88,6 +90,8 @@ jobs:
             genshin_midi_kbd.uf2 serial_midi_device.uf2 \
             release/rp2350_zero_carrier_gerbers_JLCPCB.zip \
             release/rp2350_zero_carrier-drc.rpt \
+            release/rp2350_zero_carrier-schematic.pdf \
+            release/rp2350_zero_carrier-layout.pdf \
             > release/SHA256SUMS.txt
       - name: create release
         env:
@@ -97,6 +101,8 @@ jobs:
             build/genshin_midi_kbd.uf2 build/serial_midi_device.uf2 \
             build/release/rp2350_zero_carrier_gerbers_JLCPCB.zip \
             build/release/rp2350_zero_carrier-drc.rpt \
+            build/release/rp2350_zero_carrier-schematic.pdf \
+            build/release/rp2350_zero_carrier-layout.pdf \
             build/release/SHA256SUMS.txt \
             --title "$GITHUB_REF_NAME" \
             --notes-file .github/release-notes.md \
