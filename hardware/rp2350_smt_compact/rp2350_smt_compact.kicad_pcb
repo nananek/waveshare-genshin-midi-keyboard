@@ -1207,7 +1207,7 @@
 	(footprint "rp2350_smt_compact:TestPoint_UART0_1x5_P2.54mm"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000017")
-		(at -18 -14)
+		(at -14 0)
 		(property "Reference" "TP1"
 			(at 0 -3 0)
 			(unlocked yes)
