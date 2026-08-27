@@ -40,9 +40,34 @@ jobs:
             build/serial_midi_device.uf2
           if-no-files-found: error
 
+  build-gerbers:
+    name: 基板製造データ生成 (KiCad 10.0)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [rp2350_zero_carrier, rp2350_smt_compact]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: DRC と Gerber を生成
+        run: >-
+          docker run --rm
+          --user "$(id -u):$(id -g)"
+          --env HOME=/tmp
+          --volume "$PWD:/work" --workdir /work
+          ghcr.io/kicad/kicad@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de
+          ./scripts/build_gerbers.sh hardware/${{ matrix.board }} build/release/${{ matrix.board }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: hardware-release-${{ matrix.board }}
+          path: build/release/${{ matrix.board }}
+          if-no-files-found: error
+
   release:
     name: GitHub Release 作成
-    needs: [test, build-firmware]
+    needs: [test, build-firmware, build-gerbers]
     if: success() && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -55,11 +80,18 @@ jobs:
         with:
           name: firmware-uf2
           path: build
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: hardware-release-*
+          path: build/release
       - name: create release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
             build/genshin_midi_kbd.uf2 build/serial_midi_device.uf2 \
+            build/release/*/*.zip build/release/*/*-drc.rpt \
+            build/release/*/*-schematic.pdf build/release/*/*-layout.pdf \
+            build/release/*/SHA256SUMS.txt \
             --title "$GITHUB_REF_NAME" \
             --generate-notes
