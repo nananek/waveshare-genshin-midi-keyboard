@@ -11,3 +11,10 @@ J1/J3の穴は左右対称に見えるため、RP2350-Zeroを裏返しても仮�
 5. 仮挿入を外し、メスソケットをF.Cu面から片端の1ピンだけ仮止めします。向きと直角を再確認してから残りを半田付けします。
 
 実装後は、J1/J3ともUSB-Cが矢印側に出ていてBOOT/RUNを押せることを確認してください。
+
+## Release PDF paper size
+
+Run `scripts/build_gerbers.sh` to regenerate the release drawings. The
+schematic is fitted to ISO A4 landscape. The PCB drawing is exported at
+physical scale 1:1 after translating a temporary copy into the page area, so
+the complete board is centered without clipping or changing its dimensions.

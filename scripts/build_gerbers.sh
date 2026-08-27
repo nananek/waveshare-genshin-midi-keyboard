@@ -1,92 +1,120 @@
 #!/usr/bin/env sh
-# Generate manufacturing files for the RP2350-Zero carrier.
-#
-# The output directory is deliberately ignored by Git: release CI uploads it as
-# an artifact and attaches the archive, DRC report, and checksums to a release.
+# Generate reproducible manufacturing/review files for one KiCad board.
 set -eu
 
-ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-PCB="$ROOT/hardware/rp2350_zero_carrier/rp2350_zero_carrier.kicad_pcb"
-SCH="$ROOT/hardware/rp2350_zero_carrier/rp2350_zero_carrier.kicad_sch"
-OUT="${1:-$ROOT/build/release}"
-GERBERS="$OUT/gerbers"
-BOARD_NAME="rp2350_zero_carrier"
-ZIP="$OUT/${BOARD_NAME}_gerbers_JLCPCB.zip"
-DRC="$OUT/${BOARD_NAME}-drc.rpt"
-SUMS="$OUT/SHA256SUMS.txt"
-SCHEMATIC_PDF="$OUT/${BOARD_NAME}-schematic.pdf"
-PCB_PDF="$OUT/${BOARD_NAME}-layout.pdf"
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+BOARD_DIR=${1:-$ROOT/hardware/rp2350_zero_carrier}
+OUT=${2:-$ROOT/build/release}
+BOARD=$(basename "$BOARD_DIR")
+PCB=$BOARD_DIR/$BOARD.kicad_pcb
+SCH=$BOARD_DIR/$BOARD.kicad_sch
+GERBERS=$OUT/gerbers
+PDF_WORK=$(mktemp -d)
+trap 'rm -rf "$PDF_WORK"' EXIT
 
 case "$(kicad-cli --version)" in
-    10.0.*) ;;
-    *)
-        echo "KiCad CLI 10.0.x is required; found: $(kicad-cli --version)" >&2
-        exit 1
-        ;;
+  10.0.*) ;;
+  *) echo "KiCad CLI 10.0.x is required; found: $(kicad-cli --version)" >&2; exit 1 ;;
 esac
-
+test -f "$PCB"
+test -f "$SCH"
 rm -rf "$OUT"
 mkdir -p "$GERBERS"
 
-# --exit-code-violations makes errors, warnings, and unconnected pads fail the
-# build.  The report is retained as a release asset for manufacturing review.
-kicad-cli pcb drc --output "$DRC" --exit-code-violations "$PCB"
-# Export only the layers a board fabricator needs.  The board's plot settings
-# also enable documentation layers (Fab, Courtyard, User.*), which do not
-# belong in a manufacturing archive.
+# Keep DRC violations fatal so a hardware artifact cannot silently ship with
+# shorts, missing connections, or manufacturing-rule errors.
+kicad-cli pcb drc --output "$OUT/${BOARD}-drc.rpt" --exit-code-violations "$PCB"
 kicad-cli pcb export gerbers --output "$GERBERS" \
-    --layers F.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts \
-    "$PCB"
+  --layers F.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts "$PCB"
 kicad-cli pcb export drill --output "$GERBERS" --format excellon \
-    --generate-report --report-path "$GERBERS/drill-report.rpt" "$PCB"
+  --generate-report --report-path "$GERBERS/drill-report.rpt" "$PCB"
+# KiCad takes the schematic's paper field from the input file.  v1.1.2 changed
+# the carrier schematic to A3 to make the reflowed drawing fit, but release
+# drawings are required to remain A4.  Export to a temporary PDF and use
+# Ghostscript to fit that drawing onto a fixed A4 landscape page.  The design
+# source is not rewritten by the release build.
+PDF_SCH=$PDF_WORK/$BOARD.kicad_sch
+cp "$SCH" "$PDF_SCH"
+PDF_SCH_RAW=$PDF_WORK/${BOARD}-schematic-raw.pdf
+kicad-cli sch export pdf --output "$PDF_SCH_RAW" --no-background-color "$PDF_SCH"
+command -v gs >/dev/null || { echo "Ghostscript (gs) is required for A4 PDF output" >&2; exit 1; }
+gs -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
+  -dDEVICEWIDTHPOINTS=841.896 -dDEVICEHEIGHTPOINTS=595.296 \
+  -dFIXEDMEDIA -dPDFFitPage \
+  -sOutputFile="$OUT/${BOARD}-schematic.pdf" "$PDF_SCH_RAW"
+# KiCad's single-mode PCB exporter uses the board coordinate origin as the page
+# origin.  The carrier has negative coordinates, so exporting the source board
+# clips it at the upper-left corner.  Move a temporary copy in KiCad internal
+# units, then export at scale 1.0.  This keeps the PDF vector and preserves the
+# board's physical 1:1 size.
+PDF_PCB_RAW=$PDF_WORK/${BOARD}-layout-raw.pdf
+PCB_PDF_INPUT=$PDF_WORK/${BOARD}-layout-input.kicad_pcb
+python3 - "$PCB" "$PCB_PDF_INPUT" <<'PY'
+import pcbnew
+import sys
 
-# Include the requested schematic and board-layout drawings as review assets.
-kicad-cli sch export pdf --output "$SCHEMATIC_PDF" --no-background-color "$SCH"
-kicad-cli pcb export pdf --output "$PCB_PDF" --mode-single \
-    --layers F.Cu,B.Cu,F.Silkscreen,B.Silkscreen,Edge.Cuts "$PCB"
-
-# The pinned KiCad image does not include a PDF parser.  Check the required
-# PDF header and trailer so a truncated or wrong-format drawing cannot ship.
-for pdf in "$SCHEMATIC_PDF" "$PCB_PDF"
-do
-    test -s "$pdf"
-    head -c 5 "$pdf" | grep -qx '%PDF-'
-    tail -c 1024 "$pdf" | grep -aq '%%EOF'
+source, output = sys.argv[1:]
+board = pcbnew.LoadBoard(source)
+# Board extents are approximately -33..23.5 x -41..18.5 mm.  This offset
+# places the 56.5 x 59.5 mm board at the center of A4 while retaining scale 1.
+delta = pcbnew.VECTOR2I(153000000, 116000000)
+for footprint in board.GetFootprints():
+    footprint.Move(delta)
+tracks = board.Tracks()
+for index in range(tracks.size()):
+    tracks[index].Move(delta)
+drawings = board.Drawings()
+for index in range(len(drawings)):
+    drawings[index].Move(delta)
+for zone in board.Zones():
+    zone.Move(delta)
+pcbnew.SaveBoard(output, board)
+PY
+kicad-cli pcb export pdf --output "$PDF_PCB_RAW" --mode-single --scale 1 \
+  --layers F.Cu,B.Cu,F.Silkscreen,B.Silkscreen,Edge.Cuts "$PCB_PDF_INPUT"
+cp "$PDF_PCB_RAW" "$OUT/${BOARD}-layout.pdf"
+for pdf in "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf"; do
+  test -s "$pdf"
+  head -c 5 "$pdf" | grep -qx '%PDF-'
+  tail -c 1024 "$pdf" | grep -aq '%%EOF'
 done
 
-# KiCad writes the .gbrjob alongside the Gerbers.  Archive every generated
-# Gerber/job file plus the Excellon drill file, but not diagnostic reports.
-# The pinned KiCad image has Python but not zip/unzip; use Python's standard
-# library to keep the image reference reproducible without extra packages.
-python3 - "$ZIP" "$GERBERS" "$BOARD_NAME" <<'PY'
+# KiCad 10 emits the paper size in PDF points.  Check both drawings so an
+# accidental project/drawing-sheet setting cannot silently publish A3 output.
+python3 - "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" <<'PY'
 from pathlib import Path
+import re
 import sys
-import zipfile
 
-archive, directory = map(Path, sys.argv[1:3])
-board_name = sys.argv[3]
-files = sorted(directory.glob(f"{board_name}*.g*")) + [directory / f"{board_name}.drl"]
+expected = (841.896, 595.296)  # ISO A4 landscape, points
+for name in sys.argv[1:]:
+    data = Path(name).read_bytes()
+    match = re.search(rb"/MediaBox\s*\[\s*0\s+0\s+([0-9.]+)\s+([0-9.]+)\s*\]", data)
+    if not match:
+        raise SystemExit(f"missing PDF MediaBox: {name}")
+    size = tuple(float(value) for value in match.groups())
+    if any(abs(actual - wanted) > 0.1 for actual, wanted in zip(size, expected)):
+        raise SystemExit(f"PDF is not A4 landscape: {name}: {size}")
+PY
+
+python3 - "$OUT/${BOARD}_gerbers_JLCPCB.zip" "$GERBERS" "$BOARD" <<'PY'
+from pathlib import Path
+import sys, zipfile
+archive, directory, board = map(Path, sys.argv[1:])
+files = sorted(directory.glob(f"{board.name}*.g*")) + [directory / f"{board.name}.drl"]
 if not all(path.is_file() for path in files):
     raise SystemExit("missing Gerber, job, or Excellon drill output")
 with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
     for path in files:
         output.write(path, path.name)
-PY
 
-# Catch accidental KiCad configuration changes that would produce an unusable
-# manufacturing archive before publishing an artifact.
-python3 - "$ZIP" "$BOARD_NAME" <<'PY'
-import sys
-import zipfile
-
-archive, board_name = sys.argv[1:]
 expected = {
-    f"{board_name}-F_Cu.gtl", f"{board_name}-B_Cu.gbl",
-    f"{board_name}-F_Paste.gtp", f"{board_name}-B_Paste.gbp",
-    f"{board_name}-F_Silkscreen.gto", f"{board_name}-B_Silkscreen.gbo",
-    f"{board_name}-F_Mask.gts", f"{board_name}-B_Mask.gbs",
-    f"{board_name}-Edge_Cuts.gm1", f"{board_name}.drl",
-    f"{board_name}-job.gbrjob",
+    f"{board.name}-F_Cu.gtl", f"{board.name}-B_Cu.gbl",
+    f"{board.name}-F_Paste.gtp", f"{board.name}-B_Paste.gbp",
+    f"{board.name}-F_Silkscreen.gto", f"{board.name}-B_Silkscreen.gbo",
+    f"{board.name}-F_Mask.gts", f"{board.name}-B_Mask.gbs",
+    f"{board.name}-Edge_Cuts.gm1", f"{board.name}.drl",
+    f"{board.name}-job.gbrjob",
 }
 with zipfile.ZipFile(archive) as contents:
     actual = set(contents.namelist())
@@ -95,8 +123,8 @@ if actual != expected:
 PY
 
 (cd "$OUT" && sha256sum \
-    "$(basename "$ZIP")" "$(basename "$DRC")" \
-    "$(basename "$SCHEMATIC_PDF")" "$(basename "$PCB_PDF")") > "$SUMS"
-
-echo "== release hardware artifacts"
-ls -l "$ZIP" "$DRC" "$SCHEMATIC_PDF" "$PCB_PDF" "$SUMS"
+  "${BOARD}_gerbers_JLCPCB.zip" "${BOARD}-drc.rpt" \
+  "${BOARD}-schematic.pdf" "${BOARD}-layout.pdf") > "$OUT/SHA256SUMS.txt"
+echo "== release hardware artifacts: $BOARD"
+ls -l "$OUT/${BOARD}_gerbers_JLCPCB.zip" "$OUT/${BOARD}-drc.rpt" \
+  "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" "$OUT/SHA256SUMS.txt"
