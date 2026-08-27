@@ -86,7 +86,7 @@
 		(footprint "rp2350_smt_compact:RP2350_Zero_SMT_23p_Castellated"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000001")
-		(at 0 6)
+		(at 25 23.5)
 		(property "Reference" "J1"
 			(at 0 -3 0)
 			(unlocked yes)
@@ -281,7 +281,7 @@
 		(footprint "rp2350_smt_compact:R_0603"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000002")
-		(at -2.5 -7)
+		(at 22.5 10.5)
 		(property "Reference" "R1"
 			(at 0 -1.5 0)
 			(unlocked yes)
@@ -337,7 +337,7 @@
 		(footprint "rp2350_smt_compact:R_0603"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000003")
-		(at 2.5 -7)
+		(at 27.5 10.5)
 		(property "Reference" "R2"
 			(at 0 -1.5 0)
 			(unlocked yes)
@@ -393,7 +393,7 @@
 	(footprint "rp2350_smt_compact:Fuse_Bourns_MF-R050_Radial"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000004")
-		(at -9 3)
+		(at 16 20.5)
 		(property "Reference" "F1"
 			(at 0 -3 0)
 			(unlocked yes)
@@ -505,7 +505,7 @@
 	(footprint "rp2350_smt_compact:USB_A_Neltron_5075AR-04-WH"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000005")
-		(at 0 -14.2)
+		(at 25 3.3)
 		(property "Reference" "J2"
 			(at 0 -3 0)
 			(unlocked yes)
@@ -653,7 +653,7 @@
 		(footprint "rp2350_smt_compact:SW_Slide_SS-12D00_SMD"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000006")
-		(at 16 9)
+		(at 41 26.5)
 		(property "Reference" "SW1"
 			(at 0 -4 0)
 			(unlocked yes)
@@ -713,7 +713,7 @@
 		(footprint "rp2350_smt_compact:SW_Slide_SS-12D00_SMD"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000007")
-		(at 16 4)
+		(at 41 21.5)
 		(property "Reference" "SW2"
 			(at 0 -4 0)
 			(unlocked yes)
@@ -773,7 +773,7 @@
 		(footprint "rp2350_smt_compact:SW_Slide_SS-12D00_SMD"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000008")
-		(at 16 -1)
+		(at 41 16.5)
 		(property "Reference" "SW3"
 			(at 0 -4 0)
 			(unlocked yes)
@@ -833,7 +833,7 @@
 		(footprint "rp2350_smt_compact:SW_Slide_SS-12D00_SMD"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000009")
-		(at 16 -6)
+		(at 41 11.5)
 		(property "Reference" "SW4"
 			(at 0 -4 0)
 			(unlocked yes)
@@ -893,7 +893,7 @@
 		(footprint "rp2350_smt_compact:RP2350_Zero_SMT_23p_Castellated"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000010")
-		(at 0 -6 180)
+		(at 25 11.5 180)
 		(property "Reference" "J3"
 			(at 0 -3 0)
 			(unlocked yes)
@@ -1088,7 +1088,7 @@
 		(footprint "rp2350_smt_compact:SW_Tact_PTS645_SMD"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000015")
-		(at -16 9)
+		(at 9 26.5)
 		(property "Reference" "SW6"
 			(at 0 -4.6 0)
 			(unlocked yes)
@@ -1147,7 +1147,7 @@
 		(footprint "rp2350_smt_compact:SW_Slide_SS-12D00_SMD"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000016")
-		(at -16 -4)
+		(at 9 13.5)
 		(property "Reference" "SW5"
 			(at 0 -4 0)
 			(unlocked yes)
@@ -1207,7 +1207,7 @@
 	(footprint "rp2350_smt_compact:TestPoint_UART0_1x5_P2.54mm"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000017")
-		(at -14 0)
+		(at 11 17.5)
 		(property "Reference" "TP1"
 			(at 0 -3 0)
 			(unlocked yes)
@@ -1306,7 +1306,7 @@
 	(footprint "rp2350_smt_compact:MountingHole_NPTH_2.7mm"
 		(layer "F.Cu")
 		(uuid "227c2b8b-f523-463f-8e66-16c29726e9c1")
-		(at -22 14.5)
+		(at 3 32)
 		(property "Reference" "H1"
 			(at 0 3 0)
 			(unlocked yes)
@@ -1379,7 +1379,7 @@
 	(footprint "rp2350_smt_compact:MountingHole_NPTH_2.7mm"
 		(layer "F.Cu")
 		(uuid "7a80f919-ab11-490c-92b0-0af0ca9c5043")
-		(at 22 -14.5)
+		(at 47 3)
 		(property "Reference" "H4"
 			(at 0 4 0)
 			(unlocked yes)
@@ -1452,7 +1452,7 @@
 	(footprint "rp2350_smt_compact:MountingHole_NPTH_2.7mm"
 		(layer "F.Cu")
 		(uuid "c6a63fef-fb97-40cb-a4a2-c78fe23fc5c4")
-		(at 22 14.5)
+		(at 47 32)
 		(property "Reference" "H2"
 			(at 0 3 0)
 			(unlocked yes)
@@ -1525,7 +1525,7 @@
 	(footprint "rp2350_smt_compact:MountingHole_NPTH_2.7mm"
 		(layer "F.Cu")
 		(uuid "d20827e8-e100-4f98-a7f9-81a555fb4aa8")
-		(at -22 -14.5)
+		(at 3 3)
 		(property "Reference" "H3"
 			(at 0 4 0)
 			(unlocked yes)
@@ -1599,7 +1599,7 @@
 	(footprint "rp2350_smt_compact:SOT23-5_TPS2051"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000020")
-		(at -4 -12.5)
+		(at 21 5)
 		(property "Reference" "U1"
 			(at 0 -2 0)
 			(layer "F.SilkS")
@@ -1622,7 +1622,7 @@
 	(footprint "rp2350_smt_compact:D_SMA_SS14"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000023")
-		(at 4 -12.5)
+		(at 29 5)
 		(property "Reference" "D1"
 			(at 0 -2 0)
 			(layer "F.SilkS")
@@ -1642,7 +1642,7 @@
 	(footprint "rp2350_smt_compact:C_0805"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000026")
-		(at -7 -10)
+		(at 18 7.5)
 		(property "Reference" "C1"
 			(at 0 -1.7 0)
 			(layer "F.SilkS")
@@ -1662,7 +1662,7 @@
 	(footprint "rp2350_smt_compact:C_0603"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000029")
-		(at -3 -10)
+		(at 22 7.5)
 		(property "Reference" "C2"
 			(at 0 -1.5 0)
 			(layer "F.SilkS")
@@ -1682,7 +1682,7 @@
 	(footprint "rp2350_smt_compact:C_0805"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000032")
-		(at 3 -10)
+		(at 28 7.5)
 		(property "Reference" "C3"
 			(at 0 -1.7 0)
 			(layer "F.SilkS")
@@ -1702,7 +1702,7 @@
 	(footprint "rp2350_smt_compact:C_0603"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000035")
-		(at 7 -10)
+		(at 32 7.5)
 		(property "Reference" "C4"
 			(at 0 -1.5 0)
 			(layer "F.SilkS")
@@ -1722,7 +1722,7 @@
 	(footprint "rp2350_smt_compact:Fuse_Bourns_MF-R050_Radial"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000038")
-		(at -9 -3)
+		(at 16 14.5)
 		(property "Reference" "F2"
 			(at 0 -3 0)
 			(layer "F.SilkS")
@@ -1742,7 +1742,7 @@
 	(footprint "rp2350_smt_compact:SOT23-6_USBLC6"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000041")
-		(at -5 2)
+		(at 20 19.5)
 		(property "Reference" "U2"
 			(at 0 -2 0)
 			(layer "F.SilkS")
@@ -1766,7 +1766,7 @@
 	(footprint "rp2350_smt_compact:SOT23-6_USBLC6"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000044")
-		(at 5 2)
+		(at 30 19.5)
 		(property "Reference" "U3"
 			(at 0 -2 0)
 			(layer "F.SilkS")
@@ -1789,8 +1789,8 @@
 	)
 
 	(gr_line
-		(start -25 -17.5)
-		(end 25 -17.5)
+		(start 0 0)
+		(end 50 0)
 		(stroke
 			(width 0.15)
 			(type solid)
@@ -1799,8 +1799,8 @@
 		(uuid "00000000-0000-0000-0000-000000000011")
 	)
 	(gr_line
-		(start -25 17.5)
-		(end -25 -17.5)
+		(start 0 35)
+		(end 0 0)
 		(stroke
 			(width 0.15)
 			(type solid)
@@ -1809,8 +1809,8 @@
 		(uuid "00000000-0000-0000-0000-000000000014")
 	)
 	(gr_line
-		(start 25 -17.5)
-		(end 25 17.5)
+		(start 50 0)
+		(end 50 35)
 		(stroke
 			(width 0.15)
 			(type solid)
@@ -1819,8 +1819,8 @@
 		(uuid "00000000-0000-0000-0000-000000000012")
 	)
 	(gr_line
-		(start 25 17.5)
-		(end -25 17.5)
+		(start 50 35)
+		(end 0 35)
 		(stroke
 			(width 0.15)
 			(type solid)
