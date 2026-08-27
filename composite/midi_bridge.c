@@ -28,7 +28,8 @@ typedef struct {
 } midi_bridge_chunk_t;
 
 static queue_t s_midi_queue;
-static uint8_t s_carry[64];
+static bool s_queue_inited;
+static uint8_t s_carry[MIDI_STREAM_CHUNK_MAX * 2];
 static uint32_t s_carry_len;
 static midi_note_filter_t s_filter;
 static bool s_filter_active;
@@ -41,7 +42,10 @@ static void sync_filter_mode(void) {
 }
 
 void midi_bridge_init(void) {
-    queue_init(&s_midi_queue, sizeof(midi_bridge_chunk_t), MIDI_BRIDGE_QUEUE_DEPTH);
+    if (!s_queue_inited) {
+        queue_init(&s_midi_queue, sizeof(midi_bridge_chunk_t), MIDI_BRIDGE_QUEUE_DEPTH);
+        s_queue_inited = true;
+    }
     s_carry_len = 0;
     midi_note_filter_init(&s_filter);
     s_filter_active = hid_mute_should_filter_mirror();
@@ -91,8 +95,6 @@ void midi_bridge_push(const uint8_t *data, uint32_t len) {
             }
             chunk.len = (uint8_t)frag;
             memcpy(chunk.data, data + offset, frag);
-            // パススルー中も filter 状態は上で更新済み (次の境界で反映するため)
-            (void)filtered; (void)n;
             queue_try_add(&s_midi_queue, &chunk);
             offset += frag;
         }
