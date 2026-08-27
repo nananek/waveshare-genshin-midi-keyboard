@@ -1,0 +1,662 @@
+** Drc report for rp2350_bare.kicad_pcb **
+** Created on 2026-08-27T21:18:34 **
+** Report includes: Errors, Warnings **
+
+** Found 163 DRC violations **
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(99.0500 mm, 71.6500 mm): パッド 11 [GND] - J1 ( F.Cu 上)
+    @(99.0000 mm, 70.0000 mm): PTHパッド 2 [USB_A_DM] (J2)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(89.3000 mm, 80.8000 mm): 配線 [/GPIO0] ( B.Cu 上、長さ: 2.0000 mm )
+    @(88.9500 mm, 80.9500 mm): パッド 3 [GND] - U5 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(86.0000 mm, 84.1000 mm): 配線 [/GPIO0] ( B.Cu 上、長さ: 4.6669 mm )
+    @(88.9500 mm, 80.9500 mm): パッド 3 [GND] - U5 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 16.2082 mm )
+    @(112.0000 mm, 80.9500 mm): パッド 2 [GND] - U6 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 16.2082 mm )
+    @(111.0500 mm, 79.0500 mm): パッド 6 [GND] - U6 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 16.2082 mm )
+    @(101.0000 mm, 70.0000 mm): PTHパッド 3 [USB_A_DP] (J2)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 16.2082 mm )
+    @(102.7250 mm, 71.7000 mm): PTHパッド 7 [GND] (J1)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+    @(102.7250 mm, 71.7000 mm): PTHパッド 7 [GND] (J1)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(84.8000 mm, 70.0000 mm): 配線 [VBUS] ( B.Cu 上、長さ: 11.4080 mm )
+    @(87.0500 mm, 79.0500 mm): パッド 5 [GND] - U5 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.0000 mm, 80.9500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 16.9971 mm )
+    @(88.0000 mm, 80.9500 mm): パッド 2 [VBUS] - U5 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.0000 mm, 80.9500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 16.9971 mm )
+    @(88.9500 mm, 80.9500 mm): パッド 3 [GND] - U5 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.0000 mm, 80.9500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 16.9971 mm )
+    @(101.0000 mm, 70.0000 mm): PTHパッド 3 [USB_A_DP] (J2)
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+    @(97.2750 mm, 73.1000 mm): パッド 10 [GND] - J1 ( F.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 14.2830 mm )
+    @(99.0000 mm, 70.0000 mm): PTHパッド 2 [USB_A_DM] (J2)
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 14.2830 mm )
+    @(97.2750 mm, 71.7000 mm): PTHパッド 10 [GND] (J1)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 14.2830 mm )
+    @(101.0000 mm, 70.0000 mm): PTHパッド 3 [USB_A_DP] (J2)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(99.0000 mm, 70.0000 mm): PTHパッド 2 [USB_A_DM] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(97.2000 mm, 103.4375 mm): ビア [/GPIO12] (F.Cu - B.Cu 上)
+    @(97.6000 mm, 103.4500 mm): パッド 17 [/GPIO13] - U1 ( F.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(101.0000 mm, 70.0000 mm): PTHパッド 3 [USB_A_DP] (J2)
+    @(100.9500 mm, 71.6500 mm): パッド 8 [GND] - J1 ( F.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+    @(97.2000 mm, 103.4500 mm): パッド 16 [/GPIO12] - U1 ( F.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(101.0000 mm, 70.0000 mm): PTHパッド 3 [USB_A_DP] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+    @(98.0000 mm, 103.4500 mm): パッド 18 [/GPIO14] - U1 ( F.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(103.5000 mm, 70.0000 mm): PTHパッド 4 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(84.8000 mm, 70.0000 mm): 配線 [VBUS] ( B.Cu 上、長さ: 17.1092 mm )
+    @(93.4300 mm, 72.7000 mm): PTHパッド 5 [GND] (J2)
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(93.4300 mm, 72.7000 mm): PTHパッド 5 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 23.0500 mm )
+    @(111.0500 mm, 79.0500 mm): パッド 6 [GND] - U6 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが表面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(106.5700 mm, 72.7000 mm): PTHパッド 6 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.0000 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 17.9486 mm )
+    @(111.0500 mm, 79.0500 mm): パッド 6 [GND] - U6 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+    @(102.7250 mm, 71.7000 mm): PTHパッド 7 [GND] (J1)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.0000 mm, 80.9500 mm): パッド 2 [VBUS] - U5 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(88.9500 mm, 79.0500 mm): パッド 4 [USB_A_VBUS] - U5 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 17.7343 mm )
+    @(112.0000 mm, 80.9500 mm): パッド 2 [GND] - U6 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 17.7343 mm )
+    @(111.0500 mm, 79.0500 mm): パッド 6 [GND] - U6 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(111.0500 mm, 80.9500 mm): パッド 1 [USB_A_DP] - U6 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.0000 mm, 80.9500 mm): 配線 [GND] ( B.Cu 上、長さ: 0.9500 mm )
+    @(112.9500 mm, 80.9500 mm): パッド 3 [USB_A_DM] - U6 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.9500 mm, 80.9500 mm): 配線 [GND] ( B.Cu 上、長さ: 1.9000 mm )
+    @(112.9500 mm, 80.9500 mm): パッド 3 [USB_A_DM] - U6 ( B.Cu 上)
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.9500 mm, 80.9500 mm): パッド 3 [USB_A_DM] - U6 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(112.0000 mm, 79.0500 mm): パッド 5 [USB_A_VBUS] - U6 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(105.2000 mm, 84.0000 mm): パッド 1 [/GPIO12] - R11 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(106.8000 mm, 84.0000 mm): パッド 2 [USB_A_DP] - R11 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(105.2000 mm, 88.0000 mm): パッド 1 [/GPIO13] - R12 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(106.8000 mm, 88.0000 mm): パッド 2 [USB_A_DM] - R12 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(83.2000 mm, 70.0000 mm): パッド 1 [VBUS] - F1 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[solder_mask_bridge]: 異なるネットのアイテムが裏面ハンダマスクのアパーチャで接続されている
+    Rule: 基板セットアップのハンダマスクの最小幅; error
+    @(84.8000 mm, 70.0000 mm): パッド 2 [VBUS] - F1 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[starved_thermal]: ゾーンへのサーマルリリーフ接続が不完全 (レイヤー B.Cu; ゾーン 最小スポーク数: 2; 現状 1)
+    Local override; error
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+    @(103.5000 mm, 70.0000 mm): PTHパッド 4 [GND] (J2)
+[starved_thermal]: ゾーンへのサーマルリリーフ接続が不完全 (レイヤー B.Cu; ゾーン 最小スポーク数: 2; 現状 1)
+    Local override; error
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+    @(106.5700 mm, 72.7000 mm): PTHパッド 6 [GND] (J2)
+[starved_thermal]: ゾーンへのサーマルリリーフ接続が不完全 (レイヤー B.Cu; ゾーン 最小スポーク数: 2; 現状 1)
+    Local override; error
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+    @(111.0500 mm, 79.0500 mm): パッド 6 [GND] - U6 ( B.Cu 上)
+[hole_to_hole]: ドリル穴と他の穴が近過ぎる (基板の設定の制約 最小 0.2495 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の制約; error
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+    @(97.2000 mm, 103.4375 mm): ビア [/GPIO12] (F.Cu - B.Cu 上)
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+    @(112.0000 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 17.9486 mm )
+[shorting_items]: ２つのネットを短絡するアイテム (ネット +1V1 と /GPIO12)
+    Local override; error
+    @(100.5000 mm, 94.8000 mm): ビア [+1V1] (F.Cu - B.Cu 上)
+    @(97.2000 mm, 103.4375 mm): 配線 [/GPIO12] ( B.Cu 上、長さ: 21.0194 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(112.0000 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 17.9486 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0000 mm)
+    Local override; error
+    @(94.0000 mm, 82.0000 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[shorting_items]: ２つのネットを短絡するアイテム (ネット GND と USB_A_DM)
+    Local override; error
+    @(112.0000 mm, 80.9500 mm): 配線 [GND] ( B.Cu 上、長さ: 0.9500 mm )
+    @(112.9500 mm, 80.9500 mm): パッド 3 [USB_A_DM] - U6 ( B.Cu 上)
+[shorting_items]: ２つのネットを短絡するアイテム (ネット GND と USB_A_DM)
+    Local override; error
+    @(112.9500 mm, 80.9500 mm): 配線 [GND] ( B.Cu 上、長さ: 1.9000 mm )
+    @(112.9500 mm, 80.9500 mm): パッド 3 [USB_A_DM] - U6 ( B.Cu 上)
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0000 mm)
+    Local override; error
+    @(87.0500 mm, 80.9500 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(94.0000 mm, 82.0000 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(87.0500 mm, 80.9500 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(112.0000 mm, 90.0000 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 9.0997 mm )
+    @(112.0000 mm, 80.9500 mm): 配線 [GND] ( B.Cu 上、長さ: 0.9500 mm )
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 17.7343 mm )
+    @(112.0000 mm, 80.9500 mm): 配線 [GND] ( B.Cu 上、長さ: 0.9500 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(112.0000 mm, 90.0000 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 9.0997 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(107.0000 mm, 90.0000 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 5.0000 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 17.7343 mm )
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(106.8000 mm, 88.0000 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 2.0100 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 17.7343 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(106.8000 mm, 84.0000 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 2.3324 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(84.8000 mm, 70.0000 mm): 配線 [VBUS] ( B.Cu 上、長さ: 17.1092 mm )
+    @(87.0500 mm, 80.9500 mm): 配線 [GND] ( B.Cu 上、長さ: 10.7336 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(108.0000 mm, 82.0000 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 3.2257 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0500 mm)
+    Local override; error
+    @(101.3000 mm, 74.5250 mm): ビア [VBUS] (F.Cu - B.Cu 上)
+    @(100.6500 mm, 74.5250 mm): パッド 2 [/USB_D-] - J1 ( F.Cu 上)
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(84.8000 mm, 70.0000 mm): 配線 [VBUS] ( B.Cu 上、長さ: 17.1092 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(101.3000 mm, 74.5250 mm): ビア [VBUS] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(101.3000 mm, 74.5250 mm): ビア [VBUS] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[shorting_items]: ２つのネットを短絡するアイテム (ネット /GPIO13 と /GPIO12)
+    Local override; error
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+    @(97.2000 mm, 103.4375 mm): ビア [/GPIO12] (F.Cu - B.Cu 上)
+[shorting_items]: ２つのネットを短絡するアイテム (ネット USB_A_DM と USB_A_VBUS)
+    Local override; error
+    @(99.0000 mm, 70.0000 mm): PTHパッド 2 [USB_A_DM] (J2)
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 14.2830 mm )
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(88.0000 mm, 80.9500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 16.9971 mm )
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 14.2830 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0289 mm)
+    Local override; error
+    @(87.0500 mm, 79.0500 mm): 配線 [GND] ( B.Cu 上、長さ: 1.9000 mm )
+    @(84.8000 mm, 70.0000 mm): 配線 [VBUS] ( B.Cu 上、長さ: 11.4080 mm )
+[shorting_items]: ２つのネットを短絡するアイテム (ネット /GPIO13 と /GPIO12)
+    Local override; error
+    @(97.6000 mm, 103.4375 mm): 配線 [/GPIO13] ( B.Cu 上、長さ: 17.2069 mm )
+    @(97.2000 mm, 103.4375 mm): ビア [/GPIO12] (F.Cu - B.Cu 上)
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(97.2000 mm, 103.4375 mm): ビア [/GPIO12] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 17.7343 mm )
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(84.8000 mm, 70.0000 mm): 配線 [VBUS] ( B.Cu 上、長さ: 11.4080 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(97.2000 mm, 103.4375 mm): ビア [/GPIO12] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(112.0000 mm, 80.9500 mm): 配線 [GND] ( B.Cu 上、長さ: 0.9500 mm )
+    @(106.8000 mm, 88.0000 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 9.3555 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(88.0000 mm, 80.9500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 16.9971 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 16.2082 mm )
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(106.8000 mm, 88.0000 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 9.3555 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(106.8000 mm, 84.0000 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 5.2312 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(112.9500 mm, 80.9500 mm): 配線 [USB_A_DM] ( B.Cu 上、長さ: 16.2082 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[shorting_items]: ２つのネットを短絡するアイテム (ネット GND と /GPIO13)
+    Local override; error
+    @(98.8000 mm, 101.2000 mm): PTHパッド 61 [GND] (U1)
+    @(97.6000 mm, 103.4375 mm): 配線 [/GPIO13] ( B.Cu 上、長さ: 17.2069 mm )
+[shorting_items]: ２つのネットを短絡するアイテム (ネット /GPIO12 と GND)
+    Local override; error
+    @(97.2000 mm, 103.4375 mm): 配線 [/GPIO12] ( B.Cu 上、長さ: 21.0194 mm )
+    @(98.8000 mm, 98.8000 mm): PTHパッド 61 [GND] (U1)
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(104.0000 mm, 82.0000 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(108.0000 mm, 78.0000 mm): ゾーン [VBUS] F.Cu 上, 優先度 3
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(97.2000 mm, 103.4375 mm): 配線 [/GPIO12] ( B.Cu 上、長さ: 21.0194 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(97.6000 mm, 103.4375 mm): 配線 [/GPIO13] ( B.Cu 上、長さ: 17.2069 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.2000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(104.0000 mm, 82.0000 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(108.0000 mm, 78.0000 mm): ゾーン [VBUS] F.Cu 上, 優先度 3
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0000 mm)
+    Local override; error
+    @(104.0000 mm, 82.0000 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(104.0000 mm, 82.0000 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0000 mm)
+    Local override; error
+    @(112.9500 mm, 79.0500 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(112.9500 mm, 79.0500 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0648 mm)
+    Local override; error
+    @(97.2000 mm, 103.8000 mm): 配線 [/GPIO12] ( F.Cu 上、長さ: 0.8485 mm )
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+[shorting_items]: ２つのネットを短絡するアイテム (ネット /GPIO13 と +1V1)
+    Local override; error
+    @(97.6000 mm, 103.4375 mm): 配線 [/GPIO13] ( B.Cu 上、長さ: 17.2069 mm )
+    @(100.4878 mm, 97.8505 mm): 配線 [+1V1] ( B.Cu 上、長さ: 0.0173 mm )
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(100.5000 mm, 97.8383 mm): 配線 [+1V1] ( B.Cu 上、長さ: 3.6383 mm )
+    @(97.6000 mm, 103.4375 mm): 配線 [/GPIO13] ( B.Cu 上、長さ: 17.2069 mm )
+[shorting_items]: ２つのネットを短絡するアイテム (ネット /GPIO13 と /GPIO12)
+    Local override; error
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+    @(97.2000 mm, 103.4375 mm): 配線 [/GPIO12] ( B.Cu 上、長さ: 21.0194 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0642 mm)
+    Local override; error
+    @(100.5000 mm, 94.2000 mm): ビア [+1V1] (F.Cu - B.Cu 上)
+    @(97.2000 mm, 103.4375 mm): 配線 [/GPIO12] ( B.Cu 上、長さ: 21.0194 mm )
+[shorting_items]: ２つのネットを短絡するアイテム (ネット +1V1 と /GPIO13)
+    Local override; error
+    @(100.4878 mm, 97.8505 mm): ビア [+1V1] (F.Cu - B.Cu 上)
+    @(97.6000 mm, 103.4375 mm): 配線 [/GPIO13] ( B.Cu 上、長さ: 17.2069 mm )
+[shorting_items]: ２つのネットを短絡するアイテム (ネット /GPIO0 と GND)
+    Local override; error
+    @(86.0000 mm, 84.1000 mm): 配線 [/GPIO0] ( B.Cu 上、長さ: 4.6669 mm )
+    @(88.9500 mm, 80.9500 mm): パッド 3 [GND] - U5 ( B.Cu 上)
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 23.0500 mm )
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 23.0500 mm )
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0500 mm)
+    Local override; error
+    @(101.3000 mm, 74.5250 mm): ビア [VBUS] (F.Cu - B.Cu 上)
+    @(100.6500 mm, 74.5250 mm): 配線 [/USB_D-] ( F.Cu 上、長さ: 1.8500 mm )
+[shorting_items]: ２つのネットを短絡するアイテム (ネット GND と USB_A_VBUS)
+    Local override; error
+    @(110.0000 mm, 78.0000 mm): ビア [GND] (F.Cu - B.Cu 上)
+    @(112.0000 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 17.9486 mm )
+[tracks_crossing]: Tracks crossing
+    Local override; error
+    @(95.4000 mm, 73.3000 mm): 配線 [+3V3] ( B.Cu 上、長さ: 9.2000 mm )
+    @(112.0000 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 17.9486 mm )
+[shorting_items]: ２つのネットを短絡するアイテム (ネット +3V3 と USB_A_VBUS)
+    Local override; error
+    @(95.4000 mm, 73.3000 mm): ビア [+3V3] (F.Cu - B.Cu 上)
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 14.2830 mm )
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0208 mm)
+    Local override; error
+    @(111.0500 mm, 80.9500 mm): 配線 [USB_A_DP] ( B.Cu 上、長さ: 14.8629 mm )
+    @(104.6000 mm, 73.3000 mm): ビア [+3V3] (F.Cu - B.Cu 上)
+[shorting_items]: ２つのネットを短絡するアイテム (ネット /GPIO0 と GND)
+    Local override; error
+    @(89.3000 mm, 80.8000 mm): 配線 [/GPIO0] ( B.Cu 上、長さ: 2.0000 mm )
+    @(88.9500 mm, 80.9500 mm): パッド 3 [GND] - U5 ( B.Cu 上)
+[shorting_items]: ２つのネットを短絡するアイテム (ネット GND と USB_A_DP)
+    Local override; error
+    @(100.9500 mm, 71.6500 mm): パッド 8 [GND] - J1 ( F.Cu 上)
+    @(101.0000 mm, 70.0000 mm): PTHパッド 3 [USB_A_DP] (J2)
+[shorting_items]: ２つのネットを短絡するアイテム (ネット GND と USB_A_VBUS)
+    Local override; error
+    @(97.2750 mm, 73.1000 mm): パッド 10 [GND] - J1 ( F.Cu 上)
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.1066 mm)
+    Local override; error
+    @(97.2750 mm, 71.7000 mm): PTHパッド 10 [GND] (J1)
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.1066 mm)
+    Local override; error
+    @(97.2750 mm, 71.7000 mm): PTHパッド 10 [GND] (J1)
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+[shorting_items]: ２つのネットを短絡するアイテム (ネット GND と USB_A_DM)
+    Local override; error
+    @(99.0500 mm, 71.6500 mm): パッド 11 [GND] - J1 ( F.Cu 上)
+    @(99.0000 mm, 70.0000 mm): PTHパッド 2 [USB_A_DM] (J2)
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(83.2000 mm, 70.0000 mm): パッド 1 [VBUS] - F1 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(105.2000 mm, 84.0000 mm): パッド 1 [/GPIO12] - R11 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(84.8000 mm, 70.0000 mm): パッド 2 [VBUS] - F1 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(111.0500 mm, 80.9500 mm): パッド 1 [USB_A_DP] - U6 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(106.8000 mm, 84.0000 mm): パッド 2 [USB_A_DP] - R11 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0000 mm)
+    Local override; error
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(88.0000 mm, 80.9500 mm): パッド 2 [VBUS] - U5 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(112.9500 mm, 80.9500 mm): パッド 3 [USB_A_DM] - U6 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(88.9500 mm, 79.0500 mm): パッド 4 [USB_A_VBUS] - U5 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(112.0000 mm, 79.0500 mm): パッド 5 [USB_A_VBUS] - U6 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0400 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(105.2000 mm, 88.0000 mm): パッド 1 [/GPIO13] - R12 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(106.8000 mm, 88.0000 mm): パッド 2 [USB_A_DM] - R12 ( B.Cu 上)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0400 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(96.5000 mm, 70.0000 mm): PTHパッド 1 [USB_A_VBUS] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(99.0000 mm, 70.0000 mm): PTHパッド 2 [USB_A_DM] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0850 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(97.2000 mm, 103.4500 mm): パッド 16 [/GPIO12] - U1 ( F.Cu 上)
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0850 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(97.6000 mm, 103.4500 mm): パッド 17 [/GPIO13] - U1 ( F.Cu 上)
+    @(97.2000 mm, 103.4375 mm): ビア [/GPIO12] (F.Cu - B.Cu 上)
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0850 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(98.0000 mm, 103.4500 mm): パッド 18 [/GPIO14] - U1 ( F.Cu 上)
+    @(97.6000 mm, 103.4375 mm): ビア [/GPIO13] (F.Cu - B.Cu 上)
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0400 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(99.0000 mm, 70.0000 mm): PTHパッド 2 [USB_A_DM] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 (ゾーン クリアランス 0.2000 mm; 現状 0.0000 mm)
+    Local override; error
+    @(101.0000 mm, 70.0000 mm): PTHパッド 3 [USB_A_DP] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0400 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(101.0000 mm, 70.0000 mm): PTHパッド 3 [USB_A_DP] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [GND] B.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0000 mm)
+    Local override; error
+    @(103.5000 mm, 70.0000 mm): PTHパッド 4 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0400 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(103.5000 mm, 70.0000 mm): PTHパッド 4 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0000 mm)
+    Local override; error
+    @(93.4300 mm, 72.7000 mm): PTHパッド 5 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(93.4300 mm, 72.7000 mm): PTHパッド 5 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[clearance]: クリアランス違反 ( クリアランス 0.1500 mm; 現状 0.0000 mm)
+    Local override; error
+    @(106.5700 mm, 72.7000 mm): PTHパッド 6 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[hole_clearance]: 穴のクリアランス違反 (基板の設定の穴の制約 クリアランス 0.2500 mm; 現状 0.0000 mm)
+    Rule: 基板の設定の穴の制約; error
+    @(106.5700 mm, 72.7000 mm): PTHパッド 6 [GND] (J2)
+    @(125.5000 mm, 120.5000 mm): ゾーン [+3V3] F.Cu 上, 優先度 0
+[items_not_allowed]: Items not allowed
+    Local override; error
+    @(84.8000 mm, 70.0000 mm): 配線 [VBUS] ( B.Cu 上、長さ: 11.4080 mm )
+[items_not_allowed]: Items not allowed
+    Local override; error
+    @(112.9500 mm, 79.0500 mm): 配線 [GND] ( B.Cu 上、長さ: 10.7336 mm )
+[nonmirrored_text_on_back_layer]: Non-Mirrored text on back layer
+    Local override; warning
+    @(100.0000 mm, 63.0000 mm): J2のリファレンスフィールド
+[nonmirrored_text_on_back_layer]: Non-Mirrored text on back layer
+    Local override; warning
+    @(88.0000 mm, 77.8000 mm): U5のリファレンスフィールド
+[nonmirrored_text_on_back_layer]: Non-Mirrored text on back layer
+    Local override; warning
+    @(112.0000 mm, 77.8000 mm): U6のリファレンスフィールド
+[nonmirrored_text_on_back_layer]: Non-Mirrored text on back layer
+    Local override; warning
+    @(106.0000 mm, 82.8000 mm): R11のリファレンスフィールド
+[nonmirrored_text_on_back_layer]: Non-Mirrored text on back layer
+    Local override; warning
+    @(106.0000 mm, 86.8000 mm): R12のリファレンスフィールド
+[nonmirrored_text_on_back_layer]: Non-Mirrored text on back layer
+    Local override; warning
+    @(84.0000 mm, 68.8000 mm): F1のリファレンスフィールド
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(93.5000 mm, 74.3000 mm): SW1のリファレンスフィールド
+    @(93.4300 mm, 72.7000 mm): PTHパッド 5 [GND] (J2)
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: 基板の設定のシルクスクリーンの制約; warning
+    @(73.0000 mm, 66.0000 mm): セグメント (Edge.Cuts 上)
+    @(91.8500 mm, 64.0000 mm): 矩形 of J2 、B.Silkscreen 上
+[track_dangling]: Track has unconnected end
+    Local override; warning
+    @(88.9500 mm, 79.0500 mm): 配線 [USB_A_VBUS] ( B.Cu 上、長さ: 14.2830 mm )
+[track_dangling]: Track has unconnected end
+    Local override; warning
+    @(112.9500 mm, 79.0500 mm): 配線 [GND] ( B.Cu 上、長さ: 10.7336 mm )
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** Ignored checks **
+    - Footprint has no courtyard defined
+    - Track endpoint not centered on via
+    - Tuning profile track geometries
+    - Footprint doesn't match symbol's footprint filters
+    - PTH inside courtyard
+    - NPTH inside courtyard
+    - Footprint component type doesn't match footprint pads
+
+** End of Report **

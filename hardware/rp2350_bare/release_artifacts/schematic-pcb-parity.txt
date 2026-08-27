@@ -1,0 +1,11 @@
+RP2350 bare cleanup parity check (KiCad 10.0.5, 2026-08-27)
+
+PCB parse: PASS (pcb drc parser completed)
+Schematic parse/netlist export: PASS (annotation warning retained by source)
+PCB references: 49 total, 49 unique
+Host schematic instances: J2, U5, U6 (corrected from stale U3/U4 instance refs)
+Host PCB implementation: J2, U5, U6, R11, R12, F1
+Parity status: PARTIAL / REVIEW REQUIRED
+Reason: the supplied schematic has no R11/R12/F1 symbols; these footprints are
+explicitly documented implementation additions. Official RP2350/Flash/power/
+USB-C references and board wiring were not altered.

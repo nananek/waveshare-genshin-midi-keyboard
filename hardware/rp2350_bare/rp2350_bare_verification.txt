@@ -1,0 +1,16 @@
+RP2350 bare peripheral implementation verification
+Date: 2026-08-27
+
+Changed KiCad source files:
+- rp2350_bare.kicad_sch: BareHost USB-A host, TPS2051B 500mA switch, USBLC6-2SC6 ESD symbols/instances, host net labels and implementation notes.
+- rp2350_bare.kicad_pcb: USB-A J2 footprint, TPS2051B, USBLC6-2SC6, 22R series footprints, UART/control header J6, PTC and status LED footprints, routed copper, B.Cu GND zone.
+
+Checks:
+- Schematic parse/netlist export: PASS (KiCad CLI; annotation warning remains from imported official design).
+- PCB parse: PASS (KiCad CLI 10.0.5 DRC parser completed).
+- PCB DRC: 163 violations, 0 unconnected items (previous measured state: 208 violations, 24 unconnected items). The remaining violations are legacy official-layout clearance/silkscreen checks plus the intentionally conservative B.Cu host routing; no unconnected pads remain.
+- References: PASS, all 49 PCB references are unique. Host additions use J2, U5, U6, R11, R12, F1; official U1-U3 and R1-R10 are preserved.
+- Host connectivity: GP12 -> R11 22R -> USB_A_DP -> U6 IO1 -> J2 pin 3; GP13 -> R12 22R -> USB_A_DM -> U6 IO2 -> J2 pin 2; VBUS -> F1 -> U5 IN, U5 OUT -> USB_A_VBUS -> U6 VCC/J2 pin 1; U5 enable/ILIM and U6 grounds are GND. GND stitching vias are present.
+- Schematic netlist export: PASS with existing annotation warning; host symbol instances corrected to U5/U6. Full GUI parity is not available in CLI-only mode because R11/R12/F1 are PCB implementation footprints without corresponding schematic symbols in the supplied source.
+
+This report is intentionally explicit that further layout cleanup is required before fabrication.
