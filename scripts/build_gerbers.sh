@@ -45,30 +45,54 @@ kicad-cli sch export pdf --output "$SCHEMATIC_PDF" --no-background-color "$SCH"
 kicad-cli pcb export pdf --output "$PCB_PDF" --mode-single \
     --layers F.Cu,B.Cu,F.Silkscreen,B.Silkscreen,Edge.Cuts "$PCB"
 
+# The pinned KiCad image does not include a PDF parser.  Check the required
+# PDF header and trailer so a truncated or wrong-format drawing cannot ship.
+for pdf in "$SCHEMATIC_PDF" "$PCB_PDF"
+do
+    test -s "$pdf"
+    head -c 5 "$pdf" | grep -qx '%PDF-'
+    tail -c 1024 "$pdf" | grep -aq '%%EOF'
+done
+
 # KiCad writes the .gbrjob alongside the Gerbers.  Archive every generated
 # Gerber/job file plus the Excellon drill file, but not diagnostic reports.
-(
-    cd "$GERBERS"
-    zip -q "$ZIP" "${BOARD_NAME}"*.g* "${BOARD_NAME}".drl
-)
+# The pinned KiCad image has Python but not zip/unzip; use Python's standard
+# library to keep the image reference reproducible without extra packages.
+python3 - "$ZIP" "$GERBERS" "$BOARD_NAME" <<'PY'
+from pathlib import Path
+import sys
+import zipfile
+
+archive, directory = map(Path, sys.argv[1:3])
+board_name = sys.argv[3]
+files = sorted(directory.glob(f"{board_name}*.g*")) + [directory / f"{board_name}.drl"]
+if not all(path.is_file() for path in files):
+    raise SystemExit("missing Gerber, job, or Excellon drill output")
+with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
+    for path in files:
+        output.write(path, path.name)
+PY
 
 # Catch accidental KiCad configuration changes that would produce an unusable
 # manufacturing archive before publishing an artifact.
-for file in \
-    "${BOARD_NAME}-F_Cu.gtl" \
-    "${BOARD_NAME}-B_Cu.gbl" \
-    "${BOARD_NAME}-F_Paste.gtp" \
-    "${BOARD_NAME}-B_Paste.gbp" \
-    "${BOARD_NAME}-F_Silkscreen.gto" \
-    "${BOARD_NAME}-B_Silkscreen.gbo" \
-    "${BOARD_NAME}-F_Mask.gts" \
-    "${BOARD_NAME}-B_Mask.gbs" \
-    "${BOARD_NAME}-Edge_Cuts.gm1" \
-    "${BOARD_NAME}.drl" \
-    "${BOARD_NAME}-job.gbrjob"
-do
-    unzip -Z1 "$ZIP" | grep -qx "$file"
-done
+python3 - "$ZIP" "$BOARD_NAME" <<'PY'
+import sys
+import zipfile
+
+archive, board_name = sys.argv[1:]
+expected = {
+    f"{board_name}-F_Cu.gtl", f"{board_name}-B_Cu.gbl",
+    f"{board_name}-F_Paste.gtp", f"{board_name}-B_Paste.gbp",
+    f"{board_name}-F_Silkscreen.gto", f"{board_name}-B_Silkscreen.gbo",
+    f"{board_name}-F_Mask.gts", f"{board_name}-B_Mask.gbs",
+    f"{board_name}-Edge_Cuts.gm1", f"{board_name}.drl",
+    f"{board_name}-job.gbrjob",
+}
+with zipfile.ZipFile(archive) as contents:
+    actual = set(contents.namelist())
+if actual != expected:
+    raise SystemExit(f"unexpected manufacturing archive contents: {sorted(actual)}")
+PY
 
 (cd "$OUT" && sha256sum \
     "$(basename "$ZIP")" "$(basename "$DRC")" \

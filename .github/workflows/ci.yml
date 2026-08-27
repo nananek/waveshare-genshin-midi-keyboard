@@ -48,10 +48,12 @@ jobs:
         with:
           persist-credentials: false
       - name: DRC と Gerber を生成
+        # KiCad 10.0.5 manifest-list digest, verified 2026-08-27.
         run: >-
           docker run --rm
+          --user "$(id -u):$(id -g)"
           --volume "$PWD:/work" --workdir /work
-          ghcr.io/kicad/kicad:10.0.5
+          ghcr.io/kicad/kicad@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de
           ./scripts/build_gerbers.sh
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
