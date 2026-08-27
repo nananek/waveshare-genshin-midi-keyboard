@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "rp2350_smt_compact")(type "KiCad")(uri "${KIPRJMOD}/rp2350_smt_compact.pretty")(options "")(descr "Local hand-made footprints for RP2350-SMT compact 1-board (Zero castellated, SOT23-5/6, SMA, 0603/0805, SMD switches)"))
+)

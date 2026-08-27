@@ -1,0 +1,14 @@
+Reference,Qty,Value,Footprint,LCSC/JLC型番,JLC在庫,備考
+J1/J3,2,RP2350-Zero SMT Castellated 23pin,rp2350_smt_compact:RP2350_Zero_SMT_23p_Castellated,Customer Supplied (Waveshare RP2350-Zero),要持ち込み,半穴SMT直付け。USB-C/BOOT側を基板外側（J1=+Y、J3=-Y回転180）へ向ける。JLCではCastellated Holes指定
+J2,1,USB-A Host Neltron 5075AR-04-WH,rp2350_smt_compact:USB_A_Neltron_5075AR-04-WH,C404729 / 通販100160,Basicではないが在庫あり,SMT部品以外はTHT手ハンダ。シェルGNDは基板でGNDベタへ。D+/D-は22Ω直列＋ESD経由
+R1/R2,2,22Ω 0603 5% 1/10W,rp2350_smt_compact:R_0603,C25804,C25804=10k×¥30,Basic,USB FS D+/D-直列 90Ω整合用。GP12→R1→USB DP、GP13→R2→USB DM。差動90Ωで5mm以内長合わせ
+F1/F2,2,Bourns MF-R050 PTC 0.5A 30V radial,rp2350_smt_compact:Fuse_Bourns_MF-R050_Radial,C2680178,C2680178=Extended相当,THTだが小型。F1=J1 5V→U1 IN、F2=J3 5V→D1。過電流保護。手ハンダ可
+U1,1,TPS2051BDBVR SOT23-5 ロードスイッチ 500mA EN active-low,rp2350_smt_compact:SOT23-5_TPS2051,C51187,Basic,IN=VBUS_5V(F1後)、OUT=VBUS_USB_A_SW(J2 VBUS)、EN=GNDに10kプルダウンで常時ON（MCU制御したい場合はGP22へ）。70mΩ、過電流/逆流保護。SOT23-5手ハンダ可。JLC Basic
+D1,1,SS14 SMA Schottky 1A 40V,rp2350_smt_compact:D_SMA_SS14,C57595,Basic,理想ダイオード代替。アノード=外部VBUS側? 本設計ではカソードを基板5V側へ向け外部→基板逆流をブロック。Vf 0.35V@1A。SMA手ハンダ容易
+U2/U3,2,USBLC6-2SC6 SOT23-6 ESD保護,rp2350_smt_compact:SOT23-6_USBLC6,C7516,Basic,U2=USB-A用(D+/D-/VBUS/GND)、U3=将来USB-C用(Zero内蔵Type-CのD+/D-予備)。手ハンダ可。ST製
+C1/C3,2,10uF 10V 0805 X5R VBUSバルク,rp2350_smt_compact:C_0805,C49678,Basic,U1入出力およびD1近傍のホットプラグ突入対策。VBUS-GND間に配置
+C2/C4,2,0.1uF 50V 0603 X7R,rp2350_smt_compact:C_0603,C14663,Basic,VBUS高周波デカップリング。C1/C3と並列でUSBコネクタ直近に
+SW1-5,5,SS-12D00G3 SMD SPDT スライドスイッチ,rp2350_smt_compact:SW_Slide_SS-12D00_SMD,C318884,Basic,SW1=GP28 Mute、SW2=GP29 Lyre、SW3=GP27予備、SW4=VBUS手動遮断、SW5=J3 GP29 Sustain。3pinの中央COM=GPIO、片側=GND、NC開放。手ハンダ可
+SW6,1,PTS645 SMD タクト 6x6mm,rp2350_smt_compact:SW_Tact_PTS645_SMD,C72043,Basic,J3 GP28 Reset。4pinの1/2=GND束ね、3/4=GP28束ね。手ハンダ可
+H1-H4,4,M2.5/2.7mm NPTH 取付穴,rp2350_smt_compact:MountingHole_NPTH_2.7mm,—,—,M2.5ネジ用 2.7mm穴。四隅 44x29mm間隔
+TP1,1,TestPoint 1x5 P2.54 (UART0/GND),rp2350_smt_compact:TestPoint_UART0_1x5_P2.54mm,—,—,GND/GP0/GP1/J3_GP0/J3_GP1。Pogo対応
