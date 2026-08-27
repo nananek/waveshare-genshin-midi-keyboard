@@ -46,11 +46,24 @@ if not all(path.is_file() for path in files):
 with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
     for path in files:
         output.write(path, path.name)
+
+expected = {
+    f"{board.name}-F_Cu.gtl", f"{board.name}-B_Cu.gbl",
+    f"{board.name}-F_Paste.gtp", f"{board.name}-B_Paste.gbp",
+    f"{board.name}-F_Silkscreen.gto", f"{board.name}-B_Silkscreen.gbo",
+    f"{board.name}-F_Mask.gts", f"{board.name}-B_Mask.gbs",
+    f"{board.name}-Edge_Cuts.gm1", f"{board.name}.drl",
+    f"{board.name}-job.gbrjob",
+}
+with zipfile.ZipFile(archive) as contents:
+    actual = set(contents.namelist())
+if actual != expected:
+    raise SystemExit(f"unexpected manufacturing archive contents: {sorted(actual)}")
 PY
 
 (cd "$OUT" && sha256sum \
   "${BOARD}_gerbers_JLCPCB.zip" "${BOARD}-drc.rpt" \
-  "${BOARD}-schematic.pdf" "${BOARD}-layout.pdf") > SHA256SUMS.txt
+  "${BOARD}-schematic.pdf" "${BOARD}-layout.pdf") > "$OUT/SHA256SUMS.txt"
 echo "== release hardware artifacts: $BOARD"
 ls -l "$OUT/${BOARD}_gerbers_JLCPCB.zip" "$OUT/${BOARD}-drc.rpt" \
   "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" "$OUT/SHA256SUMS.txt"
