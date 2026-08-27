@@ -86,7 +86,7 @@
 		(footprint "rp2350_smt_compact:RP2350_Zero_SMT_23p_Castellated"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000001")
-		(at 0 8)
+		(at 0 6)
 		(property "Reference" "J1"
 			(at 0 -3 0)
 			(unlocked yes)
@@ -99,7 +99,7 @@
 				)
 			)
 		)
-		(property "Value" "RP2350_Zero_Header_23p"
+		(property "Value" "RP2350_Zero_SMT_Castellated"
 			(at 0 3 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -893,7 +893,7 @@
 		(footprint "rp2350_smt_compact:RP2350_Zero_SMT_23p_Castellated"
 		(layer "F.Cu")
 		(uuid "00000000-0000-0000-0000-000000000010")
-		(at 0 -8 180)
+		(at 0 -6 180)
 		(property "Reference" "J3"
 			(at 0 -3 0)
 			(unlocked yes)
@@ -906,7 +906,7 @@
 				)
 			)
 		)
-		(property "Value" "RP2350_Zero_Header_23p"
+		(property "Value" "RP2350_Zero_SMT_Castellated"
 			(at 0 3 0)
 			(unlocked yes)
 			(layer "F.Fab")
