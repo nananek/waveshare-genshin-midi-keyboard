@@ -42,7 +42,7 @@ kicad-cli pcb export drill --output "$GERBERS" --format excellon \
 
 # Include the requested schematic and board-layout drawings as review assets.
 kicad-cli sch export pdf --output "$SCHEMATIC_PDF" --no-background-color "$SCH"
-kicad-cli pcb export pdf --output "$PCB_PDF" --mode-single \
+kicad-cli pcb export pdf --output "$PCB_PDF" --mode-multipage \
     --layers F.Cu,B.Cu,F.Silkscreen,B.Silkscreen,Edge.Cuts "$PCB"
 
 # The pinned KiCad image does not include a PDF parser.  Check the required
