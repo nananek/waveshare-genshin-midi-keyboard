@@ -90,13 +90,14 @@
 		(property "Reference" "J1"
 			(at 0 -3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "b1889652-ec83-4a72-a352-87902ac715f3")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "RP2350_Zero_Header_23p"
@@ -142,7 +143,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "355a7952-b6b8-417e-8761-30532ef53f52")
 		)
 		(fp_line
@@ -152,7 +153,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "0ef5c681-8fb8-442d-b232-dca3a9d9df68")
 		)
 		(fp_line
@@ -162,7 +163,7 @@
 				(width 0.3)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "9ef00b3c-61a5-4918-a5fe-4f729aa58fca")
 		)
 		(fp_line
@@ -172,7 +173,7 @@
 				(width 0.3)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "58ef613f-1cfa-4b9e-a0ab-38fb2199738e")
 		)
 		(fp_line
@@ -182,7 +183,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "1cd05bf6-a844-4039-9dec-a767bf16d7c0")
 		)
 		(fp_line
@@ -192,7 +193,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "560597d0-6bb6-4140-a1c1-5b32eea1aa7c")
 		)
 		(fp_poly
@@ -204,29 +205,31 @@
 				(type solid)
 			)
 			(fill yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "07b68797-80f3-488c-b2bd-c7f58e1c22fb")
 		)
 		(fp_text user "1=5V"
 			(at -4.7 12.7 0)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "853b2eb5-7b5c-4e90-9d7a-0a3dbd19233b")
 			(effects
 				(font
 					(size 0.9 0.9)
 					(thickness 0.13)
 				)
+				(justify mirror)
 			)
 		)
 		(fp_text user "USB-C / BOOT"
 			(at 0 16.1 0)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "4e47c3b8-34c5-41c1-98a3-a4fd1016aff3")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(pad "1" thru_hole circle
@@ -433,13 +436,14 @@
 		(property "Reference" "R1"
 			(at 0 -3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "1b453ca9-e178-4bcb-9e0e-5b22310ea24c")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "R_Axial_THT_P10.16mm"
@@ -485,7 +489,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "64c1d4a9-aa71-4ff0-9ba6-8af4bb55820b")
 		)
 		(fp_line
@@ -495,7 +499,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "0d0a884c-ded8-4865-8bea-2f7e31ea9503")
 		)
 		(fp_line
@@ -505,7 +509,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "6849eede-153d-4333-aac1-555bc1f4ff29")
 		)
 		(fp_line
@@ -515,7 +519,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "6434113a-7672-4a24-be88-227dc068c3bb")
 		)
 		(pad "1" thru_hole circle
@@ -543,16 +547,15 @@
 		(uuid "00000000-0000-0000-0000-000000000003")
 		(at 12.7 -17.78)
 		(property "Reference" "R2"
-			(at 0 -3 0)
+			(at 0 -3.5 0)
 			(unlocked yes)
-			(layer "B.SilkS")
+			(layer "F.SilkS")
 			(uuid "52e1c37a-1ada-41b8-9cde-00c7f926962b")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
-				(justify mirror)
 			)
 		)
 		(property "Value" "R_Axial_THT_P10.16mm_notopsilk"
@@ -615,14 +618,15 @@
 			(uuid "15776ea8-926d-4f45-9b0e-34912c4bcfad")
 		)
 		(fp_text user "MOUNT BOTTOM"
-			(at 1.5 4 0)
-			(layer "F.SilkS")
+			(at 1.5 2.5 0)
+			(layer "B.SilkS")
 			(uuid "4b1a3ddd-b4c8-4b2a-b3e0-cd46a7aa51cd")
 			(effects
 				(font
 					(size 0.8 0.8)
 					(thickness 0.12)
 				)
+				(justify mirror)
 			)
 		)
 		(pad "1" thru_hole circle
@@ -652,13 +656,14 @@
 		(property "Reference" "F1"
 			(at 0 -3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "fff49848-d4ef-487e-aa0f-8e5eaf55527a")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "Fuse_Bourns_MF-R050_Radial"
@@ -704,7 +709,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "0ba10729-e768-4e8e-97f0-e07194bec7c3")
 		)
 		(fp_line
@@ -714,7 +719,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "040d1677-9579-451f-b11d-747c5e4c9a71")
 		)
 		(fp_line
@@ -724,7 +729,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "4e8dc13f-b771-4a1d-a844-ce8da6f10934")
 		)
 		(fp_line
@@ -734,7 +739,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "478faa5c-06c6-43fd-bde4-c71403a4b34b")
 		)
 		(pad "1" thru_hole circle
@@ -764,13 +769,14 @@
 		(property "Reference" "J2"
 			(at 0 -3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "a22a4d85-ed83-4d1a-aac1-8cf287368243")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "USB_A_Neltron_5075AR-04-WH"
@@ -816,7 +822,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "a12a8511-d255-4e4a-8786-935c6db822eb")
 		)
 		(fp_line
@@ -826,7 +832,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "a7832d00-9c1b-43f6-90f9-fda6a8b5fa3e")
 		)
 		(fp_line
@@ -836,7 +842,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "f8d39691-35f8-4c47-9da1-8fa5d1552aef")
 		)
 		(fp_line
@@ -846,7 +852,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "6bd08baf-c6fa-479f-aece-126ca2e96f4d")
 		)
 		(pad "1" thru_hole circle
@@ -912,13 +918,14 @@
 		(property "Reference" "SW1"
 			(at 0 -4 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "eebf96f6-a673-402d-8832-6e7cf3e86076")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "SW_SPDT_NKK_115643_Slide"
@@ -964,7 +971,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "3f0e7dbd-fa94-4677-a224-22e66b12f18a")
 		)
 		(fp_line
@@ -974,7 +981,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "87d09788-d706-425a-bd1f-cceac846d9e7")
 		)
 		(fp_line
@@ -984,7 +991,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "29ab20f0-a7a4-4145-bc02-50f69d946541")
 		)
 		(fp_line
@@ -994,7 +1001,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "58b50f96-922f-40e6-aebc-aee4c2b92392")
 		)
 		(pad "1" thru_hole rect
@@ -1032,13 +1039,14 @@
 		(property "Reference" "SW2"
 			(at 0 -4 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "e9343f26-2c21-43f7-8d58-25332d29608e")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "SW_SPDT_NKK_115643_Slide"
@@ -1084,7 +1092,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "8cedb42c-a7cd-40e4-a612-5628d4a492ca")
 		)
 		(fp_line
@@ -1094,7 +1102,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "e64acecb-f7c9-4887-a056-8ed2306de24f")
 		)
 		(fp_line
@@ -1104,7 +1112,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "3f131370-ee22-429f-808b-c2a04d50d2b3")
 		)
 		(fp_line
@@ -1114,7 +1122,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "82272c17-af9f-464b-a3c3-4d0e7ab3a03f")
 		)
 		(pad "1" thru_hole rect
@@ -1152,13 +1160,14 @@
 		(property "Reference" "SW3"
 			(at 0 -4 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "8642afff-4aba-4946-8f19-419ad9a55da3")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "SW_SPDT_NKK_115643_Slide"
@@ -1204,7 +1213,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "1d478f8a-54ce-4a72-b82a-aa6b608e6581")
 		)
 		(fp_line
@@ -1214,7 +1223,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "614fc7b5-4df9-4dc1-9059-73a68710c808")
 		)
 		(fp_line
@@ -1224,7 +1233,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "bbc6e71e-a1d1-4d11-aae7-f14ff14e393f")
 		)
 		(fp_line
@@ -1234,7 +1243,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "a052374e-6eb8-4b70-896a-67533d96c81b")
 		)
 		(pad "1" thru_hole rect
@@ -1272,13 +1281,14 @@
 		(property "Reference" "SW4"
 			(at 0 -4 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "ef5dd790-6d52-4eca-91e1-65540ebd1468")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "SW_SPDT_NKK_115643_Slide"
@@ -1324,7 +1334,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "d21fa21d-d4cd-4e0d-9704-a3d9e80640c1")
 		)
 		(fp_line
@@ -1334,7 +1344,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "aac0b688-b462-44f9-9bbd-ffe851d93519")
 		)
 		(fp_line
@@ -1344,7 +1354,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "c58d2827-36a6-41e6-b10e-6e29d03fbf70")
 		)
 		(fp_line
@@ -1354,7 +1364,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "f084cb58-2aa9-4bbc-807f-ac329c81c44f")
 		)
 		(pad "1" thru_hole rect
@@ -1392,13 +1402,14 @@
 		(property "Reference" "J3"
 			(at 0 -3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "a81650eb-246e-450f-afd5-35c4e9a25830")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "RP2350_Zero_Header_23p"
@@ -1444,7 +1455,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "8adb62df-a407-43d3-9e16-21d3b7302e0a")
 		)
 		(fp_line
@@ -1454,7 +1465,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "ce82a856-36ed-4cd6-bfc3-3f711673c7a3")
 		)
 		(fp_line
@@ -1464,7 +1475,7 @@
 				(width 0.3)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "41bfa29d-7bc4-46d6-92da-e63835d1e12b")
 		)
 		(fp_line
@@ -1474,7 +1485,7 @@
 				(width 0.3)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "8d5e21b3-aad3-4e92-8d90-67674e61760b")
 		)
 		(fp_line
@@ -1484,7 +1495,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "04ab5c87-8727-4a4b-8d83-29b8f88faa84")
 		)
 		(fp_line
@@ -1494,7 +1505,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "a9c7d39f-c390-40d1-b9c1-1b9efda2f56f")
 		)
 		(fp_poly
@@ -1506,29 +1517,31 @@
 				(type solid)
 			)
 			(fill yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "4c1c9c1d-8d0e-4a72-a3ba-e4b1f6f9c001")
 		)
 		(fp_text user "1=5V"
 			(at -4.7 12.7 0)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "2e21d64b-47ec-427d-9285-899ea87649c6")
 			(effects
 				(font
 					(size 0.9 0.9)
 					(thickness 0.13)
 				)
+				(justify mirror)
 			)
 		)
 		(fp_text user "USB-C / BOOT"
 			(at 0 16.1 0)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "a2a24e88-d2c5-4fd5-984a-56bdf07a4f5b")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(pad "1" thru_hole circle
@@ -1731,13 +1744,14 @@
 		(property "Reference" "SW6"
 			(at 0 -4.6 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "2fde5fdf-1011-4451-89c2-edfff426e428")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "SW_TACT_Akizuki_DTS63"
@@ -1783,7 +1797,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "37b2a0b1-5e6a-4924-8bd0-8e818ec452de")
 		)
 		(fp_line
@@ -1793,7 +1807,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "d629f25e-c31a-4cbb-809a-88d53fc5026b")
 		)
 		(fp_line
@@ -1803,7 +1817,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "64b36b9c-d6aa-4025-b525-64588c5a1744")
 		)
 		(fp_line
@@ -1813,7 +1827,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "79f0fc46-79d4-4490-aa38-c2918e7e956d")
 		)
 		(pad "1" thru_hole circle
@@ -1861,13 +1875,14 @@
 		(property "Reference" "SW5"
 			(at 0 -4 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "ad91f9e6-6f9c-407e-82b6-6824efc6943b")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "SW_SPDT_NKK_115643_Slide"
@@ -1913,7 +1928,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "96179516-eb54-484b-bc68-26231cb8dc19")
 		)
 		(fp_line
@@ -1923,7 +1938,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "22227650-a7e8-4c9b-8a00-141965a34581")
 		)
 		(fp_line
@@ -1933,7 +1948,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "687f2a8d-dd83-4b6b-add7-30d7c3dcabf3")
 		)
 		(fp_line
@@ -1943,7 +1958,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "d662b1eb-1fbf-472a-8345-82c89bb46b1f")
 		)
 		(pad "1" thru_hole rect
@@ -1981,13 +1996,14 @@
 		(property "Reference" "TP1"
 			(at 0 -3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "ee7311a9-b02b-40f4-ae80-f491363ec3e1")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "TestPoint_UART0_1x5_P2.54mm"
@@ -2080,7 +2096,7 @@
 		(property "Reference" "H1"
 			(at 0 3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(hide yes)
 			(uuid "85ffa265-38f6-475f-9195-d24fabbb8e0d")
 			(effects
@@ -2088,6 +2104,7 @@
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "MountingHole_NPTH_2.7mm"
@@ -2134,7 +2151,7 @@
 				(type solid)
 			)
 			(fill no)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "78c21d05-6b78-4bae-b3bd-9263dfb1bf7d")
 		)
 		(pad "" np_thru_hole circle
@@ -2154,13 +2171,14 @@
 		(tags "capacitor electrolytic polarized radial D6.3 P2.5")
 		(property "Reference" "COUT"
 			(at 0 -4 0)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "e8315117-094a-4dcf-9790-5b9d17dcf2f3")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "220uF 16V"
@@ -2205,7 +2223,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "8035af89-4b3b-49f8-9681-d5af3224d238")
 		)
 		(fp_line
@@ -2215,7 +2233,7 @@
 				(width 0.15)
 				(type solid)
 			)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "aa888662-f80c-4a93-8a78-3de07e7d1762")
 		)
 		(fp_circle
@@ -2226,7 +2244,7 @@
 				(type solid)
 			)
 			(fill no)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "7e377a82-b607-43df-b59a-370ee2fafb0b")
 		)
 		(fp_circle
@@ -2278,7 +2296,7 @@
 		(property "Reference" "H4"
 			(at 0 4 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(hide yes)
 			(uuid "0ca2d46f-ca46-40cb-bfee-2c60114a70fc")
 			(effects
@@ -2286,6 +2304,7 @@
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "MountingHole_NPTH_2.7mm"
@@ -2332,7 +2351,7 @@
 				(type solid)
 			)
 			(fill no)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "15065842-0ab4-4c5c-81a3-047f3e0e315f")
 		)
 		(pad "" np_thru_hole circle
@@ -2708,7 +2727,7 @@
 		(property "Reference" "H2"
 			(at 0 3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(hide yes)
 			(uuid "3c98dd5e-8466-4677-9dfe-9339aed3cf51")
 			(effects
@@ -2716,6 +2735,7 @@
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "MountingHole_NPTH_2.7mm"
@@ -2762,7 +2782,7 @@
 				(type solid)
 			)
 			(fill no)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "f1bbb2e9-34a4-4d1d-a9a5-e5c46e73f04a")
 		)
 		(pad "" np_thru_hole circle
@@ -2781,7 +2801,7 @@
 		(property "Reference" "H3"
 			(at 0 4 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(hide yes)
 			(uuid "b31cd2d0-8f54-4876-b06b-420433861e82")
 			(effects
@@ -2789,6 +2809,7 @@
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "MountingHole_NPTH_2.7mm"
@@ -2835,7 +2856,7 @@
 				(type solid)
 			)
 			(fill no)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "f70a0027-5e80-4c2a-83ae-e1dd2be281ca")
 		)
 		(pad "" np_thru_hole circle
