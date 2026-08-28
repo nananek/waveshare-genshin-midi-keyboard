@@ -15,6 +15,12 @@ import sys
 
 import pcbnew
 
+# KiCad 9's generated Python bindings still call the Python 2-style ``next``
+# method internally.  Python 3.14 exposes only ``__next__`` on this SWIG
+# iterator, so restore the alias before using BOARD collection helpers.
+if not hasattr(pcbnew.SwigPyIterator, "next"):
+    pcbnew.SwigPyIterator.next = pcbnew.SwigPyIterator.__next__
+
 
 def bounds(item):
     box = item.GetBoundingBox()

@@ -614,7 +614,7 @@
 			(uuid "15776ea8-926d-4f45-9b0e-34912c4bcfad")
 		)
 		(fp_text user "MOUNT BOTTOM"
-			(at 0 3 0)
+			(at 1.5 4 0)
 			(layer "F.SilkS")
 			(uuid "4b1a3ddd-b4c8-4b2a-b3e0-cd46a7aa51cd")
 			(effects
