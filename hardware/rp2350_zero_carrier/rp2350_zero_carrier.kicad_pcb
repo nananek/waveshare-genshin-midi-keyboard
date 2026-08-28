@@ -547,15 +547,16 @@
 		(uuid "00000000-0000-0000-0000-000000000003")
 		(at 12.7 -17.78)
 		(property "Reference" "R2"
-			(at 0 -3.5 0)
+			(at 0 -3 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "B.SilkS")
 			(uuid "52e1c37a-1ada-41b8-9cde-00c7f926962b")
 			(effects
 				(font
 					(size 1 1)
 					(thickness 0.15)
 				)
+				(justify mirror)
 			)
 		)
 		(property "Value" "R_Axial_THT_P10.16mm_notopsilk"
@@ -628,6 +629,46 @@
 				)
 				(justify mirror)
 			)
+		)
+		(fp_line
+			(start -3.15 -1.2)
+			(end 3.15 -1.2)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.SilkS")
+			(uuid "a2c4e6f8-0002-4b00-9000-0000000000d1")
+		)
+		(fp_line
+			(start -3.15 1.2)
+			(end -3.15 -1.2)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.SilkS")
+			(uuid "a2c4e6f8-0002-4b00-9000-0000000000d2")
+		)
+		(fp_line
+			(start 3.15 -1.2)
+			(end 3.15 1.2)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.SilkS")
+			(uuid "a2c4e6f8-0002-4b00-9000-0000000000d3")
+		)
+		(fp_line
+			(start 3.15 1.2)
+			(end -3.15 1.2)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.SilkS")
+			(uuid "a2c4e6f8-0002-4b00-9000-0000000000d4")
 		)
 		(pad "1" thru_hole circle
 			(at -5.08 0)
