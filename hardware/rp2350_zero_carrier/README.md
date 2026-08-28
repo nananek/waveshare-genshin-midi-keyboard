@@ -4,9 +4,9 @@
 
 J1/J3の穴は左右対称に見えるため、RP2350-Zeroを裏返しても仮置きでは穴が合います。しかしその向きで半田付けすると、5VとGPIOなどが鏡映され、重大な誤配線になります。ピンソケットは取り外せない前提で、次の確認を半田付け前に必ず行ってください。
 
-1. キャリアの **F.Cu（表面）** を上にします。ソケット外側の `USB-C / BOOT`、太い矢印、V字ノッチ、`1=5V` が読める面です。
-2. メスソケットをその表面に仮置きします。矢印とV字ノッチが示す **+Y側（横5穴列の反対端）** が、RP2350-ZeroのUSB-C/BOOT/RUN側です。`1=5V` は左上のpin 1も示します。
-3. Zeroは、USB-C・BOOT/RUN・LEDがある**部品面をキャリアから外側（上）**、オスピンを下にして仮挿入します。USB-C/BOOT/RUNが矢印側にあり、BOOT/RUNとLEDが上から見えることを確認します。
+1. キャリアの **B.Cu（裏面）** を上にし、B.Silkscreenの `USB-C / BOOT`、太い矢印、V字ノッチ、`1=5V` から **+Y側（横5穴列の反対端）** とpin 1を確認します。
+2. +Y側を見失わないように基板を裏返して **F.Cu（表面）** を上にし、メスソケットをその表面に仮置きします。RP2350-ZeroのUSB-C/BOOT/RUN側を、手順1で確認した+Y側へ向けます。
+3. Zeroは、USB-C・BOOT/RUN・LEDがある**部品面をキャリアから外側（上）**、オスピンを下にして仮挿入します。USB-C/BOOT/RUNが+Y側にあり、BOOT/RUNとLEDが上から見えることを確認します。
 4. 反対面から見てBOOT/RUNがキャリア側に隠れる場合は中止してください。その姿勢は穴が合っても誤りです。
 5. 仮挿入を外し、メスソケットをF.Cu面から片端の1ピンだけ仮止めします。向きと直角を再確認してから残りを半田付けします。
 
@@ -26,7 +26,7 @@ USB-Aの電源は `J1 5V → F1 → U1 (TPS2553) → SW4 → COUT → J2 VBUS` �
 
 ## R2は裏面へ実装する
 
-USB D-の直列抵抗R2は、そのリード間のF.Cu側にU1/CINがあるため、**抵抗本体をB.Cu（裏面）側へ寝かせて挿入し、F.Cu側から半田付け**します。F.Cuシルクの `MOUNT BOTTOM` に従ってください。R1は従来どおりF.Cu側へ実装します。
+USB D-の直列抵抗R2は、そのリード間のF.Cu側にU1/CINがあるため、**抵抗本体をB.Cu（裏面）側へ寝かせて挿入し、F.Cu側から半田付け**します。B.Silkscreenの `R2` referenceと抵抗本体の外形が見える側が実装面です。R1は従来どおりF.Cu側へ実装します。
 
 ## U1型番の選定理由(ラッチオフ版を採用しなかった理由)
 
@@ -73,4 +73,12 @@ SW4はF1〜J2間のVBUS直列スイッチとして従来どおり残置し(現�
 
 `kicad-cli sch erc --severity-all`はこの基板の既存回路(今回のタスク範囲外、主にJ1/J3の未使用GPIOピンや手描きシンボルのグリッド外配置に起因)で129件を検出します(内訳: pin_not_connected 37, endpoint_off_grid 54, isolated_pin_label 16, lib_symbol_issues 12, unconnected_wire_endpoint 10)。今回の追加後は132件で、差分の内訳は「新規部品5点(U1/CIN/R_ILIM/R_FAULT/COUT)ぶんの`lib_symbol_issues`+5」「`isolated_pin_label`-2(既存ラベル整理による改善)」です。`pin_not_connected`・`endpoint_off_grid`・`unconnected_wire_endpoint`は増えていません。`lib_symbol_issues`はこのプロジェクトにsym-lib-tableが存在しないこと自体に起因する既存の警告カテゴリで、新規部品もR1/R2/F1と同じ理由で警告対象になるだけであり、配線の欠陥ではありません。
 
-PCB DRC(`kicad-cli pcb drc --refill-zones --schematic-parity --severity-all`)は0violations・0未配線パッドです。schematic-parityチェックは「PCBネット名(例: `GND`)と回路図ネット名(例: `/GND`)の"/"有無だけの表記差」による`net_conflict`をベースラインの70件から84件まで検出しますが、今回追加した`U1`/`CIN`/`R_ILIM`/`R_FAULT`/`COUT`の全ピンについて、両者のネット名文字列(スラッシュを除く)が完全一致することを個別に確認済みです(この"/"表記差はこのプロジェクトのPCBファイルが元々sch-to-PCBの正規手順を経ずに手作業で同期されてきたことに起因する既存の慣習で、今回のタスクでは対処範囲外と判断しました)。
+PCB DRC(`kicad-cli pcb drc --refill-zones --severity-all`)は0 violations・0未配線パッドです。`--schematic-parity`を追加した検査では合計84件を検出します。ベースラインの70件から増えた14件はいずれもPCB/回路図のネット名の先頭スラッシュ差で、今回追加した5部品(`U1`/`CIN`/`R_ILIM`/`R_FAULT`/`COUT`)は全ピンを個別照合済みです。既存の70件にはpin/footprint mismatch等も含まれ、今回の変更範囲外です。
+
+## Release PDF paper size
+
+Run `scripts/build_gerbers.sh` to regenerate the release drawings. The
+schematic is fitted to ISO A4 landscape. The five selected PCB layers are
+exported on separate A4 pages at physical scale 1:1 after translating a
+temporary copy into the page area, so every page is centered without clipping
+or changing the board dimensions.
