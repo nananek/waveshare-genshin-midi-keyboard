@@ -8,6 +8,8 @@ OUT=${2:-$ROOT/build/release}
 BOARD=$(basename "$BOARD_DIR")
 PCB=$BOARD_DIR/$BOARD.kicad_pcb
 SCH=$BOARD_DIR/$BOARD.kicad_sch
+JLC_BOM=$BOARD_DIR/jlc_bom.csv
+JLC_CPL=$BOARD_DIR/jlc_cpl.csv
 GERBERS=$OUT/gerbers
 PDF_WORK=$(mktemp -d)
 trap 'rm -rf "$PDF_WORK"' EXIT
@@ -18,8 +20,17 @@ case "$(kicad-cli --version)" in
 esac
 test -f "$PCB"
 test -f "$SCH"
+test -s "$JLC_BOM"
+test -s "$JLC_CPL"
 rm -rf "$OUT"
 mkdir -p "$GERBERS"
+
+# Keep the reviewed JLCPCB assembly files beside the generated fabrication
+# outputs so the CI artifact and GitHub Release contain one coherent hardware
+# package. These CSVs are maintained with the board source rather than derived
+# by KiCad, so copy them byte-for-byte and include them in the checksums below.
+cp "$JLC_BOM" "$OUT/jlc_bom.csv"
+cp "$JLC_CPL" "$OUT/jlc_cpl.csv"
 
 # Keep DRC violations fatal so a hardware artifact cannot silently ship with
 # shorts, missing connections, or manufacturing-rule errors.
@@ -158,7 +169,9 @@ PY
 
 (cd "$OUT" && sha256sum \
   "${BOARD}_gerbers_JLCPCB.zip" "${BOARD}-drc.rpt" \
-  "${BOARD}-schematic.pdf" "${BOARD}-layout.pdf") > "$OUT/SHA256SUMS.txt"
+  "${BOARD}-schematic.pdf" "${BOARD}-layout.pdf" \
+  jlc_bom.csv jlc_cpl.csv) > "$OUT/SHA256SUMS.txt"
 echo "== release hardware artifacts: $BOARD"
 ls -l "$OUT/${BOARD}_gerbers_JLCPCB.zip" "$OUT/${BOARD}-drc.rpt" \
-  "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" "$OUT/SHA256SUMS.txt"
+  "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" \
+  "$OUT/jlc_bom.csv" "$OUT/jlc_cpl.csv" "$OUT/SHA256SUMS.txt"

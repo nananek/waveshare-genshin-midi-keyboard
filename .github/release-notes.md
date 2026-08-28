@@ -4,9 +4,10 @@
   UART1 MIDI mirror.
 - `serial_midi_device.uf2` is for board 2: UART1 to USB-MIDI bridge.  Connect
   board 1 GP4 to board 2 GP5 and connect their grounds.
-- The RP2350-Zero carrier manufacturing archive, DRC report, schematic PDF,
-  board-layout PDF, and checksums are included with this release.  The Gerbers
-  and drawings were generated from this tag with KiCad 10.0.5.
+- The RP2350-Zero carrier manufacturing archive, JLCPCB BOM/CPL assembly CSVs,
+  DRC report, schematic PDF, board-layout PDF, and checksums are included with
+  this release.  The Gerbers and drawings were generated from this tag with
+  KiCad 10.0.5.
 
 ## Assembly note
 
