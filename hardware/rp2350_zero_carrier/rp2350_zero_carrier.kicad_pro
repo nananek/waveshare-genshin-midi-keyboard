@@ -503,6 +503,17 @@
         "tuning_profile": "",
         "via_diameter": 0.8,
         "via_drill": 0.4
+      },
+      {
+        "clearance": 0.15,
+        "name": "USB_VBUS_PWR",
+        "pcb_color": "rgba(255, 128, 0, 0.000)",
+        "priority": 1,
+        "schematic_color": "rgba(255, 128, 0, 0.000)",
+        "track_width": 1.0,
+        "tuning_profile": "",
+        "via_diameter": 1.0,
+        "via_drill": 0.5
       }
     ],
     "meta": {
@@ -510,7 +521,24 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "USB_VBUS_PWR",
+        "pattern": "VBUS_5V"
+      },
+      {
+        "netclass": "USB_VBUS_PWR",
+        "pattern": "VBUS_TPS_IN"
+      },
+      {
+        "netclass": "USB_VBUS_PWR",
+        "pattern": "VBUS_USB_A"
+      },
+      {
+        "netclass": "USB_VBUS_PWR",
+        "pattern": "VBUS_USB_A_SW"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
