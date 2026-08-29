@@ -64,6 +64,8 @@ jobs:
             build/release/rp2350_zero_carrier-drc.rpt
             build/release/rp2350_zero_carrier-schematic.pdf
             build/release/rp2350_zero_carrier-layout.pdf
+            build/release/jlc_bom.csv
+            build/release/jlc_cpl.csv
             build/release/SHA256SUMS.txt
           if-no-files-found: error
 
@@ -95,6 +97,7 @@ jobs:
             release/rp2350_zero_carrier-drc.rpt \
             release/rp2350_zero_carrier-schematic.pdf \
             release/rp2350_zero_carrier-layout.pdf \
+            release/jlc_bom.csv release/jlc_cpl.csv \
             > release/SHA256SUMS.txt
       - name: create release
         env:
@@ -106,6 +109,7 @@ jobs:
             build/release/rp2350_zero_carrier-drc.rpt \
             build/release/rp2350_zero_carrier-schematic.pdf \
             build/release/rp2350_zero_carrier-layout.pdf \
+            build/release/jlc_bom.csv build/release/jlc_cpl.csv \
             build/release/SHA256SUMS.txt \
             --title "$GITHUB_REF_NAME" \
             --notes-file .github/release-notes.md \

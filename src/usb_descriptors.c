@@ -9,6 +9,7 @@
 #define USB_VID 0xCAFE // テスト用 (実配布時は正規に取得した VID/PID に置換)
 #define USB_PID 0x4753 // 'G''S'
 #define USB_BCD 0x0200
+#define USB_MAX_POWER_MA 500 // RP2350本体とUSB-A接続機器を合わせた上流側の申告上限
 
 static tusb_desc_device_t const desc_device = {
     .bLength            = sizeof(tusb_desc_device_t),
@@ -96,7 +97,7 @@ enum { ITF_NUM_HID = 0, ITF_NUM_TOTAL };
 static uint8_t const desc_configuration[] = {
     // Config: number, interface count, string index, total length, attribute, power (mA)
     TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN,
-                          TUSB_DESC_CONFIG_ATT_REMOTE_WAKEUP, 100),
+                          TUSB_DESC_CONFIG_ATT_REMOTE_WAKEUP, USB_MAX_POWER_MA),
 
     // HID: interface, string, protocol, report desc len, EP in, size, polling(ms)
     TUD_HID_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE, sizeof(desc_hid_report),

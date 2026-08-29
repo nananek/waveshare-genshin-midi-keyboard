@@ -8,6 +8,8 @@ OUT=${2:-$ROOT/build/release}
 BOARD=$(basename "$BOARD_DIR")
 PCB=$BOARD_DIR/$BOARD.kicad_pcb
 SCH=$BOARD_DIR/$BOARD.kicad_sch
+JLC_BOM=$BOARD_DIR/jlc_bom.csv
+JLC_CPL=$BOARD_DIR/jlc_cpl.csv
 GERBERS=$OUT/gerbers
 PDF_WORK=$(mktemp -d)
 trap 'rm -rf "$PDF_WORK"' EXIT
@@ -18,12 +20,22 @@ case "$(kicad-cli --version)" in
 esac
 test -f "$PCB"
 test -f "$SCH"
+test -s "$JLC_BOM"
+test -s "$JLC_CPL"
 rm -rf "$OUT"
 mkdir -p "$GERBERS"
+
+# Keep the reviewed JLCPCB assembly files beside the generated fabrication
+# outputs so the CI artifact and GitHub Release contain one coherent hardware
+# package. These CSVs are maintained with the board source rather than derived
+# by KiCad, so copy them byte-for-byte and include them in the checksums below.
+cp "$JLC_BOM" "$OUT/jlc_bom.csv"
+cp "$JLC_CPL" "$OUT/jlc_cpl.csv"
 
 # Keep DRC violations fatal so a hardware artifact cannot silently ship with
 # shorts, missing connections, or manufacturing-rule errors.
 kicad-cli pcb drc --output "$OUT/${BOARD}-drc.rpt" --exit-code-violations "$PCB"
+python3 "$ROOT/scripts/silk_audit.py" "$PCB"
 kicad-cli pcb export gerbers --output "$GERBERS" \
   --layers F.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts "$PCB"
 kicad-cli pcb export drill --output "$GERBERS" --format excellon \
@@ -42,11 +54,11 @@ gs -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
   -dDEVICEWIDTHPOINTS=841.896 -dDEVICEHEIGHTPOINTS=595.296 \
   -dFIXEDMEDIA -dPDFFitPage \
   -sOutputFile="$OUT/${BOARD}-schematic.pdf" "$PDF_SCH_RAW"
-# KiCad's single-mode PCB exporter uses the board coordinate origin as the page
-# origin.  The carrier has negative coordinates, so exporting the source board
-# clips it at the upper-left corner.  Move a temporary copy in KiCad internal
-# units, then export at scale 1.0.  This keeps the PDF vector and preserves the
-# board's physical 1:1 size.
+# KiCad's PCB exporter uses the board coordinate origin as the page origin. The
+# carrier has negative coordinates, so exporting the source board clips it at
+# the upper-left corner. Move a temporary copy in KiCad internal units, then
+# export each selected layer on its own page at scale 1.0. This keeps the PDF
+# vector and preserves the board's physical 1:1 size.
 PDF_PCB_RAW=$PDF_WORK/${BOARD}-layout-raw.pdf
 PCB_PDF_INPUT=$PDF_WORK/${BOARD}-layout-input.kicad_pcb
 python3 - "$PCB" "$PCB_PDF_INPUT" <<'PY'
@@ -70,7 +82,7 @@ for zone in board.Zones():
     zone.Move(delta)
 pcbnew.SaveBoard(output, board)
 PY
-kicad-cli pcb export pdf --output "$PDF_PCB_RAW" --mode-single --scale 1 \
+kicad-cli pcb export pdf --output "$PDF_PCB_RAW" --mode-multipage --scale 1 \
   --layers F.Cu,B.Cu,F.Silkscreen,B.Silkscreen,Edge.Cuts "$PCB_PDF_INPUT"
 cp "$PDF_PCB_RAW" "$OUT/${BOARD}-layout.pdf"
 for pdf in "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf"; do
@@ -79,22 +91,55 @@ for pdf in "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf"; do
   tail -c 1024 "$pdf" | grep -aq '%%EOF'
 done
 
-# KiCad 10 emits the paper size in PDF points.  Check both drawings so an
-# accidental project/drawing-sheet setting cannot silently publish A3 output.
+# Check every page's A4 MediaBox and rendered-content bounds so paper-setting
+# regressions or page-edge clipping cannot silently reach a release artifact.
 python3 - "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" <<'PY'
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 expected = (841.896, 595.296)  # ISO A4 landscape, points
-for name in sys.argv[1:]:
+expected_page_counts = (1, 5)  # schematic; one page per selected PCB layer
+for name, expected_page_count in zip(sys.argv[1:], expected_page_counts):
     data = Path(name).read_bytes()
-    match = re.search(rb"/MediaBox\s*\[\s*0\s+0\s+([0-9.]+)\s+([0-9.]+)\s*\]", data)
-    if not match:
+    page_count = len(re.findall(rb"/Type\s*/Page\b", data))
+    if page_count != expected_page_count:
+        raise SystemExit(
+            f"unexpected PDF page count: {name}: {page_count} "
+            f"(expected {expected_page_count})"
+        )
+    media_boxes = re.findall(
+        rb"/MediaBox\s*\[\s*0\s+0\s+([0-9.]+)\s+([0-9.]+)\s*\]", data
+    )
+    if not media_boxes:
         raise SystemExit(f"missing PDF MediaBox: {name}")
-    size = tuple(float(value) for value in match.groups())
-    if any(abs(actual - wanted) > 0.1 for actual, wanted in zip(size, expected)):
-        raise SystemExit(f"PDF is not A4 landscape: {name}: {size}")
+    for page, media_box in enumerate(media_boxes, 1):
+        size = tuple(float(value) for value in media_box)
+        if any(abs(actual - wanted) > 0.1 for actual, wanted in zip(size, expected)):
+            raise SystemExit(f"PDF page is not A4 landscape: {name}: box {page}: {size}")
+    bbox = subprocess.run(
+        ["gs", "-q", "-dBATCH", "-dNOPAUSE", "-sDEVICE=bbox", name],
+        check=True, capture_output=True,
+    )
+    content_boxes = re.findall(
+        rb"%%HiResBoundingBox:\s*([-0-9.]+)\s+([-0-9.]+)\s+"
+        rb"([-0-9.]+)\s+([-0-9.]+)", bbox.stderr,
+    )
+    if len(content_boxes) != page_count:
+        raise SystemExit(
+            f"missing PDF content bounds: {name}: {len(content_boxes)} "
+            f"(expected {page_count})"
+        )
+    margin = 0.5  # points; content at the media edge is probably clipped
+    for page, content_box in enumerate(content_boxes, 1):
+        left, bottom, right, top = (float(value) for value in content_box)
+        if (left < margin or bottom < margin or
+                right > expected[0] - margin or top > expected[1] - margin):
+            raise SystemExit(
+                f"PDF content reaches outside A4 safe bounds: "
+                f"{name}: page {page}: {(left, bottom, right, top)}"
+            )
 PY
 
 python3 - "$OUT/${BOARD}_gerbers_JLCPCB.zip" "$GERBERS" "$BOARD" <<'PY'
@@ -124,7 +169,9 @@ PY
 
 (cd "$OUT" && sha256sum \
   "${BOARD}_gerbers_JLCPCB.zip" "${BOARD}-drc.rpt" \
-  "${BOARD}-schematic.pdf" "${BOARD}-layout.pdf") > "$OUT/SHA256SUMS.txt"
+  "${BOARD}-schematic.pdf" "${BOARD}-layout.pdf" \
+  jlc_bom.csv jlc_cpl.csv) > "$OUT/SHA256SUMS.txt"
 echo "== release hardware artifacts: $BOARD"
 ls -l "$OUT/${BOARD}_gerbers_JLCPCB.zip" "$OUT/${BOARD}-drc.rpt" \
-  "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" "$OUT/SHA256SUMS.txt"
+  "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" \
+  "$OUT/jlc_bom.csv" "$OUT/jlc_cpl.csv" "$OUT/SHA256SUMS.txt"
