@@ -460,6 +460,11 @@
   (label "GND" (at 243.84 171.45 0) (effects (font (size 1.27 1.27)) (justify left)) (uuid "b1c9a1a0-l010-4a00-9000-000000000001"))
   (wire (pts (xy 243.84 226.06) (xy 243.84 228.6)) (stroke (width 0) (type default)) (uuid "b1c9a1a0-w011-4a00-9000-000000000001"))
   (label "USB_PWR_FAULT_N" (at 243.84 228.6 0) (effects (font (size 1.27 1.27)) (justify left)) (uuid "b1c9a1a0-l011-4a00-9000-000000000001"))
+  (text "U1(TPS2553DBVR)ピン配置に関する注記:\nEN(pin3)はIN(pin1)と同じネットVBUS_TPS_INに意図的に直結している(TPS2553はEN=Highでオンのため、常時ON固定の設計)。\nOUT(pin6)のネット名はVBUS_USB_Aであり、文字列に\"OUT\"を含まない。\nICのピン名はデータシート(SLVS841F)準拠でIN/GND/EN/FAULT/ILIM/OUTの6本固定であり、ここに現れるネット名(VBUS_TPS_IN等)とは別物。照合はネット名ではなくピン名で行うこと。"
+    (at 205 232 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+    (uuid "b1c9a1a0-t001-4a00-9000-000000000001")
+  )
   (wire (pts (xy 243.84 218.44) (xy 243.84 215.9)) (stroke (width 0) (type default)) (uuid "b1c9a1a0-w012-4a00-9000-000000000001"))
   (label "VBUS_TPS_IN" (at 243.84 215.9 0) (effects (font (size 1.27 1.27)) (justify left)) (uuid "b1c9a1a0-l012-4a00-9000-000000000001"))
   (wire (pts (xy 269.24 173.99) (xy 269.24 171.45)) (stroke (width 0) (type default)) (uuid "c0a7b000-w001-4a00-9000-000000000001"))
