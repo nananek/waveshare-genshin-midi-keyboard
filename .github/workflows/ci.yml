@@ -83,28 +83,34 @@ jobs:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: firmware-uf2
-          path: build
+          path: build/release
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: hardware-release
           path: build/release
       - name: release checksums
         run: |
-          cd build
+          cd build/release
           sha256sum \
             genshin_midi_kbd.uf2 serial_midi_device.uf2 \
-            release/rp2350_zero_carrier_gerbers_JLCPCB.zip \
-            release/rp2350_zero_carrier-drc.rpt \
-            release/rp2350_zero_carrier-schematic.pdf \
-            release/rp2350_zero_carrier-layout.pdf \
-            release/jlc_bom.csv release/jlc_cpl.csv \
-            > release/SHA256SUMS.txt
+            rp2350_zero_carrier_gerbers_JLCPCB.zip \
+            rp2350_zero_carrier-drc.rpt \
+            rp2350_zero_carrier-schematic.pdf \
+            rp2350_zero_carrier-layout.pdf \
+            jlc_bom.csv jlc_cpl.csv \
+            > SHA256SUMS.txt
+          test "$(wc -l < SHA256SUMS.txt)" -eq 8
+          if grep -qE '  .*/' SHA256SUMS.txt; then
+            echo "checksum manifest contains a non-basename path" >&2
+            exit 1
+          fi
+          sha256sum --check SHA256SUMS.txt
       - name: create release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            build/genshin_midi_kbd.uf2 build/serial_midi_device.uf2 \
+            build/release/genshin_midi_kbd.uf2 build/release/serial_midi_device.uf2 \
             build/release/rp2350_zero_carrier_gerbers_JLCPCB.zip \
             build/release/rp2350_zero_carrier-drc.rpt \
             build/release/rp2350_zero_carrier-schematic.pdf \
