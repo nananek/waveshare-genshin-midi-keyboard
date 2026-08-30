@@ -12,6 +12,7 @@
 #include "hid_mute.h"
 #include "midi_host.h"
 #include "mirror_filter_switch.h"
+#include "usb_power_control.h"
 
 // ===========================================================================
 //  MIDI(host, core1) → HID(device, core0) の一方向パイプライン
@@ -70,6 +71,11 @@ int main(void) {
     // PIO-USB は 120MHz (または 240MHz) のシステムクロックを要求する。
     set_sys_clock_khz(120000, true);
 
+    // Establish GP9=LOW before any USB stack, second core, or application
+    // peripheral starts.  The board-level pull-down independently covers the
+    // reset interval before these instructions execute.
+    usb_power_control_init(to_ms_since_boot(get_absolute_time()));
+
     // stdio はデバッグログ用に UART へ (native USB は TinyUSB が占有)。
     stdio_init_all();
     printf("\r\n[boot] Genshin MIDI keyboard: D+=GP%d\r\n", PIN_USB_HOST_DP);
@@ -89,6 +95,13 @@ int main(void) {
 
     for (;;) {
         tud_task();
+
+        // Downstream VBUS is available only after the PC/iPad-side native USB
+        // device is configured, and is removed again on detach or suspend.
+        // J3 VBUS remains physically isolated; this controls only J1→J2 power.
+        bool upstream_ready = tud_mounted() && !tud_suspended();
+        usb_power_control_task(to_ms_since_boot(get_absolute_time()),
+                               upstream_ready);
 
         // --- ミュートスイッチ: デバウンス済みエッジを検出 ---
         hid_mute_edge_t edge = hid_mute_poll();

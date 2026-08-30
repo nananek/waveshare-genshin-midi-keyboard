@@ -129,3 +129,11 @@ The Docker image installs Debian packages including CMake, GCC Arm
 Embedded, Newlib, libstdc++, libusb, Python, Git, and CA certificates. Those
 packages are build-time tools and are not distributed by this repository; the
 applicable Debian and package-specific licenses apply to each installation.
+# Raspberry Pi pico-examples WS2812 PIO program
+
+The WS2812 PIO timing program in `src/ws2812.pio` is derived from the
+Raspberry Pi `pico-examples` WS2812 example.
+
+Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
+
+SPDX-License-Identifier: BSD-3-Clause

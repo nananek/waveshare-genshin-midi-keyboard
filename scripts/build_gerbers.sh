@@ -10,6 +10,8 @@ PCB=$BOARD_DIR/$BOARD.kicad_pcb
 SCH=$BOARD_DIR/$BOARD.kicad_sch
 JLC_BOM=$BOARD_DIR/jlc_bom.csv
 JLC_CPL=$BOARD_DIR/jlc_cpl.csv
+DECISION=$BOARD_DIR/ORDER_DECISION_JA.md
+WAIVERS=$BOARD_DIR/VALIDATION_WAIVERS_JA.md
 GERBERS=$OUT/gerbers
 PDF_WORK=$(mktemp -d)
 trap 'rm -rf "$PDF_WORK"' EXIT
@@ -22,6 +24,8 @@ test -f "$PCB"
 test -f "$SCH"
 test -s "$JLC_BOM"
 test -s "$JLC_CPL"
+test -s "$DECISION"
+test -s "$WAIVERS"
 rm -rf "$OUT"
 mkdir -p "$GERBERS"
 
@@ -31,10 +35,27 @@ mkdir -p "$GERBERS"
 # by KiCad, so copy them byte-for-byte and include them in the checksums below.
 cp "$JLC_BOM" "$OUT/jlc_bom.csv"
 cp "$JLC_CPL" "$OUT/jlc_cpl.csv"
+cp "$DECISION" "$OUT/ORDER_DECISION_JA.md"
+cp "$WAIVERS" "$OUT/VALIDATION_WAIVERS_JA.md"
 
-# Keep DRC violations fatal so a hardware artifact cannot silently ship with
-# shorts, missing connections, or manufacturing-rule errors.
-kicad-cli pcb drc --output "$OUT/${BOARD}-drc.rpt" --exit-code-violations "$PCB"
+# Gate the exact pad/net/BOM/CPL contract independently of KiCad's schematic
+# comparison, and retain the command output as manufacturing evidence.
+python3 "$ROOT/scripts/hardware_contract.py" \
+  > "$OUT/${BOARD}-hardware-contract.txt"
+
+# Electrical errors are fatal.  Keep the complete warning report as evidence:
+# standard-library lookup warnings and the intentional PCB-only UART endpoints
+# remain real, classified warnings and are neither hidden nor called errors.
+kicad-cli sch erc --severity-error --exit-code-violations \
+  --output "$OUT/${BOARD}-erc-errors.rpt" "$SCH"
+kicad-cli sch erc --severity-all \
+  --output "$OUT/${BOARD}-erc-all.rpt" "$SCH"
+
+# Keep DRC, unrouted items, and native schematic/PCB parity violations fatal so
+# a hardware artifact cannot silently ship with a mismatched net or footprint.
+kicad-cli pcb drc --schematic-parity --refill-zones --severity-all \
+  --all-track-errors --output "$OUT/${BOARD}-drc.rpt" \
+  --exit-code-violations "$PCB"
 python3 "$ROOT/scripts/silk_audit.py" "$PCB"
 kicad-cli pcb export gerbers --output "$GERBERS" \
   --layers F.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts "$PCB"
@@ -167,11 +188,8 @@ if actual != expected:
     raise SystemExit(f"unexpected manufacturing archive contents: {sorted(actual)}")
 PY
 
-(cd "$OUT" && sha256sum \
-  "${BOARD}_gerbers_JLCPCB.zip" "${BOARD}-drc.rpt" \
-  "${BOARD}-schematic.pdf" "${BOARD}-layout.pdf" \
-  jlc_bom.csv jlc_cpl.csv) > "$OUT/SHA256SUMS.txt"
+(cd "$OUT" && find . -maxdepth 1 -type f ! -name SHA256SUMS.txt \
+  -printf '%f\0' | sort -z | xargs -0 sha256sum) > "$OUT/SHA256SUMS.txt"
+(cd "$OUT" && sha256sum --check SHA256SUMS.txt)
 echo "== release hardware artifacts: $BOARD"
-ls -l "$OUT/${BOARD}_gerbers_JLCPCB.zip" "$OUT/${BOARD}-drc.rpt" \
-  "$OUT/${BOARD}-schematic.pdf" "$OUT/${BOARD}-layout.pdf" \
-  "$OUT/jlc_bom.csv" "$OUT/jlc_cpl.csv" "$OUT/SHA256SUMS.txt"
+find "$OUT" -maxdepth 1 -type f -printf '%f\n' | sort
