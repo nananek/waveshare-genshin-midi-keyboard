@@ -2273,9 +2273,9 @@
 		(layer "F.Cu")
 		(uuid "25d18138-511d-4703-aadf-bd76cc70e4c1")
 		(at -12 -28)
-		(descr "Polarized radial aluminum electrolytic capacitor, 6.3mm diameter, 2.50mm lead pitch. Sized for Rubycon 16PX220MEFC6.3X11 (220uF 16V) used as the USB downstream-port bulk capacitor COUT. Verify polarity: pad 1 is positive and connects to VBUS_USB_A_SW; pad 2 is negative and connects to GND.")
+		(descr "Polarized radial aluminum electrolytic capacitor, 6.3mm diameter, 2.50mm lead pitch. Sized for Rubycon 16PX220MEFC6.3X11 (220uF 16V) used as the USB downstream-port bulk capacitor C2. Verify polarity: pad 1 is positive and connects to VBUS_USB_A_SW; pad 2 is negative and connects to GND.")
 		(tags "capacitor electrolytic polarized radial D6.3 P2.5")
-		(property "Reference" "COUT"
+		(property "Reference" "C2"
 			(at 0 -4 0)
 			(layer "B.SilkS")
 			(uuid "e8315117-094a-4dcf-9790-5b9d17dcf2f3")
@@ -2399,9 +2399,9 @@
 		(layer "F.Cu")
 		(uuid "3f4b9ba2-2438-40ad-a777-38f574131a15")
 		(at 15.25 -20.8 90)
-		(descr "Generic SMD ceramic chip capacitor, 0603 (1608 metric) package. Pad size 0.9x0.8mm, pad centers +-0.75mm (IPC nominal-density land pattern for 0603, not a specific vendor drawing). Used for CIN (TPS2553 IN-GND decoupling). Self-authored for consistency with the other hand-made footprints in this project.")
+		(descr "Generic SMD ceramic chip capacitor, 0603 (1608 metric) package. Pad size 0.9x0.8mm, pad centers +-0.75mm (IPC nominal-density land pattern for 0603, not a specific vendor drawing). Used for C3 TPS2553 OUT-GND bypass. Self-authored for consistency with the other hand-made footprints in this project.")
 		(tags "capacitor chip SMD 0603 1608")
-		(property "Reference" "COUT_HF"
+		(property "Reference" "C3"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(uuid "0946b61e-e9fc-4159-8b50-16026ced15ac")
@@ -2842,7 +2842,7 @@
 		(layer "F.Cu")
 		(uuid "b1c9a1a0-0002-4a00-9000-0000000000f1")
 		(at 8.5 -21 180)
-		(property "Reference" "CIN"
+		(property "Reference" "C1"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(uuid "b1c9a1a0-0002-4a00-9000-0000000000f2")
@@ -2910,7 +2910,7 @@
 		(layer "F.Cu")
 		(uuid "b1c9a1a0-0003-4a00-9000-0000000000f1")
 		(at 14.5 -17.8 180)
-		(property "Reference" "R_ILIM"
+		(property "Reference" "R3"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "b1c9a1a0-0003-4a00-9000-0000000000f2")
@@ -2978,7 +2978,7 @@
 		(layer "F.Cu")
 		(uuid "b1c9a1a0-0004-4a00-9000-0000000000f1")
 		(at 18 -12 90)
-		(property "Reference" "R_FAULT"
+		(property "Reference" "R4"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(uuid "b1c9a1a0-0004-4a00-9000-0000000000f2")
@@ -3193,9 +3193,9 @@
 		(layer "F.Cu")
 		(uuid "c7eb3b71-c3a7-467b-8db9-b71dc96019b5")
 		(at 5.5 -13.5)
-		(descr "Generic SMD chip resistor, 0603 (1608 metric) package. Pad size 0.9x0.8mm, pad centers +-0.75mm (IPC nominal-density land pattern for 0603, not a specific vendor drawing). Used for R_ILIM and R_FAULT (TPS2553 support). Self-authored for consistency with the other hand-made footprints in this project.")
+		(descr "Generic SMD chip resistor, 0603 (1608 metric) package. Pad size 0.9x0.8mm, pad centers +-0.75mm (IPC nominal-density land pattern for 0603, not a specific vendor drawing). Used for R5 TPS2553 EN pull-down. Self-authored for consistency with the other hand-made footprints in this project.")
 		(tags "resistor chip SMD 0603 1608")
-		(property "Reference" "R_EN"
+		(property "Reference" "R5"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "332628ac-60a2-4a42-b7c8-03dafafc494a")

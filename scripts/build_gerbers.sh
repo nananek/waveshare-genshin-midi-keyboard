@@ -8,6 +8,8 @@ OUT=${2:-$ROOT/build/release}
 BOARD=$(basename "$BOARD_DIR")
 PCB=$BOARD_DIR/$BOARD.kicad_pcb
 SCH=$BOARD_DIR/$BOARD.kicad_sch
+SYM=$BOARD_DIR/$BOARD.kicad_sym
+SCHEMATIC_GOLDEN=$BOARD_DIR/schematic_visual_golden.sha256
 JLC_BOM=$BOARD_DIR/jlc_bom.csv
 JLC_CPL=$BOARD_DIR/jlc_cpl.csv
 DECISION=$BOARD_DIR/ORDER_DECISION_JA.md
@@ -17,11 +19,13 @@ PDF_WORK=$(mktemp -d)
 trap 'rm -rf "$PDF_WORK"' EXIT
 
 case "$(kicad-cli --version)" in
-  10.0.*) ;;
-  *) echo "KiCad CLI 10.0.x is required; found: $(kicad-cli --version)" >&2; exit 1 ;;
+  10.0.5) ;;
+  *) echo "KiCad CLI 10.0.5 is required; found: $(kicad-cli --version)" >&2; exit 1 ;;
 esac
 test -f "$PCB"
 test -f "$SCH"
+test -f "$SYM"
+test -s "$SCHEMATIC_GOLDEN"
 test -s "$JLC_BOM"
 test -s "$JLC_CPL"
 test -s "$DECISION"
@@ -43,6 +47,20 @@ cp "$WAIVERS" "$OUT/VALIDATION_WAIVERS_JA.md"
 python3 "$ROOT/scripts/hardware_contract.py" \
   > "$OUT/${BOARD}-hardware-contract.txt"
 
+# KiCad reports annotation failures as warnings while still returning success.
+# Export both native deliverables, then fail closed on '?' references,
+# nonstandard references, missing components, and project-local symbol drift.
+NATIVE_NETLIST=$OUT/${BOARD}-native.net
+NATIVE_BOM=$OUT/${BOARD}-native-bom.csv
+kicad-cli sch export netlist --format kicadsexpr \
+  --output "$NATIVE_NETLIST" "$SCH"
+kicad-cli sch export bom --output "$NATIVE_BOM" "$SCH"
+test -s "$NATIVE_NETLIST"
+test -s "$NATIVE_BOM"
+python3 "$ROOT/scripts/schematic_contract.py" \
+  "$SCH" "$SYM" "$NATIVE_NETLIST" "$NATIVE_BOM" \
+  >> "$OUT/${BOARD}-hardware-contract.txt"
+
 # Electrical errors are fatal.  Keep the complete warning report as evidence:
 # standard-library lookup warnings and the intentional PCB-only UART endpoints
 # remain real, classified warnings and are neither hidden nor called errors.
@@ -61,20 +79,12 @@ kicad-cli pcb export gerbers --output "$GERBERS" \
   --layers F.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts "$PCB"
 kicad-cli pcb export drill --output "$GERBERS" --format excellon \
   --generate-report --report-path "$GERBERS/drill-report.rpt" "$PCB"
-# KiCad takes the schematic's paper field from the input file.  v1.1.2 changed
-# the carrier schematic to A3 to make the reflowed drawing fit, but release
-# drawings are required to remain A4.  Export to a temporary PDF and use
-# Ghostscript to fit that drawing onto a fixed A4 landscape page.  The design
-# source is not rewritten by the release build.
-PDF_SCH=$PDF_WORK/$BOARD.kicad_sch
-cp "$SCH" "$PDF_SCH"
+# The source schematic is reviewed directly in A4 landscape. Export it without
+# rescaling so property placement and the golden render describe the same page.
 PDF_SCH_RAW=$PDF_WORK/${BOARD}-schematic-raw.pdf
-kicad-cli sch export pdf --output "$PDF_SCH_RAW" --no-background-color "$PDF_SCH"
+kicad-cli sch export pdf --output "$PDF_SCH_RAW" --no-background-color "$SCH"
 command -v gs >/dev/null || { echo "Ghostscript (gs) is required for A4 PDF output" >&2; exit 1; }
-gs -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
-  -dDEVICEWIDTHPOINTS=841.896 -dDEVICEHEIGHTPOINTS=595.296 \
-  -dFIXEDMEDIA -dPDFFitPage \
-  -sOutputFile="$OUT/${BOARD}-schematic.pdf" "$PDF_SCH_RAW"
+cp "$PDF_SCH_RAW" "$OUT/${BOARD}-schematic.pdf"
 # KiCad's PCB exporter uses the board coordinate origin as the page origin. The
 # carrier has negative coordinates, so exporting the source board clips it at
 # the upper-left corner. Move a temporary copy in KiCad internal units, then
@@ -162,6 +172,10 @@ for name, expected_page_count in zip(sys.argv[1:], expected_page_counts):
                 f"{name}: page {page}: {(left, bottom, right, top)}"
             )
 PY
+
+python3 "$ROOT/scripts/schematic_visual_audit.py" \
+  "$SCH" "$OUT/${BOARD}-schematic.pdf" "$SCHEMATIC_GOLDEN" \
+  >> "$OUT/${BOARD}-hardware-contract.txt"
 
 python3 - "$OUT/${BOARD}_gerbers_JLCPCB.zip" "$GERBERS" "$BOARD" <<'PY'
 from pathlib import Path

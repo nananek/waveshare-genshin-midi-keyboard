@@ -2,7 +2,7 @@
   (version 20221018)
   (generator "handwritten")
   (layer "F.Cu")
-  (descr "Polarized radial aluminum electrolytic capacitor, 6.3mm diameter, 2.50mm lead pitch. Sized for Rubycon 16PX220MEFC6.3X11 (220uF 16V) used as the USB downstream-port bulk capacitor COUT. Verify polarity: pad 1 is positive and connects to VBUS_USB_A_SW; pad 2 is negative and connects to GND.")
+  (descr "Polarized radial aluminum electrolytic capacitor, 6.3mm diameter, 2.50mm lead pitch. Sized for Rubycon 16PX220MEFC6.3X11 (220uF 16V) used as the USB downstream-port bulk capacitor C2. Verify polarity: pad 1 is positive and connects to VBUS_USB_A_SW; pad 2 is negative and connects to GND.")
   (tags "capacitor electrolytic polarized radial D6.3 P2.5")
   (attr through_hole)
   (fp_text reference "REF**" (at 0 -4) (layer "B.SilkS")

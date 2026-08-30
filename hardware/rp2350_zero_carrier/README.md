@@ -16,20 +16,20 @@ J1/J3の穴は左右対称に見えるため、RP2350-Zeroを裏返しても仮�
 
 ## USB-A VBUS保護回路
 
-USB-Aの電源は `J1 5V → F1 → U1 (TPS2553) → SW4 → COUT → J2 VBUS` の順に通ります。F1はリセッタブルヒューズ、U1は電流制限・短絡保護付きのハイサイドスイッチ、SW4はUSB-Aへの手動給電スイッチです。
+USB-Aの電源は `J1 5V → F1 → U1 (TPS2553) → SW4 → C2 → J2 VBUS` の順に通ります。F1はリセッタブルヒューズ、U1は電流制限・短絡保護付きのハイサイドスイッチ、SW4はUSB-Aへの手動給電スイッチです。
 
-- `R_ILIM = 52.3kΩ 1%` のとき、TPS2553データシート表の電流制限実力値は最小448.3 mA、公称501.6 mA、最大562.4 mAです。これは異常時の保護上限であり、接続したMIDI機器へ500 mAを保証するものではありません。通常消費の小さいUSB MIDIキーボードを対象にし、不明な機器は消費電流を確認してください。
+- TI Rev.F Table 2の500mA行はideal 52.5kΩ、closest 1% 52.3kΩ、actual min/nom/max 448.3/501.6/562.4mAです。本設計は`R3 = 52.3kΩ 1%`を採用します。これは異常時の保護閾値であり、接続したMIDI機器へ500mAを保証するものではありません。通常消費の小さいUSB MIDIキーボードを対象にし、不明な機器は消費電流を確認してください。
 - ボード1のUSBコンフィグレーションディスクリプタは、RP2350本体とUSB-A接続機器を合わせた上流側の最大値として500 mAを申告します。電源供給元の能力を増やす設定ではないため、無給電ハブや大電流機器は接続しないでください。
-- `USB_PWR_FAULT_N` はU1のオープンドレインFAULTを100kΩで3V3へプルアップし、J1 pad22=GP10へ接続します。ENはJ1 pad23=GP9で制御し、R_EN=100kΩによりboot default offです。
-- `CIN` はU1入力の直近に置く1uFセラミックコンデンサです。IN/GNDの両枝はF.CuだけでU1へ接続し、局所バイパスloopにviaを含めません。
-- `COUT_HF` はU1 OUT-GND間の100nF X7Rセラミックコンデンサです。TP_EN/TP_FAULT/TP_IN/TP_OUT/TP_GNDを受入測定に使います。
-- `COUT` はUSB-Aコネクタ付近の220uF電解コンデンサです。**pad 1 / `+` を `VBUS_USB_A_SW`、pad 2 / `-` をGND**へ実装してください。逆挿しは禁止です。
+- `USB_PWR_FAULT_N` はU1のオープンドレインFAULTを100kΩで3V3へプルアップし、J1 pad22=GP10へ接続します。ENはJ1 pad23=GP9で制御し、R5=100kΩによりboot default offです。
+- `C1` はU1入力の直近に置く1uFセラミックコンデンサです。IN/GNDの両枝はF.CuだけでU1へ接続し、局所バイパスloopにviaを含めません。
+- `C3` はU1 OUT-GND間の100nF X7Rセラミックコンデンサです。TP_EN/TP_FAULT/TP_IN/TP_OUT/TP_GNDを受入測定に使います。
+- `C2` はUSB-Aコネクタ付近の220uF電解コンデンサです。**pad 1 / `+` を `VBUS_USB_A_SW`、pad 2 / `-` をGND**へ実装してください。逆挿しは禁止です。
 
-部品値・パッケージの根拠は、[TI TPS2553データシート](https://www.ti.com/lit/ds/symlink/tps2553.pdf)と[TI DBV0006Aパッケージ図](https://www.ti.com/lit/ml/mpds026v/mpds026v.pdf)です。COUTは[秋月電子のRubycon 220uF 16V品](https://akizukidenshi.com/catalog/g/g110326/)に合わせて直径6.3 mm・ピッチ2.5 mmとしています。
+部品値・パッケージの根拠は、[TI TPS2553データシート](https://www.ti.com/lit/ds/symlink/tps2553.pdf)と[TI DBV0006Aパッケージ図](https://www.ti.com/lit/ml/mpds026v/mpds026v.pdf)です。C2は[秋月電子のRubycon 220uF 16V品](https://akizukidenshi.com/catalog/g/g110326/)に合わせて直径6.3 mm・ピッチ2.5 mmとしています。
 
 ## R2は裏面へ実装する
 
-USB D-の直列抵抗R2は、そのリード間のF.Cu側にU1/CINがあるため、**抵抗本体をB.Cu（裏面）側へ寝かせて挿入し、F.Cu側から半田付け**します。B.Silkscreenの `R2` referenceと抵抗本体の外形が見える側が実装面です。R1は従来どおりF.Cu側へ実装します。
+USB D-の直列抵抗R2は、そのリード間のF.Cu側にU1/C1があるため、**抵抗本体をB.Cu（裏面）側へ寝かせて挿入し、F.Cu側から半田付け**します。B.Silkscreenの `R2` referenceと抵抗本体の外形が見える側が実装面です。R1は従来どおりF.Cu側へ実装します。
 
 ## U1型番の選定理由(ラッチオフ版を採用しなかった理由)
 
@@ -37,19 +37,19 @@ USB D-の直列抵抗R2は、そのリード間のF.Cu側にU1/CINがあるた�
 
 ## EN制御・ILIM設定の根拠
 
-- `EN`(pin3)は`USB_PWR_EN`としてJ1 pad23=GP9へ接続し、R_EN=100kΩでGNDへpull-downします。ファーム初期化でもGP9の出力ラッチをLowにしてから出力化し、native USBがconfiguredかつ非suspend、かつFAULT latchなしの場合だけHighにします。
-- `R_ILIM = 52.3kΩ`(1%)は、TIデータシートTable 2「Common R_ILIM Resistor Selections」の"Desired Nominal Current Limit 500 mA"行にある値をそのまま採用しています(推奨範囲15kΩ〜232kΩ内)。実力値は本文既述のとおり448.3〜562.4 mA(公称501.6 mA)です。独自に式から計算した値ではなく、データシートの実測ベースの表を直接引用しています。
+- `EN`(pin3)は`USB_PWR_EN`としてJ1 pad23=GP9へ接続し、R5=100kΩでGNDへpull-downします。ファーム初期化でもGP9の出力ラッチをLowにしてから出力化し、native USBがconfiguredかつ非suspend、かつFAULT latchなしの場合だけHighにします。
+- `R3 = 52.3kΩ`(1%)は、TI Rev.F Table 2「Common RILIM Resistor Selections」の500mA行にあるideal 52.5kΩに対するclosest 1%値です。同じ行のactual値は448.3〜562.4mA（nom 501.6mA）です。独自計算値や49.9kΩ行との近似ではありません。
 
 ## VBUS配線幅の根拠(IPC-2221)
 
 `USB_VBUS_PWR` net class(`VBUS_5V` / `VBUS_TPS_IN` / `VBUS_USB_A` / `VBUS_USB_A_SW`)は基板既定の0.2mmから1.0mm(外層・1oz銅相当)へ拡幅しています。IPC-2221外層トレース幅の式(I = k・ΔT^0.44・A^0.725, k=0.048)で計算すると、1oz・ΔT10℃・外層条件で0.2mmは約0.74A、1.0mmは約2.4Aまで許容できます。ILIM実力値の上限(562.4 mA)に対し1.0mmは十分な余裕(約4倍)を持たせた値です。
 
-- `J1 5V → F1 → U1 → SW4 → COUT/J2`の主電流経路は1.0mmです。従来0.2mmだった`J1 5V → F1`は、J1/J3のヘッダーパッド列の中央へ引き直してクリアランスを保ったまま1.0mm化しました。
-- U1のINピン直近は、隣接するGNDピンおよびGNDビアとのクリアランスを確保するため、約1.5mmだけ0.4mmへテーパーさせています。CIN/EN/FAULTの枝も負荷電流の主経路ではないため0.4〜0.6mmです。これらを除く主電流経路は1.0mmです。
+- `J1 5V → F1 → U1 → SW4 → C2/J2`の主電流経路は1.0mmです。従来0.2mmだった`J1 5V → F1`は、J1/J3のヘッダーパッド列の中央へ引き直してクリアランスを保ったまま1.0mm化しました。
+- U1のINピン直近は、隣接するGNDピンおよびGNDビアとのクリアランスを確保するため、約1.5mmだけ0.4mmへテーパーさせています。C1/EN/FAULTの枝も負荷電流の主経路ではないため0.4〜0.6mmです。これらを除く主電流経路は1.0mmです。
 
 ## GND強化
 
-B.Cu全面をGNDゾーン化してリフィルしました。USBの負荷電流は`J2 GND/COUT → B.Cu GNDプレーン → J1 GND`へ戻るため、信号GNDも含むネット全体を1.0mmのネットクラスへ変更する必要はありません。GNDネットは`Default`のままですが、ゾーンのサーマルスポーク幅は0.5mm、最小スポーク数は2本で、J2のシェルへ向かうプレーン外のF.Cu枝は1.0mmです。既存のGNDビアは1本のみでしたが、U1/CIN/R_ILIM周辺への追加ステッチビアにより、現在GNDネットのビアは4本(F.Cu-B.Cu貫通)です。ゾーンリフィル後に`kicad-cli pcb drc --refill-zones --save-board`でDRCを再実行し、0違反であることを確認しています。
+B.Cu全面をGNDゾーン化してリフィルしました。USBの負荷電流は`J2 GND/C2 → B.Cu GNDプレーン → J1 GND`へ戻るため、信号GNDも含むネット全体を1.0mmのネットクラスへ変更する必要はありません。GNDネットは`Default`のままですが、ゾーンのサーマルスポーク幅は0.5mm、最小スポーク数は2本で、J2のシェルへ向かうプレーン外のF.Cu枝は1.0mmです。既存のGNDビアは1本のみでしたが、U1/C1/R3周辺への追加ステッチビアにより、現在GNDネットのビアは4本(F.Cu-B.Cu貫通)です。ゾーンリフィル後に`kicad-cli pcb drc --refill-zones --save-board`でDRCを再実行し、0違反であることを確認しています。
 
 ## D+/D-配線は現状維持(変更していません)
 
@@ -61,16 +61,16 @@ B.Cu全面をGNDゾーン化してリフィルしました。USBの負荷電流�
 
 ## SW3・SW4・ENの扱い(今回の結論)
 
-SW4はU1 OUTとCOUT/J2の間にある手動VBUS遮断として維持します。ENはGP9による自動制御です。SW3はpad1 NC/pad2 GP27/pad3 GNDの予備スイッチのままで、電源制御へ流用しません。外部電源入力は追加しません。
+SW4はU1 OUTとC2/J2の間にある手動VBUS遮断として維持します。ENはGP9による自動制御です。SW3はpad1 NC/pad2 GP27/pad3 GNDの予備スイッチのままで、電源制御へ流用しません。外部電源入力は追加しません。
 
 ## JLCPCB向けデータ
 
-`jlc_bom.csv` / `jlc_cpl.csv` はJLCPCBのSMD自動実装(CPL)に対応する6部品(`U1`, `CIN`, `R_ILIM`, `R_FAULT`, `R_EN`, `COUT_HF`)のみを収録しています。BOMとCPLのDesignatorは完全一致し、`scripts/hardware_contract.py`が値・座標・回転を検査します。
+`jlc_bom.csv` / `jlc_cpl.csv` はJLCPCBのSMD自動実装(CPL)に対応する6部品(`U1`, `C1`, `R3`, `R4`, `R5`, `C3`)のみを収録しています。BOMとCPLのDesignatorは完全一致し、`scripts/hardware_contract.py`が値・座標・回転を検査します。
 
-- **JLC実装(SMD)対象**: `U1`(TPS2553DBVR), `CIN`(0603), `R_ILIM`(0603), `R_FAULT`(0603), `R_EN`(0603), `COUT_HF`(0603)。
-- **手はんだ(THT)対象**: `J1`〜`J3`(ピンソケット/ヘッダー), `F1`(ラジアルPTCヒューズ), `SW1`〜`SW6`(スライド/タクトスイッチ), `R1`/`R2`(axial 22Ω), `COUT`(ラジアル電解コンデンサ、220uF)。いずれもCPLには含めていません。
-- **LCSC番号**: `U1`=C55266、`CIN`=C93816、`R_ILIM`=C23198、`R_FAULT/R_EN`=C14675、`COUT_HF`=C14663。在庫・代替・誘電体・許容差は発注時に再確認してください。
-- SOT-23-6(U1)のピン1向きはTIデータシートSLVS841Fの"Pin Configuration and Functions"(DBVパッケージ, top view: 左列上から IN/GND/EN、右列上から OUT/ILIM/FAULT)に基づいて自作footprintを作成しています。発注時にJLCPCBの回転補正表と必ず突き合わせてください(特にR_ILIMは180°回転で配置しているため要確認)。
+- **JLC実装(SMD)対象**: `U1`(TPS2553DBVR), `C1`(0603), `R3`(0603), `R4`(0603), `R5`(0603), `C3`(0603)。
+- **手はんだ(THT)対象**: `J1`〜`J3`(ピンソケット/ヘッダー), `F1`(ラジアルPTCヒューズ), `SW1`〜`SW6`(スライド/タクトスイッチ), `R1`/`R2`(axial 22Ω), `C2`(ラジアル電解コンデンサ、220uF)。いずれもCPLには含めていません。
+- **exact Manufacturer/MPN/LCSC**: `U1`=Texas Instruments/TPS2553DBVR/C55266、`C1`=FH/0603B105K160NT/C93816、`R3`=UNI-ROYAL/0603WAF5232T5E/C23198、`R4`と`R5`=YAGEO/RC0603FR-07100KL/C14675、`C3`=YAGEO/CC0603KRX7R9BB104/C14663。正式な6行表と発注チェックリストは`ORDER_DECISION_JA.md`を参照し、代替を禁止してください。
+- SOT-23-6(U1)のピン1向きはTIデータシートSLVS841Fの"Pin Configuration and Functions"(DBVパッケージ, top view: 左列上から IN/GND/EN、右列上から OUT/ILIM/FAULT)に基づいて自作footprintを作成しています。発注時にJLCPCBの回転補正表と必ず突き合わせてください(特にR3は180°回転で配置しているため要確認)。
 
 ## ERC/DRC/parity
 
@@ -79,7 +79,11 @@ SW4はU1 OUTとCOUT/J2の間にある手動VBUS遮断として維持します。
 ## Release PDF paper size
 
 Run `scripts/build_gerbers.sh` to regenerate the release drawings. The
-schematic is fitted to ISO A4 landscape. The five selected PCB layers are
+schematic source and release PDF are native ISO A4 landscape. Native KiCad
+netlist/BOM exports are retained in the release and rejected if annotation
+produces a `?` or a nonstandard reference. The PDF is also rendered at 180dpi
+and compared with the manually reviewed golden digest while critical field
+positions are checked for proximity. The five selected PCB layers are
 exported on separate A4 pages at physical scale 1:1 after translating a
 temporary copy into the page area, so every page is centered without clipping
 or changing the board dimensions.

@@ -34,12 +34,12 @@ EXPECTED_PADS = {
     "F1": {"1": "VBUS_5V", "2": "VBUS_TPS_IN"},
     "R1": {"1": "GP12_USB_DP", "2": "USB_A_DP"},
     "R2": {"1": "GP13_USB_DM", "2": "USB_A_DM"},
-    "R_EN": {"1": "USB_PWR_EN", "2": "GND"},
-    "R_FAULT": {"1": "3V3", "2": "USB_PWR_FAULT_N"},
-    "R_ILIM": {"1": "GND", "2": "TPS_ILIM"},
-    "CIN": {"1": "GND", "2": "VBUS_TPS_IN"},
-    "COUT_HF": {"1": "VBUS_USB_A", "2": "GND"},
-    "COUT": {"1": "VBUS_USB_A_SW", "2": "GND"},
+    "R5": {"1": "USB_PWR_EN", "2": "GND"},
+    "R4": {"1": "3V3", "2": "USB_PWR_FAULT_N"},
+    "R3": {"1": "GND", "2": "TPS_ILIM"},
+    "C1": {"1": "GND", "2": "VBUS_TPS_IN"},
+    "C3": {"1": "VBUS_USB_A", "2": "GND"},
+    "C2": {"1": "VBUS_USB_A_SW", "2": "GND"},
     "SW1": {"1": "", "2": "GP28_SW1_GAME_MODE", "3": "GND"},
     "SW2": {"1": "", "2": "GP29_SW2_LYRE_MODE", "3": "GND"},
     "SW3": {"1": "", "2": "GP27_SW3_SPARE", "3": "GND"},
@@ -60,31 +60,37 @@ ASSEMBLY = {
     # board_rotation separately locks the physical pin-1 footprint geometry.
     "U1": {
         "value": "TPS2553DBVR", "footprint": "TPS2553DBVR",
+        "manufacturer": "Texas Instruments", "mpn": "TPS2553DBVR",
         "lcsc": "C55266", "x": 11.0, "y": 17.3,
         "board_rotation": 0.0, "cpl_rotation": 180.0,
     },
-    "CIN": {
+    "C1": {
         "value": "1uF X7R 16V", "footprint": "C_0603",
-        "lcsc": "C93816", "x": 8.5, "y": 21.0,
+        "manufacturer": "FH (Guangdong Fenghua Advanced Tech)",
+        "mpn": "0603B105K160NT", "lcsc": "C93816", "x": 8.5, "y": 21.0,
         "board_rotation": 180.0, "cpl_rotation": 180.0,
     },
-    "R_ILIM": {
+    "R3": {
         "value": "52.3k 1%", "footprint": "R_0603",
-        "lcsc": "C23198", "x": 14.5, "y": 17.8,
+        "manufacturer": "UNI-ROYAL (Uniroyal Elec)",
+        "mpn": "0603WAF5232T5E", "lcsc": "C23198", "x": 14.5, "y": 17.8,
         "board_rotation": 180.0, "cpl_rotation": 180.0,
     },
-    "R_FAULT": {
+    "R4": {
         "value": "100k", "footprint": "R_0603",
+        "manufacturer": "YAGEO", "mpn": "RC0603FR-07100KL",
         "lcsc": "C14675", "x": 18.0, "y": 12.0,
         "board_rotation": 90.0, "cpl_rotation": 90.0,
     },
-    "R_EN": {
+    "R5": {
         "value": "100k EN pulldown", "footprint": "R_0603",
+        "manufacturer": "YAGEO", "mpn": "RC0603FR-07100KL",
         "lcsc": "C14675", "x": 5.5, "y": 13.5,
         "board_rotation": 0.0, "cpl_rotation": 0.0,
     },
-    "COUT_HF": {
+    "C3": {
         "value": "100nF X7R 50V", "footprint": "C_0603",
+        "manufacturer": "YAGEO", "mpn": "CC0603KRX7R9BB104",
         "lcsc": "C14663", "x": 15.25, "y": 20.8,
         "board_rotation": 90.0, "cpl_rotation": 90.0,
     },
@@ -196,6 +202,19 @@ def main() -> None:
     if len(bom_by_ref) != len(bom) or len(cpl_by_ref) != len(cpl):
         fail("duplicate JLC BOM/CPL designator")
 
+    decision = (board_dir / "ORDER_DECISION_JA.md").read_text(encoding="utf-8")
+    exact_rows = 0
+    for reference, expected in ASSEMBLY.items():
+        row_prefix = (f"| {reference} | {expected['manufacturer']} | "
+                      f"{expected['mpn']} | {expected['lcsc']} |")
+        if decision.count(row_prefix) != 1:
+            fail(f"missing or duplicate exact order-table row: {reference}")
+        exact_rows += 1
+    if exact_rows != 6:
+        fail(f"exact Manufacturer/MPN/LCSC table has {exact_rows} rows")
+    if "TPS2553DBVR-1" not in decision or "一切の代替を禁止" not in decision:
+        fail("TPS2553DBVR-1/substitution ban is missing from order decision")
+
     for reference, expected in ASSEMBLY.items():
         board_footprint = board.FindFootprintByReference(reference)
         if board_footprint.GetValue() != expected["value"]:
@@ -237,20 +256,21 @@ def main() -> None:
     output_path = shortest_track_path_mm(
         board, "VBUS_USB_A", (12.3, -18.5), (15.25, -20.05), "F.Cu")
     if input_path > 4.0:
-        fail(f"CIN-to-IN routed path too long: {input_path:.3f} mm")
+        fail(f"C1-to-IN routed path too long: {input_path:.3f} mm")
     if input_ground_path > 6.0:
-        fail(f"CIN-to-GND routed path too long: {input_ground_path:.3f} mm")
+        fail(f"C1-to-GND routed path too long: {input_ground_path:.3f} mm")
     if output_path > 5.0:
-        fail(f"OUT-to-COUT_HF routed path too long: {output_path:.3f} mm")
+        fail(f"OUT-to-C3 routed path too long: {output_path:.3f} mm")
 
     print("HARDWARE CONTRACT PASS")
     print("  EN=J1.23/GP9, FAULT=J1.22/GP10, FAULT pull-up=3V3")
-    print("  boot default off=R_EN 100k; OUT HF bypass=COUT_HF 100nF")
-    print(f"  F.Cu bypass paths: CIN-IN={input_path:.3f} mm, "
-          f"CIN-GND={input_ground_path:.3f} mm, "
-          f"OUT-COUT_HF={output_path:.3f} mm")
+    print("  boot default off=R5 100k; OUT HF bypass=C3 100nF")
+    print(f"  F.Cu bypass paths: C1-IN={input_path:.3f} mm, "
+          f"C1-GND={input_ground_path:.3f} mm, "
+          f"OUT-C3={output_path:.3f} mm")
     print("  J3 pad1/pad3 isolated; SW3 spare; SW4 manual VBUS switch")
     print(f"  JLC BOM/CPL exact assembly set: {', '.join(sorted(ASSEMBLY))}")
+    print("  exact Manufacturer/MPN/LCSC order table: 6 rows; substitution ban present")
 
 
 if __name__ == "__main__":
