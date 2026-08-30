@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import math
 from pathlib import Path
 import re
@@ -79,12 +80,75 @@ def field_positions(schematic: str) -> dict[str, tuple[tuple[float, float],
     return positions
 
 
+def global_label_angles(schematic: str) -> list[tuple[str, float]]:
+    labels = []
+    offset = 0
+    while True:
+        start = schematic.find("(global_label ", offset)
+        if start < 0:
+            break
+        form = balanced_form(schematic, start)
+        header = re.match(
+            r'\(global_label\s+"([^"]+)".*?'
+            r'\(at\s+[-0-9.]+\s+[-0-9.]+\s+([-0-9.]+)\)',
+            form,
+        )
+        if not header:
+            fail(f"cannot parse global label: {form[:100]}")
+        labels.append((header.group(1), float(header.group(2))))
+        offset = start + len(form)
+    return labels
+
+
+def check_assigned_netclass_colors(schematic_path: Path,
+                                   schematic: str) -> None:
+    project_path = schematic_path.with_suffix(".kicad_pro")
+    if not project_path.is_file():
+        fail(f"missing KiCad project for rendered-color audit: {project_path}")
+    project = json.loads(project_path.read_text(encoding="utf-8"))
+    net_settings = project.get("net_settings", {})
+    classes = {entry.get("name"): entry
+               for entry in net_settings.get("classes", [])}
+    used_labels = {name for name, _ in global_label_angles(schematic)}
+    for assignment in net_settings.get("netclass_patterns", []):
+        pattern = assignment.get("pattern", "")
+        if any(token in pattern for token in ("*", "?", "[")):
+            fail(f"wildcard netclass pattern needs visual-audit support: {pattern}")
+        if pattern not in used_labels:
+            continue
+        class_name = assignment.get("netclass")
+        net_class = classes.get(class_name)
+        if net_class is None:
+            fail(f"missing assigned net class {class_name!r} for {pattern}")
+        color = net_class.get("schematic_color", "")
+        match = re.fullmatch(
+            r"rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([0-9.]+)\s*\)",
+            color,
+        )
+        if not match:
+            fail(f"cannot parse {class_name} schematic color: {color!r}")
+        if float(match.group(1)) < 0.5:
+            fail(f"{pattern} renders transparent via net class {class_name}")
+
+
 def main() -> None:
     if len(sys.argv) != 4:
         fail("usage: schematic_visual_audit.py SCHEMATIC PDF GOLDEN_SHA256")
     schematic_path, pdf_path, golden_path = map(Path, sys.argv[1:])
     schematic = schematic_path.read_text(encoding="utf-8")
     positions = field_positions(schematic)
+
+    labels = global_label_angles(schematic)
+    vertical = sorted(name for name, angle in labels
+                      if not math.isclose(angle % 180.0, 0.0, abs_tol=1e-6))
+    if vertical:
+        fail(f"vertical global labels risk symbol/text overlap: {vertical}")
+    switch_marker = '(symbol "Switch:SW_SPDT"'
+    switch_start = schematic.find(switch_marker)
+    if switch_start < 0 or "(pin_names hide)" not in balanced_form(
+            schematic, switch_start):
+        fail("SW_SPDT duplicate pin names/numbers are not hidden")
+    check_assigned_netclass_colors(schematic_path, schematic)
 
     for reference, limit in FIELD_DISTANCE_LIMITS_MM.items():
         if reference not in positions:
@@ -119,7 +183,8 @@ def main() -> None:
         required_text = (
             "RP2350_Zero_Header_23p", "SW_SPDT_NKK_115643_Slide",
             "SW_TACT_Akizuki_DTS63", "TPS2553DBVR", "100nF X7R 50V",
-            "100k EN pulldown",
+            "100k EN pulldown", "VBUS_5V", "VBUS_TPS_IN",
+            "VBUS_USB_A", "VBUS_USB_A_SW", "Power path:",
         )
         missing = [token for token in required_text if token not in text]
         if missing:
@@ -134,6 +199,8 @@ def main() -> None:
 
     print("SCHEMATIC VISUAL AUDIT PASS")
     print("  A4 field proximity: J1/J3/SW1-SW6/U1/R/C")
+    print("  global labels horizontal; assigned net-class text opaque")
+    print("  SW_SPDT duplicate pin names hidden")
     print("  rendered required text present; no merged U1 pin text")
     print(f"  reviewed 180dpi grayscale golden: {digest}")
 

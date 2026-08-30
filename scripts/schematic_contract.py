@@ -14,7 +14,7 @@ EXPECTED_REFS = {
     "R4", "R5", "SW1", "SW2", "SW3", "SW4", "SW5", "SW6", "U1",
 }
 EXPECTED_MODULE_PINS = {
-    "1": ("VBUS/5V", "power_out"),
+    "1": ("5V", "power_out"),
     "2": ("GND", "passive"),
     "3": ("3V3", "power_out"),
     "4": ("GP29", "bidirectional"),
@@ -135,7 +135,7 @@ def main() -> None:
 
     print("SCHEMATIC CONTRACT PASS")
     print("  native BOM/netlist annotation: 19 unique standard references, no '?'")
-    print("  RP2350-Zero pins 1..23: VBUS/5V,GND,3V3,GP29..GP9")
+    print("  RP2350-Zero pins 1..23: 5V,GND,3V3,GP29..GP9")
     print("  power pins typed; GPIO pins bidirectional; embedded copy synchronized")
 
 
