@@ -17,6 +17,7 @@
 /tests/t_nkro_report
 /tests/t_nkro_report_wrap
 /tests/t_midi_note_filter
+/tests/t_usb_power_fsm
 
 # editor / OS
 .cache/

@@ -84,6 +84,22 @@
 #endif
 
 // ---------------------------------------------------------------------------
+//  TPS2553 downstream USB-A power control (board 1)
+//  GP9=EN, GP10=FAULT_N.  EN has an external 100k pull-down and therefore
+//  remains OFF during reset/boot before firmware takes ownership.
+// ---------------------------------------------------------------------------
+#ifndef PIN_USB_POWER_EN
+#define PIN_USB_POWER_EN 9
+#endif
+#ifndef PIN_USB_POWER_FAULT_N
+#define PIN_USB_POWER_FAULT_N 10
+#endif
+// Waveshare RP2350-Zero schematic: onboard WS2812B DIN is GPIO16.
+#ifndef PIN_STATUS_WS2812
+#define PIN_STATUS_WS2812 16
+#endif
+
+// ---------------------------------------------------------------------------
 //  原神モードスイッチ (ボード1: MIDI→HID 変換板)
 //  スイッチを ON (ミュート) にすると HID キーボード出力を無効化し、
 //  UART ミラーは完全パススルーにする。OFF (原神演奏中) では HID を有効化し、

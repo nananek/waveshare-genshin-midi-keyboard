@@ -62,10 +62,17 @@ jobs:
           path: |
             build/release/rp2350_zero_carrier_gerbers_JLCPCB.zip
             build/release/rp2350_zero_carrier-drc.rpt
+            build/release/rp2350_zero_carrier-erc-errors.rpt
+            build/release/rp2350_zero_carrier-erc-all.rpt
+            build/release/rp2350_zero_carrier-hardware-contract.txt
+            build/release/rp2350_zero_carrier-native.net
+            build/release/rp2350_zero_carrier-native-bom.csv
             build/release/rp2350_zero_carrier-schematic.pdf
             build/release/rp2350_zero_carrier-layout.pdf
             build/release/jlc_bom.csv
             build/release/jlc_cpl.csv
+            build/release/ORDER_DECISION_JA.md
+            build/release/VALIDATION_WAIVERS_JA.md
             build/release/SHA256SUMS.txt
           if-no-files-found: error
 
@@ -91,15 +98,9 @@ jobs:
       - name: release checksums
         run: |
           cd build/release
-          sha256sum \
-            genshin_midi_kbd.uf2 serial_midi_device.uf2 \
-            rp2350_zero_carrier_gerbers_JLCPCB.zip \
-            rp2350_zero_carrier-drc.rpt \
-            rp2350_zero_carrier-schematic.pdf \
-            rp2350_zero_carrier-layout.pdf \
-            jlc_bom.csv jlc_cpl.csv \
-            > SHA256SUMS.txt
-          test "$(wc -l < SHA256SUMS.txt)" -eq 8
+          find . -maxdepth 1 -type f ! -name SHA256SUMS.txt \
+            -printf '%f\0' | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
+          test "$(wc -l < SHA256SUMS.txt)" -eq 15
           if grep -qE '  .*/' SHA256SUMS.txt; then
             echo "checksum manifest contains a non-basename path" >&2
             exit 1
@@ -113,9 +114,16 @@ jobs:
             build/release/genshin_midi_kbd.uf2 build/release/serial_midi_device.uf2 \
             build/release/rp2350_zero_carrier_gerbers_JLCPCB.zip \
             build/release/rp2350_zero_carrier-drc.rpt \
+            build/release/rp2350_zero_carrier-erc-errors.rpt \
+            build/release/rp2350_zero_carrier-erc-all.rpt \
+            build/release/rp2350_zero_carrier-hardware-contract.txt \
+            build/release/rp2350_zero_carrier-native.net \
+            build/release/rp2350_zero_carrier-native-bom.csv \
             build/release/rp2350_zero_carrier-schematic.pdf \
             build/release/rp2350_zero_carrier-layout.pdf \
             build/release/jlc_bom.csv build/release/jlc_cpl.csv \
+            build/release/ORDER_DECISION_JA.md \
+            build/release/VALIDATION_WAIVERS_JA.md \
             build/release/SHA256SUMS.txt \
             --title "$GITHUB_REF_NAME" \
             --notes-file .github/release-notes.md \

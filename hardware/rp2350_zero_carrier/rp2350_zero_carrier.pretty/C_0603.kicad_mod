@@ -2,7 +2,7 @@
   (version 20221018)
   (generator "handwritten")
   (layer "F.Cu")
-  (descr "Generic SMD ceramic chip capacitor, 0603 (1608 metric) package. Pad size 0.9x0.8mm, pad centers +-0.75mm (IPC nominal-density land pattern for 0603, not a specific vendor drawing). Used for CIN (TPS2553 IN-GND decoupling). Self-authored for consistency with the other hand-made footprints in this project.")
+  (descr "Generic SMD ceramic chip capacitor, 0603 (1608 metric) package. Pad size 0.9x0.8mm, pad centers +-0.75mm (IPC nominal-density land pattern for 0603, not a specific vendor drawing). Used for C1/C3 TPS2553 bypass capacitors. Self-authored for consistency with the other hand-made footprints in this project.")
   (tags "capacitor chip SMD 0603 1608")
   (attr smd)
   (fp_text reference "REF**" (at 0 0) (layer "F.Fab")

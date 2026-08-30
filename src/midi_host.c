@@ -5,29 +5,12 @@
 #include "midi_mirror.h"
 #include "config.h"
 
-#ifdef PICO_DEFAULT_LED_PIN
-#include "pico/stdlib.h"
-#endif
-
 // core1 専用。tuh_task のコールバック文脈でのみ触るので排他不要。
 static midi_parser_t s_parser;
-
-static void led_set(bool on) {
-#ifdef PICO_DEFAULT_LED_PIN
-    gpio_put(PICO_DEFAULT_LED_PIN, on ? 1 : 0);
-#else
-    (void)on;
-#endif
-}
 
 void midi_host_init(void) {
     midi_parser_init(&s_parser);
     midi_mirror_init();
-#ifdef PICO_DEFAULT_LED_PIN
-    gpio_init(PICO_DEFAULT_LED_PIN);
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
-#endif
-    led_set(false);
 }
 
 // midi_parse からの Note コールバック。チャンネルフィルタを適用してアプリへ。
@@ -55,13 +38,11 @@ void tuh_midi_mount_cb(uint8_t idx, const tuh_midi_mount_cb_t *mount_cb_data) {
            mount_cb_data->rx_cable_count, mount_cb_data->tx_cable_count);
     midi_parser_init(&s_parser); // 新デバイス: ランニングステータス等をリセット
     midi_mirror_reset();         // ミラーの状態もリセット
-    led_set(true);
 }
 
 void tuh_midi_umount_cb(uint8_t idx) {
     printf("[midi] unmounted idx=%u\r\n", idx);
     app_on_midi_disconnect(); // 全キー解放 (ホットプラグ)
-    led_set(false);
 }
 
 void tuh_midi_rx_cb(uint8_t idx, uint32_t xferred_bytes) {

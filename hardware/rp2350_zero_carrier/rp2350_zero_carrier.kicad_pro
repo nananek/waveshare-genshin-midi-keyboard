@@ -509,7 +509,7 @@
         "name": "USB_VBUS_PWR",
         "pcb_color": "rgba(255, 128, 0, 0.000)",
         "priority": 1,
-        "schematic_color": "rgba(255, 128, 0, 0.000)",
+        "schematic_color": "rgba(255, 128, 0, 1.000)",
         "track_width": 1.0,
         "tuning_profile": "",
         "via_diameter": 1.0,

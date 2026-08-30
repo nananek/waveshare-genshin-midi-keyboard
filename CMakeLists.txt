@@ -62,6 +62,9 @@ add_executable(${PROJECT_NAME}
     src/mirror_filter_switch.c
     src/note_mapper.c
     src/nkro_report.c
+    src/status_led.c
+    src/usb_power_control.c
+    src/usb_power_fsm.c
 
     # --- SDK の tinyusb_host が列挙しないソースを手動追加 ---
     # MIDI ホストクラスドライバ (usbh.c がこのシンボルを参照するので必須)
@@ -70,6 +73,8 @@ add_executable(${PROJECT_NAME}
     ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/dcd_pio_usb.c
     ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/hcd_pio_usb.c
 )
+
+pico_generate_pio_header(${PROJECT_NAME} ${PROJECT_ROOT}/src/ws2812.pio)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_ROOT}/src)
 

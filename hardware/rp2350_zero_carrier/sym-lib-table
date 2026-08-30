@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "rp2350_zero_carrier")(type "KiCad")(uri "${KIPRJMOD}/rp2350_zero_carrier.kicad_sym")(options "")(descr "Project-local RP2350-Zero carrier symbols"))
+)
