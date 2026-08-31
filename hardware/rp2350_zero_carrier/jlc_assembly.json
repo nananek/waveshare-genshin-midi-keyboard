@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "components": [
+    {
+      "reference": "U1",
+      "pcb_value": "TPS2553DBVR",
+      "bom_comment": "TPS2553DBVR",
+      "footprint": "TPS2553DBVR",
+      "manufacturer": "Texas Instruments",
+      "mpn": "TPS2553DBVR",
+      "lcsc": "C55266",
+      "jlc_rotation_offset": 180
+    },
+    {
+      "reference": "C1",
+      "pcb_value": "1uF X7R 16V",
+      "bom_comment": "1uF X7R 16V",
+      "footprint": "C_0603",
+      "manufacturer": "FH (Guangdong Fenghua Advanced Tech)",
+      "mpn": "0603B105K160NT",
+      "lcsc": "C93816",
+      "jlc_rotation_offset": 0
+    },
+    {
+      "reference": "R3",
+      "pcb_value": "52.3k 1%",
+      "bom_comment": "52.3k 1%",
+      "footprint": "R_0603",
+      "manufacturer": "UNI-ROYAL (Uniroyal Elec)",
+      "mpn": "0603WAF5232T5E",
+      "lcsc": "C23198",
+      "jlc_rotation_offset": 0
+    },
+    {
+      "reference": "R4",
+      "pcb_value": "100k",
+      "bom_comment": "100k 1%",
+      "footprint": "R_0603",
+      "manufacturer": "YAGEO",
+      "mpn": "RC0603FR-07100KL",
+      "lcsc": "C14675",
+      "jlc_rotation_offset": 0
+    },
+    {
+      "reference": "R5",
+      "pcb_value": "100k EN pulldown",
+      "bom_comment": "100k 1%",
+      "footprint": "R_0603",
+      "manufacturer": "YAGEO",
+      "mpn": "RC0603FR-07100KL",
+      "lcsc": "C14675",
+      "jlc_rotation_offset": 0
+    },
+    {
+      "reference": "C3",
+      "pcb_value": "100nF X7R 50V",
+      "bom_comment": "100nF X7R 50V",
+      "footprint": "C_0603",
+      "manufacturer": "YAGEO",
+      "mpn": "CC0603KRX7R9BB104",
+      "lcsc": "C14663",
+      "jlc_rotation_offset": 0
+    }
+  ]
+}

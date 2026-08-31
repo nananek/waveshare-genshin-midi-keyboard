@@ -67,6 +67,7 @@ jobs:
             build/release/rp2350_zero_carrier-hardware-contract.txt
             build/release/rp2350_zero_carrier-native.net
             build/release/rp2350_zero_carrier-native-bom.csv
+            build/release/rp2350_zero_carrier-native-pos.csv
             build/release/rp2350_zero_carrier-schematic.pdf
             build/release/rp2350_zero_carrier-layout.pdf
             build/release/jlc_bom.csv
@@ -100,7 +101,7 @@ jobs:
           cd build/release
           find . -maxdepth 1 -type f ! -name SHA256SUMS.txt \
             -printf '%f\0' | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
-          test "$(wc -l < SHA256SUMS.txt)" -eq 15
+          test "$(wc -l < SHA256SUMS.txt)" -eq 16
           if grep -qE '  .*/' SHA256SUMS.txt; then
             echo "checksum manifest contains a non-basename path" >&2
             exit 1
@@ -119,6 +120,7 @@ jobs:
             build/release/rp2350_zero_carrier-hardware-contract.txt \
             build/release/rp2350_zero_carrier-native.net \
             build/release/rp2350_zero_carrier-native-bom.csv \
+            build/release/rp2350_zero_carrier-native-pos.csv \
             build/release/rp2350_zero_carrier-schematic.pdf \
             build/release/rp2350_zero_carrier-layout.pdf \
             build/release/jlc_bom.csv build/release/jlc_cpl.csv \

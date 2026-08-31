@@ -159,16 +159,26 @@ git diff --check
 | R5 | YAGEO | RC0603FR-07100KL | C14675 | 5.50,13.50,Top,0 |
 | C3 | YAGEO | CC0603KRX7R9BB104 | C14663 | 15.25,20.80,Top,90 |
 
-上表6行が唯一のJLC自動実装対象である。特にU1は`TPS2553DBVR`通常版に固定し、`TPS2553DBVR-1`、同等品、仕様違いを含む一切の代替を禁止する。C1の公称仕様は1µF/X7R/16V/±10%/0603で一致するが、5V DC bias後の実効容量曲線は取得できていないためWVR-009とし、TI最小0.1µFを実効値で満たすことを量産前に確認する。
+上表6点が唯一のJLC自動実装対象である。一方、JLC BOMは材料ごとの5行である。R4/R5は同じYAGEO `RC0603FR-07100KL` / `C14675`なので、BOMでは`100k 1%,"R4,R5",R_0603,C14675`という**quoted Designator 1行**に集約する。JLCが材料単位で表示する場合のC14675 Part Qty per PCB=**2**は正しい。CPLは物理搭載点なので6行を維持し、R4=`18.00,12.00,Top,90`、R5=`5.50,13.50,Top,0`を統合してはならない。特にU1は`TPS2553DBVR`通常版に固定し、`TPS2553DBVR-1`、同等品、仕様違いを含む一切の代替を禁止する。C1の公称仕様は1µF/X7R/16V/±10%/0603で一致するが、5V DC bias後の実効容量曲線は取得できていないためWVR-009とし、TI最小0.1µFを実効値で満たすことを量産前に確認する。
 
 ### 発注時チェックリスト
 
-1. JLC BOMとCPLのDesignatorが上表の6行だけで、相互に完全一致することを確認する。
+1. BOM Designatorをカンマ展開するとCPLと上表の6点に完全一致することを確認する。BOMは5材料行、CPLは6搭載行であり、C14675はquoted `R4,R5`の1材料行・Qty=2でなければならない。R4/R5を別BOM行へ戻す、未選択、Qty=0、重複警告は発注STOPとする。
 2. 各行のManufacturer/MPN/LCSCを上表と照合し、JLCの部品代替を無効にする。U1に`-1` suffixや別MPNが表示された場合は発注を中止する。
 3. U1のtop marking=`2553`、pin 1 dot、CPL rotation=180°をJLCプレビューとTI DBV top viewで二者確認する。
 4. C1/C3の誘電体・容量・定格、R3/R4/R5の抵抗値・許容差をプレビューの部品詳細で再確認する。
 5. THT、test pad、C2、J1–J3、F1、R1/R2、SW1–SW6、機構穴が自動実装対象へ混入していないことを確認する。
 6. 6部品すべての位置・面・回転が見えるJLCプレビュー画像を保存し、WVR-004のclose証跡にする。
+
+### BOM/CPL再アップロード手順
+
+1. 同一commitで`./scripts/build_gerbers.sh`を実行し、`build/release/SHA256SUMS.txt`がBOM、CPL、native position CSV、Gerber ZIPを含めて全て`OK`であることを確認する。
+2. 新しいJLC order/sessionへ、同じreleaseのGerber ZIP、`jlc_bom.csv`、`jlc_cpl.csv`をアップロードする。以前のsessionのBOM/CPLを上書き利用しない。
+3. matching画面でC14675が一つの選択済み材料として`R4,R5`/Qty=2（designator表示ならR4=1かつR5=1）となること、重複・yellow warning・Qty=0・未選択がないことを確認する。
+4. placement previewでR4=`18.00,12.00,Top,90`、R5=`5.50,13.50,Top,0`、U1=`C55266`/`TPS2553DBVR`/`11.00,17.30,Top,180`を確認し、matching画面・部品一覧・previewの画像とrelease SHA-256を保存する。
+5. C14675を含む6点の在庫を同じsessionで確認する。在庫不足はQty対応とは別のNO-GOであり、代替を自動選択しない。
+
+2026-08-31 JSTにJLC公開部品ページで`C14675`=`RC0603FR-07100KL`（YAGEO、100kΩ、1%、0603、SMT）を再照合した時点では、表示在庫は`0`だった。従って、このBOM集約でQty対応は是正しても、現時点の実発注判定は**NO-GO**である。在庫は変動するため新規sessionで再確認するが、在庫0を理由に別LCSC/別MPNを自動選択してはならない。
 
 - https://jlcpcb.com/partdetail/YAGEO-CC0603KRX7R9BB104/C14663
 - https://www.lcsc.com/product-detail/A_C14675.html
