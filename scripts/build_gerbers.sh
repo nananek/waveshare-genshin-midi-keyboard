@@ -12,6 +12,7 @@ SYM=$BOARD_DIR/$BOARD.kicad_sym
 SCHEMATIC_GOLDEN=$BOARD_DIR/schematic_visual_golden.sha256
 JLC_BOM=$BOARD_DIR/jlc_bom.csv
 JLC_CPL=$BOARD_DIR/jlc_cpl.csv
+JLC_MANIFEST=$BOARD_DIR/jlc_assembly.json
 DECISION=$BOARD_DIR/ORDER_DECISION_JA.md
 WAIVERS=$BOARD_DIR/VALIDATION_WAIVERS_JA.md
 GERBERS=$OUT/gerbers
@@ -28,24 +29,35 @@ test -f "$SYM"
 test -s "$SCHEMATIC_GOLDEN"
 test -s "$JLC_BOM"
 test -s "$JLC_CPL"
+test -s "$JLC_MANIFEST"
 test -s "$DECISION"
 test -s "$WAIVERS"
 rm -rf "$OUT"
 mkdir -p "$GERBERS"
 
-# Keep the reviewed JLCPCB assembly files beside the generated fabrication
-# outputs so the CI artifact and GitHub Release contain one coherent hardware
-# package. These CSVs are maintained with the board source rather than derived
-# by KiCad, so copy them byte-for-byte and include them in the checksums below.
+# Generate assembly data only from KiCad's native position export.  --check is
+# deliberately byte-for-byte so hand edits (including unquoted grouped BOM
+# designators) cannot reach a release.  Retain the exact native source CSV as
+# a checksummed manufacturing artifact.
+NATIVE_POS=$OUT/${BOARD}-native-pos.csv
+python3 "$ROOT/scripts/generate_jlc_assembly.py" --check \
+  --native-pos-output "$NATIVE_POS" "$BOARD_DIR" \
+  > "$OUT/${BOARD}-hardware-contract.txt"
+
+# Gate the exact pad/net/grouped-BOM/CPL contract independently of KiCad's
+# schematic comparison.  The Python suite carries both positive and negative
+# JLC matching cases (split C14675, malformed quotes, missing/duplicate CPL,
+# coordinate/rotation drift, and U1 substitution).
+python3 "$ROOT/scripts/hardware_contract.py" \
+  >> "$OUT/${BOARD}-hardware-contract.txt"
+python3 "$ROOT/tests/test_jlc_assembly.py" \
+  >> "$OUT/${BOARD}-hardware-contract.txt" 2>&1
+
+# Copy only after the native generator and JLC semantics gates pass.
 cp "$JLC_BOM" "$OUT/jlc_bom.csv"
 cp "$JLC_CPL" "$OUT/jlc_cpl.csv"
 cp "$DECISION" "$OUT/ORDER_DECISION_JA.md"
 cp "$WAIVERS" "$OUT/VALIDATION_WAIVERS_JA.md"
-
-# Gate the exact pad/net/BOM/CPL contract independently of KiCad's schematic
-# comparison, and retain the command output as manufacturing evidence.
-python3 "$ROOT/scripts/hardware_contract.py" \
-  > "$OUT/${BOARD}-hardware-contract.txt"
 
 # KiCad reports annotation failures as warnings while still returning success.
 # Export both native deliverables, then fail closed on '?' references,

@@ -65,12 +65,14 @@ SW4はU1 OUTとC2/J2の間にある手動VBUS遮断として維持します。EN
 
 ## JLCPCB向けデータ
 
-`jlc_bom.csv` / `jlc_cpl.csv` はJLCPCBのSMD自動実装(CPL)に対応する6部品(`U1`, `C1`, `R3`, `R4`, `R5`, `C3`)のみを収録しています。BOMとCPLのDesignatorは完全一致し、`scripts/hardware_contract.py`が値・座標・回転を検査します。
+`jlc_bom.csv` / `jlc_cpl.csv` はJLCPCBのSMD自動実装(CPL)に対応する6部品(`U1`, `C1`, `R3`, `R4`, `R5`, `C3`)だけを、`scripts/generate_jlc_assembly.py`でKiCad native position CSVから再生成したものです。`--check`はcommit済みCSVとのbyte-for-byte一致を要求し、`scripts/jlc_assembly_contract.py`はBOMのDesignatorを展開してCPLと照合します。
 
 - **JLC実装(SMD)対象**: `U1`(TPS2553DBVR), `C1`(0603), `R3`(0603), `R4`(0603), `R5`(0603), `C3`(0603)。
+- **BOMは5材料行、CPLは6搭載行**: 同じYAGEO `RC0603FR-07100KL` / `C14675`であるR4/R5は、BOMの単一行`100k 1%,"R4,R5",R_0603,C14675`へ必ず集約する。JLCの材料集約表示ではこの行のPart Qty per PCB=**2**が正しい。CPLは集約せず、R4=`(18.000,12.000,Top,90°)`、R5=`(5.500,13.500,Top,0°)`を別々の搭載点として残す。R5のEN pull-downという役割は回路図と本資料に残し、購入材料のCommentを分裂させない。
 - **手はんだ(THT)対象**: `J1`〜`J3`(ピンソケット/ヘッダー), `F1`(ラジアルPTCヒューズ), `SW1`〜`SW6`(スライド/タクトスイッチ), `R1`/`R2`(axial 22Ω), `C2`(ラジアル電解コンデンサ、220uF)。いずれもCPLには含めていません。
 - **exact Manufacturer/MPN/LCSC**: `U1`=Texas Instruments/TPS2553DBVR/C55266、`C1`=FH/0603B105K160NT/C93816、`R3`=UNI-ROYAL/0603WAF5232T5E/C23198、`R4`と`R5`=YAGEO/RC0603FR-07100KL/C14675、`C3`=YAGEO/CC0603KRX7R9BB104/C14663。正式な6行表と発注チェックリストは`ORDER_DECISION_JA.md`を参照し、代替を禁止してください。
 - SOT-23-6(U1)のピン1向きはTIデータシートSLVS841Fの"Pin Configuration and Functions"(DBVパッケージ, top view: 左列上から IN/GND/EN、右列上から OUT/ILIM/FAULT)に基づいて自作footprintを作成しています。発注時にJLCPCBの回転補正表と必ず突き合わせてください(特にR3は180°回転で配置しているため要確認)。
+- 再生成・発注前checkは`python3 scripts/generate_jlc_assembly.py --check`、`python3 scripts/jlc_assembly_contract.py`、`python3 tests/test_jlc_assembly.py`の順で実行する。JLCの再アップロードでは同一commitのGerber ZIP/BOM/CPLを新規sessionへ入れ、重複警告・Qty=0・未選択が無いこと、C14675のQty=2と6点のplacement previewを保存してからGOとする。
 
 ## ERC/DRC/parity
 

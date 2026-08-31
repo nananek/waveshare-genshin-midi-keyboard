@@ -3,13 +3,15 @@
 
 from __future__ import annotations
 
-import csv
 import heapq
 import math
 from pathlib import Path
 import sys
 
 import pcbnew
+
+from generate_jlc_assembly import load_manifest
+from jlc_assembly_contract import validate_jlc_assembly
 
 
 EXPECTED_PADS = {
@@ -54,46 +56,15 @@ EXPECTED_PADS = {
     "TP_GND": {"1": "GND"},
 }
 
-ASSEMBLY = {
-    # x/y use JLC's Cartesian convention: PCB editor X, inverted editor Y.
-    # U1's CPL rotation includes the reviewed 180-degree JLC/LCSC correction;
-    # board_rotation separately locks the physical pin-1 footprint geometry.
-    "U1": {
-        "value": "TPS2553DBVR", "footprint": "TPS2553DBVR",
-        "manufacturer": "Texas Instruments", "mpn": "TPS2553DBVR",
-        "lcsc": "C55266", "x": 11.0, "y": 17.3,
-        "board_rotation": 0.0, "cpl_rotation": 180.0,
-    },
-    "C1": {
-        "value": "1uF X7R 16V", "footprint": "C_0603",
-        "manufacturer": "FH (Guangdong Fenghua Advanced Tech)",
-        "mpn": "0603B105K160NT", "lcsc": "C93816", "x": 8.5, "y": 21.0,
-        "board_rotation": 180.0, "cpl_rotation": 180.0,
-    },
-    "R3": {
-        "value": "52.3k 1%", "footprint": "R_0603",
-        "manufacturer": "UNI-ROYAL (Uniroyal Elec)",
-        "mpn": "0603WAF5232T5E", "lcsc": "C23198", "x": 14.5, "y": 17.8,
-        "board_rotation": 180.0, "cpl_rotation": 180.0,
-    },
-    "R4": {
-        "value": "100k", "footprint": "R_0603",
-        "manufacturer": "YAGEO", "mpn": "RC0603FR-07100KL",
-        "lcsc": "C14675", "x": 18.0, "y": 12.0,
-        "board_rotation": 90.0, "cpl_rotation": 90.0,
-    },
-    "R5": {
-        "value": "100k EN pulldown", "footprint": "R_0603",
-        "manufacturer": "YAGEO", "mpn": "RC0603FR-07100KL",
-        "lcsc": "C14675", "x": 5.5, "y": 13.5,
-        "board_rotation": 0.0, "cpl_rotation": 0.0,
-    },
-    "C3": {
-        "value": "100nF X7R 50V", "footprint": "C_0603",
-        "manufacturer": "YAGEO", "mpn": "CC0603KRX7R9BB104",
-        "lcsc": "C14663", "x": 15.25, "y": 20.8,
-        "board_rotation": 90.0, "cpl_rotation": 90.0,
-    },
+# x/y use JLC's Cartesian convention: PCB editor X, inverted editor Y. These
+# reviewed physical placements remain independent of the native-derived CPL.
+EXPECTED_ASSEMBLY_PLACEMENTS = {
+    "U1": (11.0, 17.3, 0.0),
+    "C1": (8.5, 21.0, 180.0),
+    "R3": (14.5, 17.8, 180.0),
+    "R4": (18.0, 12.0, 90.0),
+    "R5": (5.5, 13.5, 0.0),
+    "C3": (15.25, 20.8, 90.0),
 }
 
 TEST_PAD_POSITIONS = {
@@ -116,11 +87,6 @@ def pad_map(board: pcbnew.BOARD, reference: str) -> dict[str, str]:
     pads = footprint.Pads()
     return {str(pads[index].GetNumber()): pads[index].GetNetname()
             for index in range(pads.size())}
-
-
-def read_csv(path: Path) -> list[dict[str, str]]:
-    with path.open(newline="", encoding="utf-8-sig") as source:
-        return list(csv.DictReader(source))
 
 
 def shortest_track_path_mm(board: pcbnew.BOARD, net_name: str,
@@ -191,20 +157,18 @@ def main() -> None:
             fail(f"{reference} position: expected {expected_position}, "
                  f"got {actual_position}")
 
-    bom = read_csv(board_dir / "jlc_bom.csv")
-    cpl = read_csv(board_dir / "jlc_cpl.csv")
-    bom_by_ref = {row["Designator"]: row for row in bom}
-    cpl_by_ref = {row["Designator"]: row for row in cpl}
-    if set(bom_by_ref) != set(ASSEMBLY):
-        fail(f"JLC BOM designators: {sorted(bom_by_ref)}")
-    if set(cpl_by_ref) != set(ASSEMBLY):
-        fail(f"JLC CPL designators: {sorted(cpl_by_ref)}")
-    if len(bom_by_ref) != len(bom) or len(cpl_by_ref) != len(cpl):
-        fail("duplicate JLC BOM/CPL designator")
+    components = load_manifest(board_dir)
+    assembly = {str(component["reference"]): component
+                for component in components}
+    if set(assembly) != set(EXPECTED_ASSEMBLY_PLACEMENTS):
+        fail(f"JLC assembly manifest references: {sorted(assembly)}")
+    # This expands the grouped BOM designators before comparing them to the
+    # six distinct CPL placements and the KiCad-native position export.
+    validate_jlc_assembly(board_dir)
 
     decision = (board_dir / "ORDER_DECISION_JA.md").read_text(encoding="utf-8")
     exact_rows = 0
-    for reference, expected in ASSEMBLY.items():
+    for reference, expected in assembly.items():
         row_prefix = (f"| {reference} | {expected['manufacturer']} | "
                       f"{expected['mpn']} | {expected['lcsc']} |")
         if decision.count(row_prefix) != 1:
@@ -215,36 +179,24 @@ def main() -> None:
     if "TPS2553DBVR-1" not in decision or "一切の代替を禁止" not in decision:
         fail("TPS2553DBVR-1/substitution ban is missing from order decision")
 
-    for reference, expected in ASSEMBLY.items():
+    for reference, expected in assembly.items():
         board_footprint = board.FindFootprintByReference(reference)
-        if board_footprint.GetValue() != expected["value"]:
-            fail(f"{reference} PCB value: expected {expected['value']!r}, "
+        if board_footprint.GetValue() != expected["pcb_value"]:
+            fail(f"{reference} PCB value: expected {expected['pcb_value']!r}, "
                  f"got {board_footprint.GetValue()!r}")
+        if board_footprint.GetFPIDAsString().split(":")[-1] != expected["footprint"]:
+            fail(f"{reference} PCB footprint: expected {expected['footprint']!r}, "
+                 f"got {board_footprint.GetFPIDAsString()!r}")
         position = board_footprint.GetPosition()
         board_placement = (
             round(pcbnew.ToMM(position.x), 6),
             round(-pcbnew.ToMM(position.y), 6),
             round(board_footprint.GetOrientationDegrees() % 360.0, 6),
         )
-        expected_board_placement = (
-            expected["x"], expected["y"], expected["board_rotation"])
+        expected_board_placement = EXPECTED_ASSEMBLY_PLACEMENTS[reference]
         if board_placement != expected_board_placement:
             fail(f"{reference} PCB placement: expected "
                  f"{expected_board_placement}, got {board_placement}")
-
-        if bom_by_ref[reference]["Comment"] != expected["value"]:
-            fail(f"{reference} BOM value")
-        if bom_by_ref[reference]["Footprint"] != expected["footprint"]:
-            fail(f"{reference} BOM footprint")
-        if bom_by_ref[reference]["LCSC Part #"] != expected["lcsc"]:
-            fail(f"{reference} LCSC part")
-        row = cpl_by_ref[reference]
-        actual = (float(row["Mid X"]), float(row["Mid Y"]), row["Layer"],
-                  float(row["Rotation"]))
-        expected_cpl = (expected["x"], expected["y"], "Top",
-                        expected["cpl_rotation"])
-        if actual != expected_cpl:
-            fail(f"{reference} CPL: expected {expected_cpl}, got {actual}")
 
     # TI calls for short IN-GND and OUT-GND bypass loops. These bounds lock the
     # directly routed F.Cu branches; DRC and zone refill independently cover
@@ -269,7 +221,8 @@ def main() -> None:
           f"C1-GND={input_ground_path:.3f} mm, "
           f"OUT-C3={output_path:.3f} mm")
     print("  J3 pad1/pad3 isolated; SW3 spare; SW4 manual VBUS switch")
-    print(f"  JLC BOM/CPL exact assembly set: {', '.join(sorted(ASSEMBLY))}")
+    print(f"  JLC BOM/CPL exact assembly set: {', '.join(sorted(assembly))}")
+    print("  JLC BOM materials=5; C14675 is one R4,R5 row (quantity 2)")
     print("  exact Manufacturer/MPN/LCSC order table: 6 rows; substitution ban present")
 
 
