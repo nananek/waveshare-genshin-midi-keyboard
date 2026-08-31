@@ -141,6 +141,17 @@ class JlcAssemblyContractTest(unittest.TestCase):
             '"lcsc": "C55266"', '"lcsc": "C00000"', 1), encoding="utf-8")
         self.assert_rejected()
 
+    def test_non_u1_substitution_fails(self) -> None:
+        manifest = self.board / "jlc_assembly.json"
+        original = manifest.read_text(encoding="utf-8")
+        for current in ("C93816", "C23198", "C14675", "C14663"):
+            with self.subTest(lcsc=current):
+                manifest.write_text(original.replace(
+                    f'"lcsc": "{current}"', '"lcsc": "C00000"', 1),
+                    encoding="utf-8")
+                self.assert_rejected()
+        manifest.write_text(original, encoding="utf-8")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -24,6 +24,52 @@ CPL_HEADER = ("Designator", "Mid X", "Mid Y", "Layer", "Rotation")
 NATIVE_HEADER = ("Ref", "Val", "Package", "PosX", "PosY", "Rot", "Side")
 MANIFEST_NAME = "jlc_assembly.json"
 
+# These are reviewed purchasing identities, not suggestions for a matcher to
+# replace. Keep the complete set here so changing the manifest cannot silently
+# turn a shortage into an unreviewed substitute. The manifest remains the
+# readable source for the generated files, while this table is the fail-closed
+# approval gate for the current board revision.
+REVIEWED_COMPONENTS: dict[str, dict[str, object]] = {
+    "U1": {
+        "reference": "U1", "pcb_value": "TPS2553DBVR",
+        "bom_comment": "TPS2553DBVR", "footprint": "TPS2553DBVR",
+        "manufacturer": "Texas Instruments", "mpn": "TPS2553DBVR",
+        "lcsc": "C55266", "jlc_rotation_offset": 180,
+    },
+    "C1": {
+        "reference": "C1", "pcb_value": "1uF X7R 16V",
+        "bom_comment": "1uF X7R 16V", "footprint": "C_0603",
+        "manufacturer": "FH (Guangdong Fenghua Advanced Tech)",
+        "mpn": "0603B105K160NT", "lcsc": "C93816",
+        "jlc_rotation_offset": 0,
+    },
+    "R3": {
+        "reference": "R3", "pcb_value": "52.3k 1%",
+        "bom_comment": "52.3k 1%", "footprint": "R_0603",
+        "manufacturer": "UNI-ROYAL (Uniroyal Elec)",
+        "mpn": "0603WAF5232T5E", "lcsc": "C23198",
+        "jlc_rotation_offset": 0,
+    },
+    "R4": {
+        "reference": "R4", "pcb_value": "100k",
+        "bom_comment": "100k 1%", "footprint": "R_0603",
+        "manufacturer": "YAGEO", "mpn": "RC0603FR-07100KL",
+        "lcsc": "C14675", "jlc_rotation_offset": 0,
+    },
+    "R5": {
+        "reference": "R5", "pcb_value": "100k EN pulldown",
+        "bom_comment": "100k 1%", "footprint": "R_0603",
+        "manufacturer": "YAGEO", "mpn": "RC0603FR-07100KL",
+        "lcsc": "C14675", "jlc_rotation_offset": 0,
+    },
+    "C3": {
+        "reference": "C3", "pcb_value": "100nF X7R 50V",
+        "bom_comment": "100nF X7R 50V", "footprint": "C_0603",
+        "manufacturer": "YAGEO", "mpn": "CC0603KRX7R9BB104",
+        "lcsc": "C14663", "jlc_rotation_offset": 0,
+    },
+}
+
 
 class AssemblyError(RuntimeError):
     """Raised for any drift that must stop a manufacturing build."""
@@ -97,21 +143,21 @@ def load_manifest(board_dir: Path) -> list[dict[str, object]]:
         if not all(isinstance(component[key], str) and component[key]
                    for key in required - {"jlc_rotation_offset"}):
             fail(f"invalid manifest strings for component {index}")
-        if not isinstance(component["jlc_rotation_offset"], (int, float)):
+        if type(component["jlc_rotation_offset"]) not in (int, float):
             fail(f"invalid JLC rotation offset for component {index}")
         reference = str(component["reference"])
         if reference in references:
             fail(f"duplicate manifest reference: {reference}")
         references.add(reference)
         components.append(component)
-    if references != {"C1", "C3", "R3", "R4", "R5", "U1"}:
+    if references != set(REVIEWED_COMPONENTS):
         fail(f"unexpected assembly manifest references: {sorted(references)}")
-    u1 = next(component for component in components
-              if component["reference"] == "U1")
-    if u1["mpn"] != "TPS2553DBVR" or u1["lcsc"] != "C55266":
-        fail("U1 must be TPS2553DBVR / C55266")
-    if u1["jlc_rotation_offset"] != 180:
-        fail("U1 must carry the reviewed 180-degree JLC rotation offset")
+    manifest_by_reference = {
+        str(component["reference"]): component for component in components
+    }
+    for reference, expected in REVIEWED_COMPONENTS.items():
+        if manifest_by_reference[reference] != expected:
+            fail(f"unreviewed assembly identity or rotation for {reference}")
     return components
 
 
