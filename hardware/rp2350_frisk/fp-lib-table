@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "rp2350_frisk")(type "KiCad")(uri "${KIPRJMOD}/rp2350_frisk.pretty")(options "")(descr "RP2350 Frisk gadget project footprints"))
+)

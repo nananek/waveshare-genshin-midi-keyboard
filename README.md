@@ -1,203 +1,155 @@
-# 原神楽器 MIDI → HID キーボード変換ファーム (RP2350)
+# PIO-MIDI → CH9329 キーボード ガジェット (RP2350A)
 
-USB MIDI キーボードの演奏を RP2350 上で解析し、USB HID キーボード信号へ変換して
-PC 上の原神・演奏 UI (諧律のチェンバロ、ライアー等)を、MIDI キーボードで
-演奏できるようにするファームウェア。原神の楽器に共通する7音×3オクターブの
-キーバインドを対象とする。
+USB MIDI キーボードの演奏を RP2350 で受け、**CH9329 経由の USB HID
+キーボード**として操作対象 PC（原神の演奏 UI）へ送るガジェットです。
+同時に RP2350 自身は **USB-MIDI ガジェット**として PC/DAW に MIDI を
+そのまま出力します。
 
 ```
-[MIDI キーボード] --USB--> (PIO-USB host) RP2350 (native USB device) --USB--> [PC / 原神]
-                         core1: tuh_midi                core0: tud_hid (NKRO)
+[MIDI キーボード] --USB-A--> PIO-USB host (RP2350)
+                                  |
+                                  +--> native USB-C = USB-MIDI ガジェット → PC/DAW
+                                  |
+                                  +--> UART1 9600 8N1 --> CH9329 --> USB-C HID → 操作対象 PC
 ```
 
 - 3 オクターブ × ダイアトニック 7 音 = 21 キー固定
-- 和音対応(NKRO ビットマップ、最大 21 同時押し)
-- ベロシティは無視(ゲーム側に強弱概念が無いため)
-
----
-
-## 0. 2 ボード構成(本リポジトリが生成する 2 本のファーム)
-
-このリポジトリは同一ビルドで **2 本の uf2** を生成する。
-
-| uf2 | ボード | 機能 |
-|-----|--------|------|
-| `build/genshin_midi_kbd.uf2` | ボード1 (Waveshare RP2350-USB-A) | MIDI→HID コンバータ(本 README の主対象)。加えて**受信 MIDI を RAW で UART ミラー出力** |
-| `build/serial_midi_device.uf2` | ボード2 (同型ボード) | シリアル→USB-MIDI ブリッジ。ボード1 の UART ミラーを USB-MIDI デバイスとして PC/DAW に見せる |
-
-ボード1 の UART ミラー出力 (GP4 / UART1 / 31250 baud) とボード2 の UART 入力
-(GP5 / UART1 / 31250 baud) を直結し、GND 同士を繋ぐと、PC は「MIDI→HID の出力」と
-「USB-MIDI の出力」を同時に受けられる(DAW での録音と原神の演奏を並行できる)。
-詳細は **§7 実機配線** を参照。
-
-ライセンスは `LICENSE`、取得・ビルド依存のライセンスは
-`THIRD_PARTY_NOTICES.md` を参照。
+- 和音対応（CH9329 の 6KRO レポート。6 音まで）
+- ベロシティは無視
+- MIDI の生バイト列は USB-MIDI ガジェットへパススルー（CC、ピッチベンド、SysEx も通る）
+- MIDI を見せる PC と、CH9329 で操作する PC を物理的に分けられる
 
 ---
 
 ## 1. ハードウェア
 
-RP2350-Zeroを使う専用キャリア基板の組立時は、ソケットの向きが電気的に重大です。
-半田付け前に必ず [RP2350-Zero carrier 組立注記](hardware/rp2350_zero_carrier/README.md) を確認してください。
+新しい基板は `hardware/rp2350_frisk/` にあります。
 
-対象ボード: **Waveshare RP2350-USB-A**(RP2350 + USB-A ホストポート)。素の Pico 2 +
-自作 D+/D− 配線でも可。
+- **外形 57.6 × 31.4 mm、四隅 2 mm 45° パンチカット**
+  （`nananek/serial-km-emulator` と同じ。旧型フリスクケース向け）
+- **RP2350A QFN-60 ベアチップ**（ソケット／モジュールのスタックではない）
+- 12 MHz 水晶、W25Q128 QSPI フラッシュ、3.3 V LDO、公式 Minimal Design の
+  デカップリング構成
+- **USB-C ×2 + USB-A ×1**
+  - J1: native USB-MIDI ガジェット（PC/DAW）
+  - J2: USB-A ホスト（MIDI キーボード）
+  - J3: CH9329 の USB HID（操作対象 PC）
+- CH9329 は UART1 / GP4 / GP5 / 9600 8N1 で接続
 
-| 役割 | 接続 | 備考 |
-|------|------|------|
-| MIDI 入力 (ホスト) | USB-A ポート = **D+ = GP12 / D− = GP13** | PIO-USB。`PIN_USB_HOST_DP` で変更可 |
-| PC 出力 (デバイス) | USB-C(ネイティブ USB) | HID キーボードとして認識される |
-| 原神モードスイッチ (任意) | GP28 ↔ GND (内部プルアップ、トグルスイッチ) | 開 = 原神演奏、閉 = ミュート + MIDIパススルー |
+> **注意:** `hardware/rp2350_frisk/` は現時点では**外形・配置・ネット割り当ての
+> ドラフト**です。配線と回路図は未完了で、製造発注できる状態ではありません。
+> 詳細と TODO は同ディレクトリの `README.md` を参照してください。
 
-### ⚠️ 必須ハードウェア改造(Waveshare RP2350-USB-A)
+旧設計 `hardware/rp2350_zero_carrier/`（RP2350-Zero を 2 枚ソケットで載せる
+2 ボード構成）は履歴として残しています。新しいビルド対象ではありません。
 
-USB-A ポートの **D+ にはデバイス動作用のプルアップ抵抗 R13 (1.5kΩ)** が載っている。
-これはホスト動作を妨げる(ロースピード機器が繋がらない・ホットプラグ検出が効かない)。
-**R13 を除去する**こと。除去しないと MIDI キーボードが列挙されない/挿抜検出できない。
+### ピン割り当て（新基板）
 
-- D+/D− は隣接ペアであること(GP12/GP13 は条件を満たす)。
-- 素のボードで自作配線する場合、ホスト側は D+/D− に強いプルアップを付けないこと。
+| 機能 | RP2350A pin | GPIO | 接続 |
+|------|-------------|------|------|
+| PIO-USB D+ | 16 | GP12 | 22Ω → ESD → USB-A J2 D+ |
+| PIO-USB D- | 17 | GP13 | 22Ω → ESD → USB-A J2 D- |
+| CH9329 RXD | 7 | GP4 | CH9329 TXD (pin 7) |
+| CH9329 TXD | 8 | GP5 | CH9329 RXD (pin 8) |
+| native USB D- | 51 | USB_DM | USB-C J1 D- |
+| native USB D+ | 52 | USB_DP | USB-C J1 D+ |
+| 原神モード（任意） | 42 | GP28 | TP3 ↔ GND |
+| 楽器モード（任意） | 43 | GP29 | TP4 ↔ GND |
 
-> 指示書 1章の「D+ のプルダウン抵抗を外す改造」は、実際には当ボードでは
-> **D+ のプルアップ R13 の除去**に相当する。
-
-### 原神モードスイッチ (任意) / 楽器モードスイッチ (任意)
-
-ボード1 には 2 つのラッチ式トグルスイッチを追加できる (どちらも任意、未配線でも動作する)。
-
-- **原神モードスイッチ (GP28 ↔ GND)**: 開 (OFF) は原神演奏モード。HID出力を有効にし、
-  UARTミラーを原神で使えるノートだけにフィルターする。閉 (ON) は原神ミュートモード。
-  HID出力を停止し、UARTミラーは完全パススルーにする。ミュート突入時には全キー解放 +
-  空レポートを送信する (固着キー解除)。
-- **楽器モードスイッチ (GP29 ↔ GND)**: 開 (OFF) は通常の原神楽器、閉 (ON) は
-  古びたライアー (スメール音階) のノートマッピングに切り替える。キーバインドは同じで、
-  低音域と中音域はド・レ・ミ♭・ファ・ソ・ラ・シ♭、高音域はド・レ♭・ミ♭・ファ・ソ・ラ♭・シ♭。
-
-内部プルアップを常時有効化しているため外部抵抗は不要で、GP ピンと GND の間を
-スイッチで開閉するだけの配線になる。`MUTE_SWITCH_ENABLE 0` / `LYRE_SWITCH_ENABLE 0`
-で各機能を無効化できる。
+デバッグログは **UART0 (GP0=TX / GP1=RX, 115200)**。CH9329 は UART1 なので
+衝突しません。native USB は USB-MIDI が占有します。
 
 ---
 
 ## 2. ソフトウェア構成
 
-- **core0**: ネイティブ USB = NKRO HID キーボードデバイス (`tud_hid`)
-- **core1**: PIO-USB = USB MIDI ホスト (`tuh_midi`)
-- MIDI 受信 → ノート変換 → HID キーコード → NKRO レポート送信の一方向パイプライン。
-  コア間はロックフリーキュー(`pico/util/queue.h`)で受け渡し、HID 状態は core0 のみが触る。
+- **core1**: PIO-USB ホスト（`tuh_midi`）。MIDI キーボードの Note On/Off を
+  パースし、生 MIDI バイト列を USB-MIDI ガジェット用キューへ流す。
+- **core0**: native USB の USB-MIDI デバイス（`tud_midi`）と CH9329 UART。
+  Note イベントを 6KRO キーボードレポートへ変換し、UART へ積む。
+- コア間はロックフリーキュー。CH9329 のキーボード状態は core0 だけが触る。
 
 ### ソースツリー
 
 ```
 src/
-  main.c            # デュアルコア起動、コア間キュー、ドレインループ
-  usb_descriptors.c # デバイス/コンフィグ/NKRO レポートディスクリプタ
-  hid_device.c/.h   # tud_hid グルー・NKRO レポート送信
-  nkro_report.c/.h  # NKRO レポート状態(純粋・単体テスト可能)
-  midi_host.c/.h    # tuh_midi コールバック(idx ベース)
-  midi_parse.c/.h   # 生 MIDI バイト列 → Note On/Off(純粋・単体テスト可能)
-  note_mapper.c/.h  # MIDI ノート → キースロット変換(3 章の仕様、純粋・単体テスト可能)
-  midi_mirror.c/.h  # RAW MIDI の UART ミラー出力(UART1/GP4/31250、config.h で無効化可)
-  config.h          # 全設定パラメータ(4 章)
-  tusb_config.h     # TinyUSB デュアルロール設定
-serial_midi_device/ # ボード2: シリアル→USB-MIDI ブリッジ(UART1/GP5 RX → USB-MIDI)
-  main.c            #   シングルコア: UART RX ドレイン → tud_midi_stream_write
-  usb_descriptors.c #   USB-MIDI デバイスディスクリプタ(PID 0x4D49)
-  config.h          #   MIDI_UART_RX_PIN / MIDI_UART_BAUD / MIDI_UART_INDEX
-  tusb_config.h     #   デバイス専用 TinyUSB 設定(CFG_TUD_MIDI=1)
-tests/              # ホスト側ユニットテスト(ARM 不要、cc で実行)
-lib/                # 外部ライブラリ(fetch_deps.sh が配置)
-scripts/fetch_deps.sh
-CMakeLists.txt
-pico_sdk_import.cmake
+  main.c              # デュアルコア起動、キュー、スイッチ、CH9329 出力
+  usb_descriptors.c   # native USB = USB-MIDI デバイス
+  tusb_config.h       # device=USB-MIDI / host=PIO-USB MIDI
+  midi_host.c/.h      # tuh_midi コールバック（idx ベース）
+  midi_parse.c/.h     # 生 MIDI → Note On/Off（純粋・テスト可能）
+  midi_bridge.c/.h    # PIO-USB → USB-MIDI パススルー
+  note_mapper.c/.h    # MIDI ノート → キースロット（純粋・テスト可能）
+  ch9329_protocol.c/.h# CH9329 フレーム組み立て（純粋・テスト可能）
+  ch9329_keyboard.c/.h# CH9329 6KRO レポート状態（純粋・テスト可能）
+  ch9329_uart.c/.h    # UART1 9600 8N1 送信（ノンブロッキング）
+  hid_mute.c/.h       # GP28 原神モード（CH9329 出力ミュート）
+  mirror_filter_switch.c/.h # GP29 楽器モード（スメール音階）
+  debounced_switch.c/.h
+  config.h            # 設定の一元管理
+hardware/rp2350_frisk/ # 新基板（外形・配置ドラフト）
+hardware/rp2350_zero_carrier/ # 旧 2 ボード構成（履歴）
+tests/                 # ホスト側ユニットテスト（ARM 不要）
+scripts/               # ビルド・依存取得・製造データ
 ```
 
-### 依存ライブラリとバージョン(重要)
+### 依存ライブラリ
 
-- **pico-sdk `2.1.1`** (RP2350 対応)。環境変数 `PICO_SDK_PATH` を設定。
-- **hathach/tinyusb `0.20.0`**(⚠️ pico-sdk 同梱の raspberrypi/tinyusb では不可)
-  - 同梱版には `midi_host` が無く `tuh_midi_*` をリンクできない。
-  - `0.20.0` は idx ベースの `tuh_midi` API・`hcd_edpt_abort_xfer`/`hcd_frame_number`
-    実装済み(→ 指示書 2.3 の未実装リンクエラー回避策は不要)。
-- **sekigon-gonnoc/Pico-PIO-USB**(RP2350 対応、`a5a2f5ae91988449ba576ec9d237e806d5cd4416` に固定)。
+- **pico-sdk 2.1.1**（RP2350 対応）
+- **hathach/tinyusb 0.20.0**
+  （pico-sdk 同梱版には `midi_host` が無いため upstream が必須）
+- **sekigon-gonnoc/Pico-PIO-USB**（RP2350 対応コミット固定）
 
-`scripts/fetch_deps.sh` がこれらを `lib/` に取得する。CMake は `PICO_TINYUSB_PATH`
-を upstream に向けてビルドする。
+`scripts/fetch_deps.sh` が `lib/` に取得します。
 
 ---
 
 ## 3. ビルド & 書き込み
 
-### 3.A Docker でビルド(推奨・ホストに ARM ツールチェーン不要)
-
-ARM ツールチェーン・pico-sdk・picotool を含むイメージを作り、コンテナ内でビルドする。
-`build/genshin_midi_kbd.uf2` と `build/serial_midi_device.uf2` の 2 本がホスト側に
-生成される(この手順は実際に検証済み)。
+### Docker（推奨）
 
 ```sh
 ./scripts/build_docker.sh
+# => build/midi_ch9329_gadget.uf2
 ```
 
-- 初回はイメージ構築(arm-none-eabi 12.2 + pico-sdk 2.1.1 + picotool)で数分かかる。
-- 依存ライブラリ(`lib/tinyusb`, `lib/Pico-PIO-USB`)はコンテナ内で自動取得される。
-- rootless / rootful どちらの Docker でも成果物がホストユーザ所有になるよう uid を調整済み。
-
-### 3.B ネイティブツールチェーンでビルド
+### ネイティブ
 
 ```sh
-# 0) ARM ツールチェーン + pico-sdk が必要
-#    Arch: pacman -S arm-none-eabi-gcc arm-none-eabi-newlib cmake
-#    PICO_SDK_PATH を pico-sdk のパスに設定しておく
 export PICO_SDK_PATH=/path/to/pico-sdk
-
-# 1) 依存ライブラリ取得
 ./scripts/fetch_deps.sh
-
-# 2) ビルド
 cmake -B build -DPICO_BOARD=pico2
 cmake --build build -j
 ```
 
 ### 書き込み
 
-BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI-RP2 ドライブへ
-コピー(または `picotool load build/genshin_midi_kbd.uf2`)。
-
-デバッグログは **UART**(GP0=TX, GP1=RX, 115200)に出る(native USB は HID が占有)。
+BOOTSEL を押しながら USB-C 接続し、`build/midi_ch9329_gadget.uf2` を
+RPI-RP2 ドライブへコピーします（または `picotool load ...`）。
 
 ---
 
-## 4. 設定(`src/config.h`)
+## 4. 設定（`src/config.h`）
 
-すべて `#ifndef` ガード付き。`cmake -DCMAKE_C_FLAGS="-DOCTAVE_OFFSET=12"` 等でも上書き可。
+すべて `#ifndef` ガード付き。`cmake -DCMAKE_C_FLAGS="-DOCTAVE_OFFSET=12"` 等で
+上書きできます。
 
 | パラメータ | 既定 | 意味 |
 |-----------|------|------|
-| `OCTAVE_OFFSET` | `0` | 入力ノートに加算する**半音数**(12=1oct)。実機キャリブレーション用 |
-| `OUT_OF_RANGE_POLICY` | `IGNORE` | 範囲外(47以下/84以上): `IGNORE`=無視 / `WRAP`=最寄りオクターブへ折返し |
-| `PIN_USB_HOST_DP` | `12` | PIO-USB ホストの D+ GPIO(D− は +1) |
+| `OCTAVE_OFFSET` | `0` | 入力ノートに加算する半音数（12=1oct） |
+| `OUT_OF_RANGE_POLICY` | `IGNORE` | 範囲外: `IGNORE`=無視 / `WRAP`=最寄りオクターブへ折返し |
+| `PIN_USB_HOST_DP` | `12` | PIO-USB ホスト D+（D− は +1） |
 | `MIDI_CHANNEL_FILTER` | `0` | 0=全ch / 1..16=指定chのみ |
-| `MIDI_UART_MIRROR_ENABLE` | `1` | RAW MIDI の UART ミラー出力を有効にする(0=コンパイルアウト) |
-| `MIDI_UART_MIRROR_BAUD` | `31250` | ミラー出力ボーレート(標準 MIDI over UART) |
-| `MIDI_UART_MIRROR_UART` | `1` | ミラーに使う UART インスタンス(0=uart0 / 1=uart1) |
-| `MIDI_UART_MIRROR_TX_PIN` | `4` | ミラー出力 TX ピン(UART1 の GP4) |
-| `MUTE_SWITCH_ENABLE` | `1` | 原神モードスイッチ機能を有効にする (0=コンパイルアウト) |
-| `MUTE_SWITCH_PIN` | `28` | 原神モードスイッチ接続 GPIO |
-| `MUTE_SWITCH_ACTIVE_LEVEL` | `0` | 0=LOW でミュート + パススルー / 1=HIGH でミュート |
-| `MUTE_SWITCH_DEBOUNCE_MS` | `20` | 原神モードスイッチのデバウンス時間 (ms) |
-| `LYRE_SWITCH_ENABLE` | `1` | 楽器モードスイッチ機能を有効にする (0=コンパイルアウト) |
-| `LYRE_SWITCH_PIN` | `29` | 楽器モードスイッチ接続 GPIO |
-| `LYRE_SWITCH_ACTIVE_LEVEL` | `0` | 0=LOW でスメール音階 / 1=HIGH でスメール音階 |
-| `LYRE_SWITCH_DEBOUNCE_MS` | `20` | 楽器モードスイッチのデバウンス時間 (ms) |
+| `CH9329_UART_INDEX` | `1` | CH9329 に使う UART（0=uart0 / 1=uart1） |
+| `CH9329_UART_TX_PIN` | `4` | RP2350 TX → CH9329 RXD |
+| `CH9329_UART_RX_PIN` | `5` | RP2350 RX ← CH9329 TXD |
+| `CH9329_UART_BAUD` | `9600` | CH9329 出荷時設定 |
+| `MUTE_SWITCH_ENABLE` | `1` | GP28 原神モード（CH9329 出力ミュート） |
+| `MUTE_SWITCH_PIN` | `28` | スイッチ GPIO |
+| `LYRE_SWITCH_ENABLE` | `1` | GP29 楽器モード（スメール音階） |
+| `LYRE_SWITCH_PIN` | `29` | スイッチ GPIO |
 
-ボード2 (serial_midi_device) の設定は `serial_midi_device/config.h`:
-`MIDI_UART_RX_PIN`(既定 `5`=UART1 RX)、`MIDI_UART_BAUD`(既定 `31250`)、
-`MIDI_UART_INDEX`(既定 `1`)、`RESET_BUTTON_ENABLE`/`_PIN`(既定 `28`)/
-`_ACTIVE_LEVEL`/`_DEBOUNCE_MS`(MIDI RESETタクトスイッチ、issue #6)、
-`SUSTAIN_SWITCH_ENABLE`/`_PIN`(既定 `29`)/`_ACTIVE_LEVEL`/`_DEBOUNCE_MS`/
-`SUSTAIN_MIDI_CHANNEL`(サステインスライドスイッチ、issue #8)。
-
-### キー対応表(既定・指示書 3.1)
+### キー対応表（既定）
 
 ```
 低音域 48=Z 50=X 52=C 53=V 55=B 57=N 59=M   (ド レ ミ ファ ソ ラ シ)
@@ -205,98 +157,81 @@ BOOTSEL を押しながら USB-C 接続 → `build/genshin_midi_kbd.uf2` を RPI
 高音域 72=Q 74=W 76=E 77=R 79=T 81=Y 83=U
 ```
 
+黒鍵は常にドロップします（原神の楽器に黒鍵が無いため）。
+
 ---
 
-## 5. ホスト側ユニットテスト(ARM ツールチェーン不要)
+## 5. CH9329 プロトコル
 
-純粋ロジック(ノート変換・MIDI パース・NKRO レポート状態)は PC の `cc` で検証できる。
+CH9329 のキーボード送信フレーム（14 バイト）:
+
+```
+57 AB 00 02 08 <modifier> 00 <key1> <key2> <key3> <key4> <key5> <key6> <sum>
+```
+
+- `sum` = checksum 自身を除く全バイトの単純和の下位 8 bit
+- `key*` は USB HID Keyboard/Keypad Usage（a=0x04 … z=0x1D）
+- CH9329 は 6KRO。7 音以上同時に押した場合は、表現できないノートを落とす
+  （既存キーを固着させない）
+
+送信は 9600 bps のため 1 フレーム約 15 ms です。UART はノンブロッキングで、
+送信中に新しいレポートが来た場合は「最新の状態」を次に送ります。
+
+---
+
+## 6. ホスト側ユニットテスト
+
+ARM ツールチェーン不要。純粋ロジックを `cc` で検証します。
 
 ```sh
 cd tests
-make          # 4 モジュール分 + WRAP ポリシー専用ビルドを実行 (全て ALL PASS になるはず)
+make        # note_mapper / midi_parse / ch9329_protocol / ch9329_keyboard
 make clean
 ```
 
 カバー範囲:
-- `note_mapper`: 3.1 対応表、黒鍵ドロップ、範囲外 2 ポリシー、移調オフセット
-- `midi_parse`: Note On/Off、vel0=Off、ランニングステータス、リアルタイム混在、SysEx、和音
-- `nkro_report`: 単音/和音のビット配置、エイリアス参照カウント(`OUT_OF_RANGE_WRAP` で同一キーに
-  丸まった 2 音。既定ビルドでは到達不能な経路のため `t_nkro_report_wrap` で別途検証)、
-  retrigger べき等、range 外無視、`release_all`
-- `midi_note_filter`: ミラーフィルターのバイト列状態機械 (ダイアトニック Note 素通し、
-  範囲外/CC/PB/PC/SysEx/リアルタイムの破棄、ランニングステータス再構成、チャンク分断、移調オフセット)
+
+- `note_mapper`: 21 キー対応、黒鍵ドロップ、範囲外 IGNORE/WRAP、移調、スメール音階
+- `midi_parse`: Note On/Off、vel0=Off、ランニングステータス、リアルタイム、SysEx
+- `ch9329_protocol`: フレーム長、ヘッダ、チェックサム、modifier、任意コマンド
+- `ch9329_keyboard`: 単音/和音、6KRO 上限、べき等、範囲外、スメール、release_all、
+  WRAP のエイリアス参照カウント
 
 ---
 
-## 6. 実機キャリブレーション手順(指示書 6章)
+## 7. 実機キャリブレーション
 
-1. UART ログで MIDI キーボードの Note On/Off が出ることを確認。
-2. PC で HID キーボードとして認識され、キーボードテスター等でキーが出ることを確認。
-3. 原神の演奏画面を開き、MIDI で「ド」を弾いて画面上の対応キーと発音が一致するか確認。
-   ズレていたら `OCTAVE_OFFSET` を ±12(オクターブ)や ±1(半音)で調整。
-4. 3 和音以上を弾いて全音が発音される(NKRO)ことを確認。
-5. 黒鍵を弾いても発音されない(無視される)ことを確認。
-6. MIDI キーボードを抜き差ししても復帰する(切断時は全キー解放される)ことを確認。
-
----
-
-## 7. 2 ボード実機配線(ミラー + シリアル→USB-MIDI ブリッジ)
-
-```
-[MIDI keyboard] --USB-A--> [ボード1 (コンバータ)] --USB-C--> [PC] (HID: 既存機能)
-                              | GP4 (UART1 TX, 31250)  ← ミラー出力
-                              | GP5 (UART1 RX, 31250)  → ミラー入力
-                              | GND -------------------→ GND
-                               | GP28 ↔ GND              ← 原神モード (閉 = ミュート + パススルー)
-                               | GP29 ↔ GND              ← 楽器モード (閉 = スメール音階)
-                             [ボード2 (ブリッジ)] --USB-C--> [PC] (USB-MIDI)
-```
-
-確認項目:
-
-1. ボード1 で既存 HID 出力が従来どおり動く(デバッグログ UART0 も出ている)。
-2. PC がボード2 を「Serial MIDI Bridge」(USB-MIDI デバイス)として認識する
-   (`aconnect -l` や DAW の MIDI 入力一覧、Windows ならデバイスマネージャーで確認)。
-3. キーボードを弾くと DAW 側で Note On/Off が見える。さらに CC ノブ・ピッチベンドも
-   通ること(フルフィディリティ確認)。
-4. ボード1 の UART1 を FTDI 等に繋いでも 31250 baud で同じバイト列が見える
-   (ミラー単体確認、任意)。
-5. `MIDI_UART_MIRROR_ENABLE 0` でビルドするとミラーが消え既存動作に戻る(設定ガード確認)。
-
-### ボード2の任意スイッチ(MIDI RESETボタン / サステインスイッチ)
-
-| 用途 | 配線 | 動作 |
-|------|------|------|
-| MIDI RESETタクトスイッチ (任意) | GP28 ↔ GND (内部プルアップ、常開タクトスイッチ) | 押下ごとに MIDI System Reset (0xFF) を1回送信 |
-| サステインスイッチ (任意) | GP29 ↔ GND (内部プルアップ、スライドスイッチ) | 閉=CC64(サステイン)=127 を送信、開=CC64=0 を送信 |
-
-`RESET_BUTTON_ENABLE 0` / `SUSTAIN_SWITCH_ENABLE 0`(`serial_midi_device/config.h`)で
-それぞれ無効化(コンパイルアウト)できる。ボード1のGP28(原神モードスイッチ)/GP29
-(楽器モードスイッチ)とは別基板・別GPIO空間なので混同しないこと。
-
-### ミラーの既知のトレードオフ
-
-`uart_write_blocking` は TX FIFO に詰めるまで core1 の `tuh_task` を止める
-(31250 baud では 1 バイト ≈ 320µs)。Note On/Off や CC クラスは 1ms 未満で実害はないが、
-大きな SysEx ダンプ(64 バイト)では ~20ms ほどホスト処理が止まる。ミラー用途として許容。
+1. UART0 ログで MIDI キーボードの Note On/Off が出ることを確認。
+2. PC 側で USB-MIDI ガジェットが見えることを確認（`aconnect -l` 等）。
+3. CH9329 側の PC で HID キーボードとして認識され、キーボードテスターで
+   キーが出ることを確認。
+4. 原神の演奏画面で「ド」を弾き、画面上のキーと発音が一致するか確認。
+   ズレていたら `OCTAVE_OFFSET` を ±12 / ±1 で調整。
+5. 3 和音以上を弾いて全音が発音されることを確認（6KRO の範囲）。
+6. 黒鍵が無視されることを確認。
+7. MIDI キーボードを抜き差しして、CH9329 側の全キーが解放されることを確認。
 
 ---
 
-## 8. 既知の制約 / 残リスク
+## 8. 既知の制約 / 残作業
 
-- **TinyUSB × Pico-PIO-USB のリンク統合**が唯一の要実機確認ポイント。本 CMake は
-  Pico-PIO-USB 公式サンプル(native device + PIO host)と同じ方式:
-  `tinyusb_device` / `tinyusb_host` をリンクしつつ `dcd_pio_usb.c` / `hcd_pio_usb.c`
-  と(SDK が列挙しない)`midi_host.c` を手動追加する。
-  もし `hcd_*` の重複定義や未定義参照が出た場合は、TinyUSB / Pico-PIO-USB の
-  バージョン組み合わせ(§2)を疑い、各 GitHub Issue を確認すること。
-- ダイアトニック 21 音固定。原神側に半音/移調キーが増えたらマッピング再設計が必要。
-- PIO-USB の MIDI クラス相性検証事例は少ない。列挙に失敗する機種があれば
-  `tuh_midi` のデバッグログを有効化して切り分ける。
+- `hardware/rp2350_frisk/` は配置ドラフト。配線、GND/電源プレーン、ERC、
+  回路図、ケース開口の確認が未完了です。
+- CH9329 は 6KRO のため、7 音以上の同時押しはできません。
+- CH9329 の UART は 9600 bps 固定（出荷時設定）。設定ツールで速度を変える場合は
+  `CH9329_UART_BAUD` も合わせてください。
+- 原神側のキーバインドが変わったら `note_mapper.c` の対応表を更新してください。
 
-## 9. 受け入れ基準(指示書 7章)
+---
 
-- [ ] 3 オクターブのダイアトニック音が、原神の楽譜表示・発音と対応キー通り一致
-- [ ] 3 和音以上を同時に弾いても全音が正しく発音(NKRO)
-- [ ] MIDI キーボードのホットプラグ後も動作継続 / 再認識(切断時は全キー解放)
-- [ ] 範囲外・黒鍵の挙動が設定通り
+## 9. 旧構成（履歴）
+
+`hardware/rp2350_zero_carrier/` は RP2350 を 2 枚使う旧構成の名残です。
+旧ボード 2（UART→USB-MIDI ブリッジ）のファームは削除しました。現在の
+ビルド対象は 1 枚の RP2350A が USB-MIDI ガジェットと CH9329 ドライバを
+兼ねる新構成だけです。
+
+## ライセンス
+
+`LICENSE` を参照してください。取得・ビルド依存のライセンスは
+`THIRD_PARTY_NOTICES.md` を参照してください。

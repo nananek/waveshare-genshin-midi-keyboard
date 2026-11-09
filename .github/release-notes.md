@@ -1,16 +1,20 @@
-## Hardware and firmware
+## Firmware
 
-- `genshin_midi_kbd.uf2` is for board 1: USB MIDI to HID keyboard, with a raw
-  UART1 MIDI mirror.
-- `serial_midi_device.uf2` is for board 2: UART1 to USB-MIDI bridge.  Connect
-  board 1 GP4 to board 2 GP5 and connect their grounds.
-- The RP2350-Zero carrier manufacturing archive, JLCPCB BOM/CPL assembly CSVs,
-  DRC report, schematic PDF, board-layout PDF, and checksums are included with
-  this release.  The Gerbers and drawings were generated from this tag with
-  KiCad 10.0.5.
+- `midi_ch9329_gadget.uf2` は新しい 1 枚構成用です。
+  - PIO-USB ホストで MIDI キーボードを受信
+  - native USB を USB-MIDI ガジェットとして PC/DAW へパススルー
+  - UART1 (GP4/GP5, 9600 8N1) で CH9329 を駆動し、操作対象 PC へ HID キーボードを送信
 
-## Assembly note
+旧 `genshin_midi_kbd.uf2` / `serial_midi_device.uf2` の 2 ボード構成は廃止しました。
 
-When using board 1 as a USB host, remove the RP2350-Zero's D+ pull-up resistor
-R13.  Leaving R13 fitted prevents correct MIDI-keyboard enumeration and hot-plug
-detection.  See the README for wiring and switch details.
+## Hardware
+
+`hardware/rp2350_frisk/` に新基板の外形・配置ドラフトがあります。
+
+- 57.6 × 31.4 mm、四隅 2 mm 45° パンチカット（旧型フリスクケース向け）
+- RP2350A QFN-60 ベアチップ（ソケット/モジュールスタックではない）
+- USB-C ×2 + USB-A ×1、CH9329 を UART 接続
+
+**注意:** 新基板は外形・配置・ネット割り当てのドラフトで、配線と回路図は
+未完了です。製造発注には使用しないでください。旧 `rp2350_zero_carrier` の
+製造データは履歴として同梱しています。

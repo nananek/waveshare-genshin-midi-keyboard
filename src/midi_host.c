@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "tusb.h"
 #include "midi_host.h"
+#include "midi_bridge.h"
 #include "midi_parse.h"
-#include "midi_mirror.h"
 #include "config.h"
 
 // core1 専用。tuh_task のコールバック文脈でのみ触るので排他不要。
@@ -10,7 +10,6 @@ static midi_parser_t s_parser;
 
 void midi_host_init(void) {
     midi_parser_init(&s_parser);
-    midi_mirror_init();
 }
 
 // midi_parse からの Note コールバック。チャンネルフィルタを適用してアプリへ。
@@ -37,7 +36,6 @@ void tuh_midi_mount_cb(uint8_t idx, const tuh_midi_mount_cb_t *mount_cb_data) {
            idx, mount_cb_data->daddr,
            mount_cb_data->rx_cable_count, mount_cb_data->tx_cable_count);
     midi_parser_init(&s_parser); // 新デバイス: ランニングステータス等をリセット
-    midi_mirror_reset();         // ミラーの状態もリセット
 }
 
 void tuh_midi_umount_cb(uint8_t idx) {
@@ -57,7 +55,7 @@ void tuh_midi_rx_cb(uint8_t idx, uint32_t xferred_bytes) {
         if (n == 0) {
             break;
         }
-        midi_mirror_send(buffer, n); // 生バイト列をそのまま UART へ (パース・変換は通さない)
+        midi_bridge_send(buffer, n); // 生バイト列を USB-MIDI ガジェットへ
         midi_parser_push(&s_parser, buffer, n, on_note, NULL);
     }
 }

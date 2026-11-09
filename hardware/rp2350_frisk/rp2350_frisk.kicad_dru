@@ -1,0 +1,7 @@
+(version 1)
+(rule "official-minimal-clearance"
+  (constraint clearance (min 0.15mm)))
+(rule "min-hole"
+  (constraint hole_size (min 0.2mm)))
+(rule "edge-clearance"
+  (constraint edge_clearance (min 0.2mm)))

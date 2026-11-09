@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 # ---------------------------------------------------------------------------
-#  Docker で ARM ファーム (2 本の uf2) をビルドする。
-#    - build/genshin_midi_kbd.uf2      (ボード1: MIDI→HID コンバータ)
-#    - build/serial_midi_device.uf2    (ボード2: シリアル→USB-MIDI ブリッジ)
+#  Docker で ARM ファーム (1 本の uf2) をビルドする。
+#    - build/midi_ch9329_gadget.uf2
+#        PIO-USB MIDI ホスト + native USB-MIDI ガジェット + CH9329 UART
 #  ホストに ARM ツールチェーン / pico-sdk が無くても動く。
 #
 #    ./scripts/build_docker.sh            # イメージ構築 + ビルド
@@ -36,6 +36,6 @@ docker run --rm \
     sh -c './scripts/fetch_deps.sh && cmake -B build -DPICO_BOARD=pico2 && cmake --build build -j "$(nproc)"'
 
 echo "== artifacts"
-ls -la "$ROOT/build"/genshin_midi_kbd.uf2 "$ROOT/build"/serial_midi_device.uf2 \
-    "$ROOT/build"/genshin_midi_kbd.elf "$ROOT/build"/serial_midi_device.elf 2>/dev/null \
+ls -la "$ROOT/build"/midi_ch9329_gadget.uf2 \
+    "$ROOT/build"/midi_ch9329_gadget.elf 2>/dev/null \
     || { echo "  (uf2 が生成されていない — 上のログを確認)"; exit 1; }
