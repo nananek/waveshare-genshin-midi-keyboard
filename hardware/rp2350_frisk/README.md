@@ -4,15 +4,16 @@
 1 枚基板です。従来の「RP2350-Zero を 2 枚ソケットでスタックする」構成を
 置き換える **発注データ付きの試作基板** です。
 
-> **重要: `fab/` は旧 CH9329 試作のデータです。CH345 版ではありません。**
-> ファームは NKRO HID + CH345 に切り替わったため、この `fab/` をそのまま
-> 発注すると動きません。CH345 のパッケージ・ピン配置・水晶要否をデータシートで
-> 確定したうえで、U4 周辺（UART/USB/水晶）を再配線した CH345 版を作る必要が
-> あります。旧データは比較・履歴用に残しています。
+> **CH345 版の発注データを `fab/` に生成済みです。**
+> DRC は 0 violations / 0 unconnected です。ただし U1 pin22 と J3 の
+> A7/B7 に via-in-pad を使っているため、JLCPCB の発注時に resin fill /
+> via-in-pad の要否を DFM プレビューで確認してください。
 >
-> 参考: 旧 CH9329 試作の DRC は物理エラー 0 / unconnected 3 で、
-> `/QSPI_SCLK`、`Net-(U1-USB_DP)`、`Net-(C4-Pad1)` の 3 ネットだけ
-> 手配線前提でした。
+> 発注ファイル:
+> - `fab/rp2350_frisk_ch345_gerbers_JLCPCB.zip`
+> - `fab/jlc_bom.csv`
+> - `fab/jlc_cpl.csv`
+> - `fab/ORDER_NOTES_JA.md`
 
 ## 外形
 
@@ -20,7 +21,7 @@
 
 - **57.6 × 31.4 mm、t1.6 mm**
 - 四隅 **2 mm の 45° パンチカット**
-- 4 層: `F.Cu` / `In1.Cu` / `In2.Cu` / `B.Cu`（信号配線。GND は各層の配線とビアで接続）
+- **6 層**: `F.Cu` / `In1.Cu` / `In2.Cu` / `In3.Cu` / `In4.Cu` / `B.Cu`
 - 固定穴なし（紙ケース／両面テープ／スポンジ固定を想定）
 
 外形は `rp2350_frisk.kicad_pcb` の `Edge.Cuts` が正本です。
@@ -103,25 +104,25 @@ J3 VBUS ── D2 ──┘         │
 `TBD` の LCSC は発注前に確定してください。とくに RP2350A、W25Q128、
 NCP1117、水晶、USB-A コネクタは JLCPCB の在庫・実装可否を確認してください。
 
-## CH345 版への変更点（次回基板）
+## CH345 版の変更点
 
-NKRO 必須のため、U4 の CH9329 を **CH345** に置き換えます。CH345 は
-UART 31250 ↔ USB-MIDI の専用ICです。CH340G 系と同じ SOP-16 を想定していますが、
-**ピン配置・パッケージ・水晶要否は発注前に WCH のデータシートで確定**して
-ください。以下は CH340G 互換と仮定した暫定マッピングです。
+NKRO 必須のため、U4 の CH9329 を **CH345T** に置き換えました。CH345 は
+UART 31250 ↔ USB-MIDI の専用ICです。パッケージは **SSOP-20 5.3×7.2 mm、
+0.65 mm pitch** で、WCH の CH345 データシートに基づいています。
 
 | CH345 pin | 機能 | 接続 |
 |-----------|------|------|
-| 1 | GND | GND |
-| 2 | MOUT | RP2350 GP5 (UART1 RX) |
-| 3 | MIN | RP2350 GP4 (UART1 TX) |
-| 4 | V3 | 100 nF → GND |
-| 5 | UD+ | USB-C J3 D+ |
-| 6 | UD- | USB-C J3 D- |
-| 7 | XI | 12 MHz 水晶 |
-| 8 | XO | 12 MHz 水晶 |
-| 15 | VCC | +5 V |
-| 9–14, 16 | NC | — |
+| 1 | RST | GND |
+| 3 | MOUT | RP2350 GP5 (UART1 RX) |
+| 4 | MIN | RP2350 GP4 (UART1 TX) |
+| 5 | V3 | 100 nF → GND |
+| 6 | UD+ | USB-C J3 D+ |
+| 7 | UD- | USB-C J3 D- |
+| 8, 17 | GND | GND |
+| 9 | XI | 12 MHz 水晶 X2 |
+| 10 | XO | 12 MHz 水晶 X2 |
+| 19 | VCC | +5 V |
+| 2, 11–16, 18, 20 | NC | 未接続 |
 
 追加部品:
 
@@ -131,26 +132,20 @@ UART 31250 ↔ USB-MIDI の専用ICです。CH340G 系と同じ SOP-16 を想定
 - R17/R18: 5.1 kΩ（J3 の CC1/CC2 Rd。既存 R13/R14 を流用可）
 
 J1 は native USB の NKRO HID、J2 は USB-A ホスト、J3 は CH345 の USB-MIDI
-になります。U4 周辺の UART/USB/水晶の配線は既存の CH9329 版と異なるため、
-再配置・再配線が必要です。
+になります。U4 周辺の UART/USB/水晶は CH345 版として再配置・再配線済みです。
 
-## 既知の未完了項目（発注前に必須）
+## 発注前の確認事項
 
-1. **3 ネットの手配線**: `/QSPI_SCLK`、`Net-(U1-USB_DP)`、
-   `Net-(C4-Pad1)` は未接続。`fab/ORDER_NOTES_JA.md` の座標間へ
-   細いワイヤを半田付けする。それ以外のネットは配線済み。
+1. **via-in-pad / 0.2 mm ドリル**: U1 pin22 と J3 A7/B7 に小さな via-in-pad を
+   使っています。JLCPCB の DFM プレビューで resin fill / via-in-pad の要否を
+   確認してください。
 2. **BOM の TBD**: `fab/jlc_bom.csv` の `TBD` は JLCPCB の在庫確認後に
-   LCSC 型番を確定する。とくに RP2350A、W25Q128、NCP1117、水晶、
+   LCSC 型番を確定する。とくに CH345T、RP2350A、W25Q128、NCP1117、水晶、
    USB-A コネクタ。
-3. **D+/D-**: J1/J2/J3 の差動ペアは配線済みだが、Full-Speed の実機確認は
-   組立後に必要。90Ω 制御は必須ではない。
-4. **USB-A VBUS**: U5 の IN/OUT と J2 VBUS は配線済み。1.0 mm 幅の
-   確認は DRC で実施済み。
-5. **CH9329**: U4 の VCC/V33 デカップリングは配置済み。UART は 9600 8N1。
-6. **スイッチ**: TP3/TP4 はテストパッド。実際のスイッチにする場合は
-   ケース加工が必要。
-7. **ERC**: 回路図は未作成。KiCad の回路図 → PCB パリティは未確認。
-8. **ケース開口**: 旧型フリスクケースの USB-C ×2 / USB-A ×1 の開口位置を
+3. **CH345 の水晶負荷容量**: C26/C27 は 22 pF の暫定値。データシート推奨値で
+   確定する。
+4. **ERC**: 回路図は未作成。KiCad の回路図 → PCB パリティは未確認。
+5. **ケース開口**: 旧型フリスクケースの USB-C ×2 / USB-A ×1 の開口位置を
    実物で確認する。
 
 ## 検証
@@ -160,18 +155,16 @@ KiCad 10.0.5 で外形・配置の DRC を実行済みです。
 ```sh
 kicad-cli pcb drc --severity-error rp2350_frisk.kicad_pcb
 # Found 0 violations
-# Found 3 unconnected items（手配線する 3 ネット）
+# Found 0 unconnected items
 ```
 
-`drc_final.rpt` に結果を保存しています。物理的なクリアランス／短絡／
-基板端／ドリル径のエラーは 0 です。残る 3 ネットは `fab/ORDER_NOTES_JA.md`
-のジャンパ配線で解消します。
+`fab/drc.rpt` に結果を保存しています。
 
 ## 旧設計との関係
 
 `../rp2350_zero_carrier/` は RP2350-Zero を 2 枚ソケットで載せる旧設計です。
-本基板はそれを置き換える新方針のドラフトであり、旧基板の製造データや
-契約テスト（`scripts/hardware_contract.py` など）は旧設計向けのままです。
+本基板はそれを置き換える CH345 版で、旧基板の製造データや契約テスト
+（`scripts/hardware_contract.py` など）は旧設計向けのままです。
 新基板をリリース対象にするときは、契約テストと CI をこの基板向けに
 作り直してください。
 

@@ -1,65 +1,54 @@
-> **OBSOLETE: この fab データは旧 CH9329 試作向けです。**
-> 現在のファームは NKRO HID + CH345 です。CH345 版の基板を再設計するまで
-> このデータを発注しないでください。
-
-# RP2350 Frisk MIDI/CH9329 基板 発注メモ
+# RP2350A + CH345 Frisk 基板 発注メモ
 
 ## 同梱ファイル
 
-- `gerbers/` … KiCad 10.0.5 で出力した Gerber / Excellon。層は F.Cu, In1.Cu, In2.Cu, B.Cu, F/B Paste, F/B Silk, F/B Mask, Edge.Cuts。
-- `jlc_bom.csv` … JLCPCB BOM 形式（Comment, Designator, Footprint, LCSC Part #）
-- `jlc_cpl.csv` … JLCPCB CPL 形式（Designator, Mid X, Mid Y, Layer, Rotation）。原点は基板左下、Y 上向き。
-- `bom_full.csv` … 参考用の全部品表（Layer 付き）
-- `drc_final.rpt` … KiCad DRC 結果
+- `gerbers/` … KiCad 10.0.5 の Gerber / Excellon。6層（F.Cu, In1–In4, B.Cu）。
+- `rp2350_frisk_ch345_gerbers_JLCPCB.zip` … 上記 Gerber / Drill の ZIP
+- `jlc_bom.csv` … JLCPCB BOM
+- `jlc_cpl.csv` … JLCPCB CPL（基板左下原点、Y 上向き）
+- `bom_full.csv` … 参考用の全部品表
+- `drc.rpt` … KiCad DRC 結果（0 violations / 0 unconnected）
 
 ## 基板仕様
 
-- 57.6 × 31.4 mm、t1.6 mm、4 層、四隅 2 mm 45° パンチカット
-- 表面・裏面の両面 SMT（C3/C4/C8/C10/C12/C13/C15/C18/C20〜C25, R2/R7/R8/R13〜R16, U5/U6, D2 は裏面）
-- USB-C ×2（J1 = native USB-MIDI、J3 = CH9329 HID）、USB-A ×1（J2 = MIDI キーボードホスト）
+- 57.6 × 31.4 mm、t1.6 mm、**6層**
+- 四隅 2 mm 45° パンチカット
+- 表面・裏面の両面 SMT
+- J1 = native USB **NKRO HID**（操作対象 PC）
+- J2 = USB-A ホスト（MIDI キーボード）
+- J3 = CH345 の **USB-MIDI**（制御 PC/DAW）
+- U4 = CH345T（SSOP-20）、X2 = 12 MHz 水晶
+- TP5 = GP27 予備スイッチ（旧サステインスイッチの移設先）
 
-## 重要: 3 本のジャンパ配線が必要
+## 製法上の注意
 
-この基板は配線の自動化が完了しておらず、以下の 3 ネットだけ未接続です。
-基板を発注して組み立てた後、指定のパッド／ビア間に細いワイヤ（AWG36 程度）を
-半田付けしてください。それ以外のネットは配線済みで、DRC の物理エラーは 0 です。
-
-| ネット | 接続先 A | 接続先 B | 備考 |
-|--------|----------|----------|------|
-| `/QSPI_SCLK` | U1 pin 56 (36.505, 16.330) | U3 pin 6 付近のビア (20.669, 26.768) | フラッシュのクロック。最優先で配線 |
-| `Net-(U1-USB_DP)` | U1 pin 52 (36.505, 17.930) | R7 pin 2 (25.180, 18.630) | native USB D+ |
-| `Net-(C4-Pad1)` | X1 pin 3 (39.305, 18.630) | C4 pin 1 (35.055, 15.475) | 水晶の負荷容量側。短いワイヤで可 |
-
-座標は KiCad の基板座標（mm、基板左上が 0,0）です。実装後は必ず導通確認を
-してください。ワイヤは基板面に這わせ、可能なら UV レジストや絶縁テープで固定します。
+- **ビア径**: 0.45/0.2 mm と 0.3/0.2 mm を使用しています。0.2 mm ドリルは
+  6層基板の標準範囲ですが、JLCPCB の見積で advanced 扱いにならないか確認してください。
+- **Via-in-pad**: U1 pin22 (/XOUT) と J3 の A7/B7 (USB_HID_DM) に小さな
+  ビアをパッド内に置いています。JLCPCB では resin fill / via-in-pad の
+  オプションが必要になる場合があります。DFM プレビューで確認してください。
+- **最小線幅/間隔**: 0.1 mm。6層基板の標準範囲です。
+- CH345T は SSOP-20 5.3 × 7.2 mm、0.65 mm pitch です。
+- 水晶 X2 の負荷容量 C26/C27 は 22 pF の暫定値です。CH345 データシートの
+  推奨値に合わせて確定してください。
 
 ## BOM の TBD
 
 `jlc_bom.csv` の `LCSC Part #` が `TBD` の部品は、JLCPCB の在庫確認後に
-LCSC 型番を確定してください。とくに以下は要確認です。
+型番を確定してください。とくに以下は要確認です。
 
+- CH345T（U4）
 - RP2350A（U1）
 - W25Q128JVSIQ（U3）
 - NCP1117ST33T3G（U2）
-- 12 MHz 水晶（X1）
+- 12 MHz 水晶（X1, X2）
 - USB-A コネクタ（J2）
-- 15 pF / 4.7 uF / 22Ω / 33Ω / 27Ω / 0Ω / 10 kΩ の受動部品
+- 15 pF / 22 pF / 4.7 uF / 22Ω / 33Ω / 27Ω / 0Ω / 10 kΩ の受動部品
 
-CH9329 (U4, C2838834)、USB-C (J1/J3, C165948)、USBLC6 (U6, C7519)、
-TPS2051B (U5, C51187)、BAT54WS (D1/D2, C22629)、100 nF (C14663)、
-10 uF 0805 (C15850)、5.1 k (C23186)、1 k (C21190) は確定済みです。
+確定済み: USB-C (J1/J3, C165948)、USBLC6 (U6/U7, C7519)、TPS2051B (U5, C51187)、
+BAT54WS (D1/D2, C22629)、100 nF (C14663)、10 uF 0805 (C15850)、
+5.1 k (C23186)、1 k (C21190)。
 
-## CH9329 のボーレート
+## CH345 のボーレート
 
-出荷時は 9600 bps です。1 レポート約 14.6 ms なので通常演奏は可能ですが、
-高速なトリルまで詰める場合は TP1 (SET) と TP2 (GND) を短絡して WCH 設定
-ツールで 115200 bps に変更してください。ファームは起動時に GET_INFO を
-115200 / 57600 / 38400 / 19200 / 9600 の順で試し、応答があった速度を
-自動採用するため、再ビルドは不要です。
-
-## 発注時の注意
-
-- 4 層基板、最小線幅/間隔 0.1/0.1 mm、ビア 0.5/0.3 mm を想定しています。
-- 裏面実装を含むため、JLCPCB では両面 SMT を選択してください。
-- USB-C のシェル固定タブは THT 形状です。JLCPCB の SMT 実装可否を確認してください。
-- 基板外形は 57.6 × 31.4 mm の中心線寸法です（Gerber の外形線は線幅を含みます）。
+CH345 の UART は 31250 bps 固定です。ファームは生 MIDI をそのまま流します。

@@ -9,14 +9,15 @@
 
 ## Hardware
 
-`hardware/rp2350_frisk/` に新基板の外形・配置ドラフトがあります。
+`hardware/rp2350_frisk/` に CH345 版の基板と発注データがあります。
 
-- 57.6 × 31.4 mm、四隅 2 mm 45° パンチカット（旧型フリスクケース向け）
+- 57.6 × 31.4 mm、四隅 2 mm 45° パンチカット、**6層**
 - RP2350A QFN-60 ベアチップ（ソケット/モジュールスタックではない）
-- USB-C ×2 + USB-A ×1、CH345 を UART 接続（基板は CH345 版へ再設計中）
-
-**注意:** ファームは NKRO HID + CH345 に切り替わりました。現在の
-`hardware/rp2350_frisk/fab/` は旧 CH9329 試作のデータで、このファームとは
-互換性がありません。CH345 のピン配置を確定して基板を再配線するまで、
-`fab/` を発注しないでください。旧 `rp2350_zero_carrier` の製造データは
-履歴として同梱しています。
+- USB-C ×2 + USB-A ×1、CH345T を UART 31250 で接続
+- Gerber / BOM / CPL は `hardware/rp2350_frisk/fab/`。DRC は 0 violations /
+  0 unconnected
+- U1 pin22 と J3 A7/B7 に via-in-pad を使用。JLCPCB の DFM で resin fill /
+  via-in-pad の要否を確認してください。
+- BOM の `TBD`（CH345T、RP2350A、W25Q128、NCP1117、水晶、USB-A など）は
+  発注前に確定してください。
+- 旧 `rp2350_zero_carrier` の製造データは履歴として同梱しています。

@@ -24,9 +24,9 @@ USB-MIDI として制御 PC/DAW へ出力します。
 
 新基板は `hardware/rp2350_frisk/` にあります。
 
-> **注意:** 現在の `fab/` は旧 CH9329 試作のデータです。ファームは CH345 前提に
-> 切り替わったため、**CH345 版の基板に更新するまで `fab/` を発注しないでください**。
-> CH345 のパッケージ・ピン配置を確認して再配線する必要があります。
+> **注意:** `fab/` は CH345 版の発注データです。DRC は 0 violations /
+> 0 unconnected ですが、U1 pin22 と J3 A7/B7 に via-in-pad を使っているため、
+> JLCPCB の DFM プレビューで resin fill / via-in-pad の要否を確認してください。
 
 - **外形 57.6 × 31.4 mm、四隅 2 mm 45° パンチカット**（旧型フリスクケース向け）
 - **RP2350A QFN-60 ベアチップ**（ソケット／モジュールのスタックではない）
@@ -81,7 +81,7 @@ src/
   mirror_filter_switch.c/.h # GP29 楽器モード（スメール音階）
   debounced_switch.c/.h
   config.h            # 設定の一元管理
-hardware/rp2350_frisk/ # 基板（CH345 版へ更新予定）
+hardware/rp2350_frisk/ # 基板（CH345 版、6層）
 tests/                 # ホスト側ユニットテスト（ARM 不要）
 scripts/               # ビルド・依存取得・製造データ
 ```
@@ -107,7 +107,7 @@ scripts/               # ビルド・依存取得・製造データ
 ```
 
 > ターゲット名は移行途中のため `midi_nkro_ch345` のままです。
-> 実体は NKRO HID + CH345 版です。
+
 
 ### ネイティブ
 
@@ -210,12 +210,12 @@ make clean
 
 ## 8. 既知の制約 / 残作業
 
-- **基板は CH345 版へ再設計中**。現在の `hardware/rp2350_frisk/fab/` は
-  CH9329 試作のデータで、このファームとは互換性がありません。
-- CH345 のパッケージ・ピン配置・水晶要否をデータシートで確定してから、
-  J3 の USB 配線と UART 配線を更新する必要があります。
+- 基板は CH345 版（6層）で、`fab/` に Gerber / BOM / CPL を生成済み。
+- U1 pin22 と J3 A7/B7 に via-in-pad を使用。JLCPCB の DFM で
+  resin fill / via-in-pad の要否を確認すること。
 - CH345 の UART は 31250 固定。CC/ピッチベンド/SysEx はそのまま通ります。
 - HID は NKRO ですが、原神側が同時に受け付ける音数はゲーム側の仕様に依存します。
+- 回路図と ERC は未作成。
 
 ---
 

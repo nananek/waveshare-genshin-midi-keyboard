@@ -7,3 +7,7 @@
   (constraint edge_clearance (min 0.2mm)))
 (rule "min-track"
   (constraint track_width (min 0.1mm)))
+(rule "small-via"
+  (constraint via_diameter (min 0.3mm)))
+(rule "hole-clearance"
+  (constraint hole_clearance (min 0.18mm)))

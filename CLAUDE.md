@@ -88,17 +88,17 @@ CH345 は **UART1**(TX=GP4 / RX=GP5, 31250 8N1)。
 
 新基板は `hardware/rp2350_frisk/`。発注データは `fab/` にある。
 
-- 外形 **57.6 × 31.4 mm**、四隅 2 mm 45° パンチカット。
+- 外形 **57.6 × 31.4 mm**、四隅 2 mm 45° パンチカット、**6層**。
 - **RP2350A QFN-60 ベアチップ** + W25Q128 + 12 MHz 水晶 + 3.3 V LDO。
 - J1 = native USB **NKRO HID**（USB-C、左短辺）。
 - J2 = USB-A ホスト（MIDI キーボード、上長辺）。VBUS は TPS2051B。
-- J3 = **CH345 の USB-MIDI**（USB-C、右短辺）。
-- J1/J3 の VBUS は BAT54WS でダイオード OR。
-- 現在の `fab/` は旧 CH9329 試作のデータ。CH345 版へ再設計するまで発注しない。
-- CH345 のパッケージ・ピン配置・水晶要否をデータシートで確定してから、
-  U4 周辺（UART/USB/水晶）を再配線する。
-- 旧 `hardware/rp2350_zero_carrier/` は履歴。新しい契約テストや CI を作る場合は
-  `hardware/rp2350_frisk/` 向けに作り直すこと。
+- J3 = **CH345T の USB-MIDI**（USB-C、右短辺）。
+- U4 = CH345T（SSOP-20）、X2 = CH345 用 12 MHz 水晶。
+- U1 pin22 と J3 A7/B7 に via-in-pad（0.3/0.2、0.45/0.2）を使用。
+  JLCPCB の DFM で resin fill / via-in-pad の要否を確認する。
+- DRC は 0 violations / 0 unconnected。`fab/` に Gerber / BOM / CPL あり。
+- BOM の `TBD`（CH345T、RP2350A、W25Q128、NCP1117、水晶、USB-A など）は
+  発注前に確定する。回路図と ERC は未作成。
 
 ## キャリブレーション
 
