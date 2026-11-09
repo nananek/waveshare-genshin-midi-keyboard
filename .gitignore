@@ -34,3 +34,6 @@ compile_commands.json
 
 # worker 間受け渡し用の一時領域 (計画書等)
 /tmp/
+
+# local scratch
+/.tmp/

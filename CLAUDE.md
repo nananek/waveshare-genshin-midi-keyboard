@@ -97,8 +97,7 @@ CH9329 は **UART1**(TX=GP4 / RX=GP5, 9600 8N1)。
 
 ## ハードウェア
 
-新基板は `hardware/rp2350_frisk/`。**現状は外形・配置・ネット割り当ての
-ドラフトで、配線と回路図は未完了**。発注可能な状態ではない。
+新基板は `hardware/rp2350_frisk/`。発注データは `fab/` にある。
 
 - 外形 **57.6 × 31.4 mm**、四隅 2 mm 45° パンチカット。
 - **RP2350A QFN-60 ベアチップ** + W25Q128 + 12 MHz 水晶 + 3.3 V LDO。
@@ -106,7 +105,11 @@ CH9329 は **UART1**(TX=GP4 / RX=GP5, 9600 8N1)。
 - J2 = USB-A ホスト（MIDI キーボード、上長辺）。VBUS は TPS2051B。
 - J3 = CH9329 の USB HID（USB-C、右短辺）。
 - J1/J3 の VBUS は BAT54WS でダイオード OR。
-- DRC は物理エラー 0 / unconnected 141（配線未実施のため）。
+- DRC は物理エラー 0 / unconnected 3。残る 3 ネット
+  (`/QSPI_SCLK` / `Net-(U1-USB_DP)` / `Net-(C4-Pad1)`) は
+  `fab/ORDER_NOTES_JA.md` の座標間を細いワイヤで手配線する。
+- 発注ファイル: `fab/rp2350_frisk_gerbers_JLCPCB.zip`、
+  `fab/jlc_bom.csv`、`fab/jlc_cpl.csv`。BOM の `TBD` は発注前に確定する。
 - 旧 `hardware/rp2350_zero_carrier/` は履歴。新しい契約テストや CI を作る場合は
   `hardware/rp2350_frisk/` 向けに作り直すこと。
 
