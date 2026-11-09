@@ -14,9 +14,8 @@
 # host test binaries
 /tests/t_note_mapper
 /tests/t_midi_parse
-/tests/t_ch9329_protocol
-/tests/t_ch9329_keyboard
-/tests/t_ch9329_keyboard_wrap
+/tests/t_nkro_report
+/tests/t_nkro_report_wrap
 
 # editor / OS
 .cache/

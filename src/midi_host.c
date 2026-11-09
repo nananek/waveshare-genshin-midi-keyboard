@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "tusb.h"
 #include "midi_host.h"
-#include "midi_bridge.h"
+#include "midi_uart.h"
 #include "midi_parse.h"
 #include "config.h"
 
@@ -55,7 +55,7 @@ void tuh_midi_rx_cb(uint8_t idx, uint32_t xferred_bytes) {
         if (n == 0) {
             break;
         }
-        midi_bridge_send(buffer, n); // 生バイト列を USB-MIDI ガジェットへ
+        midi_uart_send(buffer, n); // 生バイト列を CH345 (USB-MIDI) へ
         midi_parser_push(&s_parser, buffer, n, on_note, NULL);
     }
 }

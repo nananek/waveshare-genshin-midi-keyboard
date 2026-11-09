@@ -2,13 +2,13 @@
 #define CONFIG_H
 
 // ===========================================================================
-//  原神 MIDI → CH9329 キーボード ガジェット 設定
+//  原神 MIDI → NKRO HID + CH345 USB-MIDI 設定
 //
 //  構成:
 //    [MIDI キーボード] --USB--> PIO-USB host (RP2350)
-//    RP2350 native USB = USB-MIDI ガジェット (PC/DAW へ生 MIDI を出力)
-//    RP2350 UART1       = CH9329 (9600 8N1) へ HID キーボードレポートを送信
-//    CH9329 USB         = 操作対象 PC へ HID キーボードとして見える
+//    RP2350 native USB = NKRO HID キーボード (操作対象 PC へ)
+//    RP2350 UART1       = CH345 (31250 8N1) へ生 MIDI を送信
+//    CH345 USB          = 制御 PC/DAW へ USB-MIDI として見える
 //
 //  すべて #ifndef ガード付きなので、CMake / コンパイル時 -D で上書きできる。
 // ===========================================================================
@@ -58,51 +58,22 @@
 #endif
 
 // ---------------------------------------------------------------------------
-//  CH9329 (USB HID キーボードエミュレータ) 接続
-//  CH9329 の出荷時設定は 9600 bps / 8N1 / プロトコルモード / Mode 0。
-//  RP2350 の UART1 を CH9329 の RXD/TXD にクロス接続する。
-//  TX=GP4, RX=GP5。デバッグログは UART0 (GP0/GP1) を使うため衝突しない。
+//  CH345 (UART ↔ USB-MIDI) 接続
+//  RP2350 の UART1 を CH345 の MIN/MOUT にクロス接続する。
+//  TX=GP4, RX=GP5, 31250 bps 8N1。デバッグログは UART0 (GP0/GP1)。
+//  MIDI バイト列は CH345 へそのまま流す (USB-MIDI クラス)。
 // ---------------------------------------------------------------------------
-#ifndef CH9329_KEYBOARD_ENABLE
-#define CH9329_KEYBOARD_ENABLE 1
+#ifndef MIDI_UART_INDEX
+#define MIDI_UART_INDEX 1
 #endif
-// 0 = uart0 / 1 = uart1
-#ifndef CH9329_UART_INDEX
-#define CH9329_UART_INDEX 1
+#ifndef MIDI_UART_TX_PIN
+#define MIDI_UART_TX_PIN 4
 #endif
-#ifndef CH9329_UART_TX_PIN
-#define CH9329_UART_TX_PIN 4
+#ifndef MIDI_UART_RX_PIN
+#define MIDI_UART_RX_PIN 5
 #endif
-#ifndef CH9329_UART_RX_PIN
-#define CH9329_UART_RX_PIN 5
-#endif
-#ifndef CH9329_UART_BAUD
-#define CH9329_UART_BAUD 9600
-#endif
-// 起動時に CH9329 の GET_INFO を各ボーレートで試し、応答があった速度を
-// 採用する。0 にすると CH9329_UART_BAUD 固定。
-#ifndef CH9329_AUTO_BAUD
-#define CH9329_AUTO_BAUD 1
-#endif
-// 自動判定で試す順序 (先頭ほど優先)。CH9329 の設定ツールで変更できる値。
-#ifndef CH9329_BAUD_CANDIDATES
-#define CH9329_BAUD_CANDIDATES {115200u, 57600u, 38400u, 19200u, 9600u}
-#endif
-// 1 候補あたりの応答待ち時間 (ms)。
-#ifndef CH9329_BAUD_PROBE_MS
-#define CH9329_BAUD_PROBE_MS 60
-#endif
-
-// ---------------------------------------------------------------------------
-//  MIDI ガジェット (native USB) へのパススルー
-//  PIO-USB ホストが受けた生 MIDI バイト列を、そのまま USB-MIDI として
-//  PC/DAW へ送る。core1 → core0 のキューを介する。
-// ---------------------------------------------------------------------------
-#ifndef MIDI_BRIDGE_QUEUE_DEPTH
-#define MIDI_BRIDGE_QUEUE_DEPTH 8
-#endif
-#ifndef MIDI_BRIDGE_CHUNK_MAX
-#define MIDI_BRIDGE_CHUNK_MAX 64
+#ifndef MIDI_UART_BAUD
+#define MIDI_UART_BAUD 31250
 #endif
 // tuh_midi_stream_read を 1 回に読み出す最大バイト数。
 #ifndef MIDI_STREAM_CHUNK_MAX
@@ -111,8 +82,8 @@
 
 // ---------------------------------------------------------------------------
 //  原神モードスイッチ (任意)
-//  ON (LOW) で CH9329 へのキーボード出力を停止する。USB-MIDI パススルーは
-//  継続する。ミュート突入時は全キー解放レポートを CH9329 へ送る。
+//  ON (LOW) で NKRO HID のキーボード出力を停止する。UART の MIDI 出力は
+//  継続する。ミュート突入時は全キー解放レポートを HID へ送る。
 //  既定配線: GP28 ↔ GND をトグルスイッチで開閉 (内部プルアップ)。
 // ---------------------------------------------------------------------------
 #ifndef MUTE_SWITCH_ENABLE
@@ -127,6 +98,35 @@
 #endif
 #ifndef MUTE_SWITCH_DEBOUNCE_MS
 #define MUTE_SWITCH_DEBOUNCE_MS 20
+#endif
+
+// ---------------------------------------------------------------------------
+//  予備スイッチ (任意)
+//  旧ボード2のサステインスイッチを、PIO-USB MIDI-HID ガジェット側の
+//  予備入力へ移したもの。既定では状態を読むだけで MIDI へは送らない。
+//  SPARE_SWITCH_CC を 0..127 にすると、エッジでその CC を CH345 へ送る
+//  (例: 64 にすると従来のサステインと同じ動作)。
+//  既定配線: GP27 ↔ GND (内部プルアップ、アクティブ LOW)。
+// ---------------------------------------------------------------------------
+#ifndef SPARE_SWITCH_ENABLE
+#define SPARE_SWITCH_ENABLE 1
+#endif
+#ifndef SPARE_SWITCH_PIN
+#define SPARE_SWITCH_PIN 27
+#endif
+#ifndef SPARE_SWITCH_ACTIVE_LEVEL
+#define SPARE_SWITCH_ACTIVE_LEVEL 0
+#endif
+#ifndef SPARE_SWITCH_DEBOUNCE_MS
+#define SPARE_SWITCH_DEBOUNCE_MS 20
+#endif
+// -1 = MIDI へ送らない (純粋な予備入力)。0..127 = その CC を送る。
+#ifndef SPARE_SWITCH_CC
+#define SPARE_SWITCH_CC (-1)
+#endif
+// SPARE_SWITCH_CC を送るときの MIDI チャンネル (0-indexed、既定 0 = ch1)。
+#ifndef SPARE_SWITCH_MIDI_CHANNEL
+#define SPARE_SWITCH_MIDI_CHANNEL 0
 #endif
 
 // ---------------------------------------------------------------------------

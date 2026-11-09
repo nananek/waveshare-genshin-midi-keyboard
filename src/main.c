@@ -7,23 +7,23 @@
 #include "tusb.h"
 #include "pio_usb.h"
 
-#include "ch9329_keyboard.h"
-#include "ch9329_uart.h"
 #include "config.h"
+#include "hid_device.h"
 #include "hid_mute.h"
-#include "midi_bridge.h"
 #include "midi_host.h"
+#include "midi_uart.h"
 #include "mirror_filter_switch.h"
+#include "spare_switch.h"
 
 // ===========================================================================
-//  PIO-MIDI gadget + CH9329 keyboard pipeline
+//  MIDI keyboard (PIO-USB host) → NKRO HID (native USB)
+//  + RAW MIDI (UART1 31250) → CH345 → USB-MIDI
 //
-//  core1: PIO-USB ホスト = MIDI キーボード入力
-//  core0: native USB = USB-MIDI ガジェット (PC/DAW へ生 MIDI)
-//         UART1       = CH9329 (操作対象 PC へ HID キーボード)
+//  core1: PIO-USB ホスト (MIDI キーボード入力、RAW MIDI を CH345 へ)
+//  core0: native USB = NKRO HID キーボード (操作対象 PC)
 //
-//  MIDI ノートイベントはロックフリーキューで core1 → core0 へ渡す。
-//  CH9329 のキーボード状態は core0 だけが触る。
+//  HID 状態は core0 だけが触る。MIDI ノートイベントはロックフリーキューで
+//  core1 → core0 へ渡す。
 // ===========================================================================
 
 #define EVT_RELEASE_ALL 0xFFu // note フィールドのセンチネル (有効 MIDI ノートは 0..127)
@@ -36,7 +36,6 @@ typedef struct {
 static queue_t s_evt_queue;
 
 // MIDI 側から見た「現在押されているノート」(ミュート中も含め常時更新)。
-// ミュート解除時、押しっぱなしのまま新規 Note On が来ないノートを再送する。
 static bool s_note_held[128];
 
 // ---- midi_host.c (core1) から呼ばれるシーム実装 ----
@@ -52,8 +51,6 @@ void app_on_midi_disconnect(void) {
 
 // ---------------------------------------------------------------------------
 //  core1: PIO-USB ホスト (rhport 1)
-//  tuh_configure / tuh_init / tuh_task はすべてこのコアで行うこと
-//  (PIO/DMA ステートマシンが起動コアに紐づくため)。
 // ---------------------------------------------------------------------------
 static void core1_main(void) {
     sleep_ms(10);
@@ -70,19 +67,13 @@ static void core1_main(void) {
     }
 }
 
-static void queue_keyboard_report(void) {
-    ch9329_uart_queue_report(ch9329_keyboard_modifier(),
-                              ch9329_keyboard_keys());
-}
-
 static void reassert_held_notes(void) {
-    ch9329_keyboard_release_all();
+    hid_device_release_all();
     for (int i = 0; i < 128; i++) {
         if (s_note_held[i]) {
-            ch9329_keyboard_note_on((uint8_t)i);
+            hid_device_note_on((uint8_t)i);
         }
     }
-    queue_keyboard_report();
 }
 
 int main(void) {
@@ -90,45 +81,50 @@ int main(void) {
     set_sys_clock_khz(120000, true);
 
     // stdio はデバッグログ用に UART0 (GP0/GP1) へ。
-    // native USB は USB-MIDI が占有するため stdio-usb は使わない。
+    // native USB は NKRO HID が占有するため stdio-usb は使わない。
     stdio_init_all();
-    printf("\r\n[boot] PIO-MIDI CH9329 gadget: D+=GP%d UART%d TX=GP%d\r\n",
-           PIN_USB_HOST_DP, CH9329_UART_INDEX, CH9329_UART_TX_PIN);
+    printf("\r\n[boot] MIDI→NKRO HID + CH345: D+=GP%d UART%d TX=GP%d\r\n",
+           PIN_USB_HOST_DP, MIDI_UART_INDEX, MIDI_UART_TX_PIN);
 
     queue_init(&s_evt_queue, sizeof(midi_evt_t), 128);
-    midi_bridge_init();
 
-    // native USB = USB-MIDI デバイス。
+    // native USB = NKRO HID キーボード。
     tud_init(BOARD_TUD_RHPORT);
-
-    ch9329_keyboard_init();
-    ch9329_uart_init();
-    printf("[ch9329] UART%d @%lu bps (auto=%d)\r\n",
-           CH9329_UART_INDEX, (unsigned long)ch9329_uart_baud(), CH9329_AUTO_BAUD);
+    hid_device_init();
+    midi_uart_init();
     hid_mute_init();
     mirror_filter_switch_init();
-    ch9329_keyboard_set_sumeru_mode(mirror_filter_switch_is_enabled());
-
-    // 起動時に空レポートを一度送り、CH9329 側の固着キーを解除する。
-    queue_keyboard_report();
+    spare_switch_init();
+    hid_device_set_sumeru_mode(mirror_filter_switch_is_enabled());
 
     multicore_launch_core1(core1_main);
 
     for (;;) {
         tud_task();
 
-        // USB-MIDI ガジェットへの生 MIDI パススルー。
-        midi_bridge_task();
-
-        // --- 原神モードスイッチ: CH9329 出力のミュート ---
+        // --- 原神モードスイッチ: HID 出力のミュート ---
         hid_mute_edge_t edge = hid_mute_poll();
         if (edge == HID_MUTE_ENTER) {
-            printf("[mute] ON: CH9329 keyboard output disabled\r\n");
-            ch9329_keyboard_release_all();
-            queue_keyboard_report();
+            printf("[mute] ON: NKRO HID output disabled\r\n");
+            hid_device_release_all();
         } else if (edge == HID_MUTE_EXIT) {
             printf("[mute] OFF: reassert held notes\r\n");
             reassert_held_notes();
+        }
+
+        // --- 予備スイッチ: 既定では状態を読むだけ。SPARE_SWITCH_CC を
+        //     設定すると CH345 経由で CC を送る ---
+        spare_switch_edge_t spare_edge = spare_switch_poll();
+        if (spare_edge != SPARE_SWITCH_NO_CHANGE) {
+#if SPARE_SWITCH_CC >= 0
+            uint8_t value = (spare_edge == SPARE_SWITCH_ENTER) ? 127u : 0u;
+            midi_uart_send_cc(SPARE_SWITCH_MIDI_CHANNEL,
+                              (uint8_t)SPARE_SWITCH_CC, value);
+            printf("[spare] CC%d=%u\r\n", SPARE_SWITCH_CC, value);
+#else
+            printf("[spare] %s\r\n",
+                   spare_edge == SPARE_SWITCH_ENTER ? "ON" : "OFF");
+#endif
         }
 
         // --- 楽器モードスイッチ: 押下中ノートを新しい音階で再配置 ---
@@ -136,26 +132,21 @@ int main(void) {
         mirror_filter_switch_poll();
         bool new_sumeru_mode = mirror_filter_switch_is_enabled();
         if (new_sumeru_mode != old_sumeru_mode) {
-            // ミュート中は CH9329 に何も送らない。解除時に新しい音階で
-            // 保持ノートを再アサートする。
             if (!hid_mute_is_muted()) {
-                ch9329_keyboard_release_all();
-                ch9329_keyboard_set_sumeru_mode(new_sumeru_mode);
+                hid_device_release_all();
+                hid_device_set_sumeru_mode(new_sumeru_mode);
                 for (int i = 0; i < 128; i++) {
                     if (s_note_held[i]) {
-                        ch9329_keyboard_note_on((uint8_t)i);
+                        hid_device_note_on((uint8_t)i);
                     }
                 }
-                queue_keyboard_report();
             } else {
-                ch9329_keyboard_set_sumeru_mode(new_sumeru_mode);
+                hid_device_set_sumeru_mode(new_sumeru_mode);
             }
         }
 
         // core1 から届いた MIDI イベントを反映。
-        // ミュート中もキューは排出しつつ保持状態だけは更新する。
         bool muted = hid_mute_is_muted();
-        bool keyboard_changed = false;
         midi_evt_t e;
         while (queue_try_remove(&s_evt_queue, &e)) {
             if (e.note == EVT_RELEASE_ALL) {
@@ -163,7 +154,7 @@ int main(void) {
                     s_note_held[i] = false;
                 }
                 if (!muted) {
-                    keyboard_changed |= ch9329_keyboard_release_all();
+                    hid_device_release_all();
                 }
                 continue;
             }
@@ -172,15 +163,12 @@ int main(void) {
                 continue;
             }
             if (e.on) {
-                keyboard_changed |= ch9329_keyboard_note_on(e.note);
+                hid_device_note_on(e.note);
             } else {
-                keyboard_changed |= ch9329_keyboard_note_off(e.note);
+                hid_device_note_off(e.note);
             }
         }
-        if (keyboard_changed) {
-            queue_keyboard_report();
-        }
 
-        ch9329_uart_task();
+        hid_device_task();
     }
 }

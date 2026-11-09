@@ -33,7 +33,7 @@ endif()
 # ---- pico-sdk 取り込み ----
 include(pico_sdk_import.cmake)
 
-project(midi_ch9329_gadget C CXX ASM)
+project(midi_nkro_ch345 C CXX ASM)
 
 # 依存が揃っているか早期チェック
 if(NOT EXISTS ${PICO_TINYUSB_PATH}/src/class/midi/midi_host.c)
@@ -56,15 +56,15 @@ add_executable(${PROJECT_NAME}
     src/main.c
     src/usb_descriptors.c
     src/debounced_switch.c
+    src/hid_device.c
     src/hid_mute.c
-    src/midi_bridge.c
     src/midi_host.c
     src/midi_parse.c
+    src/midi_uart.c
     src/mirror_filter_switch.c
     src/note_mapper.c
-    src/ch9329_keyboard.c
-    src/ch9329_protocol.c
-    src/ch9329_uart.c
+    src/nkro_report.c
+    src/spare_switch.c
 
     # --- SDK の tinyusb_host が列挙しないソースを手動追加 ---
     ${PICO_TINYUSB_PATH}/src/class/midi/midi_host.c

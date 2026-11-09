@@ -36,7 +36,7 @@ jobs:
         with:
           name: firmware-uf2
           path: |
-            build/midi_ch9329_gadget.uf2
+            build/midi_nkro_ch345.uf2
           if-no-files-found: error
 
   build-gerbers:
@@ -111,7 +111,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            build/release/midi_ch9329_gadget.uf2 \
+            build/release/midi_nkro_ch345.uf2 \
             build/release/rp2350_zero_carrier_gerbers_JLCPCB.zip \
             build/release/rp2350_zero_carrier-drc.rpt \
             build/release/rp2350_zero_carrier-erc-errors.rpt \
