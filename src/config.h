@@ -79,6 +79,19 @@
 #ifndef CH9329_UART_BAUD
 #define CH9329_UART_BAUD 9600
 #endif
+// 起動時に CH9329 の GET_INFO を各ボーレートで試し、応答があった速度を
+// 採用する。0 にすると CH9329_UART_BAUD 固定。
+#ifndef CH9329_AUTO_BAUD
+#define CH9329_AUTO_BAUD 1
+#endif
+// 自動判定で試す順序 (先頭ほど優先)。CH9329 の設定ツールで変更できる値。
+#ifndef CH9329_BAUD_CANDIDATES
+#define CH9329_BAUD_CANDIDATES {115200u, 57600u, 38400u, 19200u, 9600u}
+#endif
+// 1 候補あたりの応答待ち時間 (ms)。
+#ifndef CH9329_BAUD_PROBE_MS
+#define CH9329_BAUD_PROBE_MS 60
+#endif
 
 // ---------------------------------------------------------------------------
 //  MIDI ガジェット (native USB) へのパススルー

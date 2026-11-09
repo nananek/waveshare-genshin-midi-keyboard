@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 // CH9329 シリアルプロトコルの純粋な組み立て処理 (UART 非依存・単体テスト可能)。
 //
@@ -20,6 +21,7 @@
 #define CH9329_HEADER_0 0x57u
 #define CH9329_HEADER_1 0xABu
 #define CH9329_ADDR_DEFAULT 0x00u
+#define CH9329_CMD_GET_INFO 0x01u
 #define CH9329_CMD_SEND_KB 0x02u
 #define CH9329_KB_DATA_LEN 0x08u
 #define CH9329_KEY_COUNT 6u
@@ -39,6 +41,14 @@ uint8_t ch9329_build_keyboard_frame(uint8_t modifier,
 uint8_t ch9329_build_frame(uint8_t addr, uint8_t command,
                            const uint8_t *data, uint8_t length,
                            uint8_t *out);
+
+// GET_INFO (command 0x01) フレーム。応答のヘッダ検出でボーレートを
+// 自動判定するために使う。out は CH9329_FRAME_MAX バイト必要。
+uint8_t ch9329_build_get_info_frame(uint8_t addr, uint8_t *out);
+
+// 受信バッファの先頭が完全な CH9329 フレームなら true。
+// ヘッダ (57 AB)、長さ、チェックサムを検証する。
+bool ch9329_frame_valid(const uint8_t *frame, size_t length);
 
 // フレームのチェックサム (checksum 自身を含めない単純和) を返す。
 uint8_t ch9329_checksum(const uint8_t *frame, size_t length);

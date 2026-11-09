@@ -103,6 +103,8 @@ int main(void) {
 
     ch9329_keyboard_init();
     ch9329_uart_init();
+    printf("[ch9329] UART%d @%lu bps (auto=%d)\r\n",
+           CH9329_UART_INDEX, (unsigned long)ch9329_uart_baud(), CH9329_AUTO_BAUD);
     hid_mute_init();
     mirror_filter_switch_init();
     ch9329_keyboard_set_sumeru_mode(mirror_filter_switch_is_enabled());

@@ -10,7 +10,11 @@
 // core0 のメインループからのみ呼ぶこと。送信はノンブロッキングで、
 // 最新のキーボードレポートを優先する (古い中間状態は捨てる)。
 
+// UART を初期化し、必要なら CH9329 のボーレートを自動判定する。
 void ch9329_uart_init(void);
+
+// 実際に使用しているボーレート。
+uint32_t ch9329_uart_baud(void);
 
 // 送信待ちのレポートを置き換える。UART が空いていれば次の task で送られる。
 void ch9329_uart_queue_report(uint8_t modifier,

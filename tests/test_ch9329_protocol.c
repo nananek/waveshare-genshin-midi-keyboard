@@ -68,6 +68,17 @@ int main(void) {
     expect_u8("custom-data", frame[5], 0x11);
     expect_u8("custom-sum", frame[8], ch9329_checksum(frame, 8));
 
+    // --- GET_INFO (0x01, length 0) ---
+    len = ch9329_build_get_info_frame(0x00, frame);
+    expect_u8("info-len", len, 6);
+    expect_u8("info-cmd", frame[3], 0x01);
+    expect_u8("info-dlen", frame[4], 0x00);
+    expect_u8("info-sum", frame[5], 0x03);
+    expect_u8("info-valid", ch9329_frame_valid(frame, len), true);
+    expect_u8("info-bad-checksum", ch9329_frame_valid(frame, len - 1), false);
+    frame[5] ^= 0x01;
+    expect_u8("info-bad-sum", ch9329_frame_valid(frame, len), false);
+
     // --- checksum は 8 bit で折り返す ---
     uint8_t many[4] = {0xFF, 0xFF, 0xFF, 0xFF};
     expect_u8("sum-wrap", ch9329_checksum(many, sizeof(many)), 0xFC);
