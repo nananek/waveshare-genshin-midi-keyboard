@@ -9,15 +9,23 @@
 
 ## Hardware
 
-`hardware/rp2350_frisk/` に CH345 版の基板と発注データがあります。
+`hardware/rp2350_frisk/` の CH345 版基板が v2.0.0 の対象です。発注データは次の
+ファイルで添付しています。
 
-- 57.6 × 31.4 mm、四隅 2 mm 45° パンチカット、**6層**
-- RP2350A QFN-60 ベアチップ（ソケット/モジュールスタックではない）
-- USB-C ×2 + USB-A ×1、CH345T を UART 31250 で接続
-- Gerber / BOM / CPL は `hardware/rp2350_frisk/fab/`。DRC は 0 violations /
-  0 unconnected
-- U1 pin22 と J3 A7/B7 に via-in-pad を使用。JLCPCB の DFM で resin fill /
-  via-in-pad の要否を確認してください。
-- BOM の `TBD`（CH345T、RP2350A、W25Q128、NCP1117、水晶、USB-A など）は
-  発注前に確定してください。
-- 旧 `rp2350_zero_carrier` の製造データは履歴として同梱しています。
+- `rp2350_frisk_ch345_gerbers_JLCPCB.zip` … Gerber / Excellon（6層 + ドリル + job）
+- `rp2350_frisk-jlc-bom.csv` / `rp2350_frisk-jlc-cpl.csv` … JLCPCB 発注用 BOM / CPL
+- `rp2350_frisk-bom-full.csv` … 参考用の全部品表
+- `rp2350_frisk-drc.rpt` … KiCad 10.0.5 の DRC（0 violations / 0 unconnected）
+- `rp2350_frisk-placement.pdf` … 配置図
+- `rp2350_frisk-ORDER_NOTES_JA.md` … 発注前の確認事項
+
+基板仕様は 57.6 × 31.4 mm、四隅 2 mm 45° パンチカット、6層です。RP2350A
+QFN-60 ベアチップ、CH345T を UART 31250 で接続し、USB-C ×2 + USB-A ×1 を
+載せています。
+
+U1 pin22 と J3 A7/B7 に via-in-pad を使用しています。JLCPCB の DFM で
+resin fill / via-in-pad の要否を確認してください。BOM の `TBD`（CH345T、
+RP2350A、W25Q128、NCP1117、水晶、USB-A など）は発注前に確定してください。
+
+旧 `rp2350_zero_carrier` の製造データは履歴として添付しています。旧基板は
+廃止済みで、v2.0.0 の実装対象ではありません。

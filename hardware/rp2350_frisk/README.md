@@ -163,10 +163,12 @@ kicad-cli pcb drc --severity-error rp2350_frisk.kicad_pcb
 ## 旧設計との関係
 
 `../rp2350_zero_carrier/` は RP2350-Zero を 2 枚ソケットで載せる旧設計です。
-本基板はそれを置き換える CH345 版で、旧基板の製造データや契約テスト
-（`scripts/hardware_contract.py` など）は旧設計向けのままです。
-新基板をリリース対象にするときは、契約テストと CI をこの基板向けに
-作り直してください。
+本基板はそれを置き換える CH345 版です。旧基板の製造データや契約テスト
+（`scripts/hardware_contract.py` など）は旧設計向けのまま残しています。
+
+v2.0.0 のリリースでは `scripts/build_frisk_release.sh` が `fab/` と
+`docs/placement.pdf` を検証して発注用アセットにまとめます。Frisk 基板には
+まだ回路図が無いため、ERC と回路図/PCB パリティはリリースゲートに含まれません。
 
 ## ライセンス
 

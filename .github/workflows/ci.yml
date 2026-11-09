@@ -76,9 +76,30 @@ jobs:
             build/release/SHA256SUMS.txt
           if-no-files-found: error
 
+  build-frisk-fab:
+    name: Frisk 基板の発注データをパッケージ
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: ./scripts/build_frisk_release.sh
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: frisk-fab-release
+          path: |
+            build/release/rp2350_frisk_ch345_gerbers_JLCPCB.zip
+            build/release/rp2350_frisk-drc.rpt
+            build/release/rp2350_frisk-jlc-bom.csv
+            build/release/rp2350_frisk-jlc-cpl.csv
+            build/release/rp2350_frisk-bom-full.csv
+            build/release/rp2350_frisk-ORDER_NOTES_JA.md
+            build/release/rp2350_frisk-placement.pdf
+          if-no-files-found: error
+
   release:
     name: GitHub Release 作成
-    needs: [test, build-firmware, build-gerbers]
+    needs: [test, build-firmware, build-gerbers, build-frisk-fab]
     if: success() && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -95,12 +116,16 @@ jobs:
         with:
           name: hardware-release
           path: build/release
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: frisk-fab-release
+          path: build/release
       - name: release checksums
         run: |
           cd build/release
           find . -maxdepth 1 -type f ! -name SHA256SUMS.txt \
             -printf '%f\0' | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
-          test "$(wc -l < SHA256SUMS.txt)" -eq 15
+          test "$(wc -l < SHA256SUMS.txt)" -eq 22
           if grep -qE '  .*/' SHA256SUMS.txt; then
             echo "checksum manifest contains a non-basename path" >&2
             exit 1
@@ -112,6 +137,13 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" \
             build/release/midi_nkro_ch345.uf2 \
+            build/release/rp2350_frisk_ch345_gerbers_JLCPCB.zip \
+            build/release/rp2350_frisk-drc.rpt \
+            build/release/rp2350_frisk-jlc-bom.csv \
+            build/release/rp2350_frisk-jlc-cpl.csv \
+            build/release/rp2350_frisk-bom-full.csv \
+            build/release/rp2350_frisk-ORDER_NOTES_JA.md \
+            build/release/rp2350_frisk-placement.pdf \
             build/release/rp2350_zero_carrier_gerbers_JLCPCB.zip \
             build/release/rp2350_zero_carrier-drc.rpt \
             build/release/rp2350_zero_carrier-erc-errors.rpt \
