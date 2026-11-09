@@ -1,4 +1,8 @@
-# RP2350-Zero carrier 組立
+# RP2350-Zero carrier 組立 (LEGACY)
+
+> **LEGACY:** この基板は旧 2 ボード構成（RP2350-Zero を 2 枚ソケットで搭載）の
+> 履歴です。現行方針は `../rp2350_frisk/`（RP2350A ベアチップ + CH9329 の
+> 1 枚基板）です。新規発注・新規ファームの対象ではありません。
 
 > **2026-08-30電源制御版:** 発注判定と実測waiverは [ORDER_DECISION_JA.md](ORDER_DECISION_JA.md) と [VALIDATION_WAIVERS_JA.md](VALIDATION_WAIVERS_JA.md) を正本とします。TPS2553はGP9 EN / GP10 FAULT_N、FAULT 3V3 pull-up、EN 100kΩ pull-down、OUT 100nF、5測定padの構成です。外部電源入力とSW3流用は禁止します。
 

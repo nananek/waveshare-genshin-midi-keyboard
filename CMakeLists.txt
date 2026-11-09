@@ -1,12 +1,16 @@
 cmake_minimum_required(VERSION 3.13)
 
 # ===========================================================================
-#  RP2350 MIDI → 原神「諧律のチェンバロ」HID キーボード変換
+#  PIO-MIDI gadget + CH9329 keyboard (RP2350A)
+#
+#  [MIDI keyboard] --USB--> PIO-USB host --+
+#                                          +--> native USB = USB-MIDI gadget
+#                                          +--> UART1 9600 --> CH9329 --> PC HID
 # ===========================================================================
 
-# ---- ターゲット MCU: RP2350 (Pico 2 / Waveshare RP2350-USB-A) ----
+# ---- ターゲット MCU: RP2350A ----
 if(NOT DEFINED PICO_BOARD)
-    set(PICO_BOARD pico2 CACHE STRING "Target board (RP2350)")
+    set(PICO_BOARD pico2 CACHE STRING "Target board (RP2350A)")
 endif()
 
 set(PROJECT_ROOT ${CMAKE_CURRENT_LIST_DIR})
@@ -17,7 +21,6 @@ set(PROJECT_ROOT ${CMAKE_CURRENT_LIST_DIR})
 # MIDI ホスト対応の upstream TinyUSB。
 #   ※ pico-sdk 同梱の raspberrypi/tinyusb には midi_host が無く tuh_midi_* を
 #     リンクできないため、upstream 0.20.0+ を指す必要がある。
-#     PICO_TINYUSB_PATH は pico_sdk_init() より前に設定すること。
 if(NOT DEFINED PICO_TINYUSB_PATH)
     set(PICO_TINYUSB_PATH ${PROJECT_ROOT}/lib/tinyusb)
 endif()
@@ -30,7 +33,7 @@ endif()
 # ---- pico-sdk 取り込み ----
 include(pico_sdk_import.cmake)
 
-project(genshin_midi_kbd C CXX ASM)
+project(midi_nkro_ch345 C CXX ASM)
 
 # 依存が揃っているか早期チェック
 if(NOT EXISTS ${PICO_TINYUSB_PATH}/src/class/midi/midi_host.c)
@@ -56,25 +59,18 @@ add_executable(${PROJECT_NAME}
     src/hid_device.c
     src/hid_mute.c
     src/midi_host.c
-    src/midi_mirror.c
-    src/midi_note_filter.c
     src/midi_parse.c
+    src/midi_uart.c
     src/mirror_filter_switch.c
     src/note_mapper.c
     src/nkro_report.c
-    src/status_led.c
-    src/usb_power_control.c
-    src/usb_power_fsm.c
+    src/spare_switch.c
 
     # --- SDK の tinyusb_host が列挙しないソースを手動追加 ---
-    # MIDI ホストクラスドライバ (usbh.c がこのシンボルを参照するので必須)
     ${PICO_TINYUSB_PATH}/src/class/midi/midi_host.c
-    # PIO-USB グルー (SDK 未バンドル)
     ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/dcd_pio_usb.c
     ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/hcd_pio_usb.c
 )
-
-pico_generate_pio_header(${PROJECT_NAME} ${PROJECT_ROOT}/src/ws2812.pio)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_ROOT}/src)
 
@@ -93,13 +89,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     pico_pio_usb
 )
 
-# デバッグ出力は UART へ (native USB は HID デバイスが占有するため)。
+# デバッグ出力は UART0 へ。native USB は USB-MIDI が占有する。
 pico_enable_stdio_uart(${PROJECT_NAME} 1)
 pico_enable_stdio_usb(${PROJECT_NAME} 0)
 
 pico_add_extra_outputs(${PROJECT_NAME})
-
-# ---- 2 つ目のファーム: シリアル→USB-MIDI デバイス (機能 B) ----
-# 別 executable として同一ビルドツリーに定義。固有の tusb_config.h を
-# 持ち、PIO-USB ホストは使わない (TinyUSB は executable ごとに再コンパイルされる)。
-add_subdirectory(serial_midi_device)

@@ -16,8 +16,6 @@
 /tests/t_midi_parse
 /tests/t_nkro_report
 /tests/t_nkro_report_wrap
-/tests/t_midi_note_filter
-/tests/t_usb_power_fsm
 
 # editor / OS
 .cache/
@@ -35,3 +33,6 @@ compile_commands.json
 
 # worker 間受け渡し用の一時領域 (計画書等)
 /tmp/
+
+# local scratch
+/.tmp/

@@ -118,7 +118,7 @@ enum { STRID_LANGID = 0, STRID_MANUFACTURER, STRID_PRODUCT, STRID_SERIAL };
 static char const *string_desc_arr[] = {
     (const char[]){0x09, 0x04},   // 0: 言語 ID (英語 0x0409)
     "MIDI2Genshin",               // 1: Manufacturer
-    "Genshin Chamber Keyboard",   // 2: Product
+    "MIDI2Genshin NKRO Keyboard",   // 2: Product
     NULL,                         // 3: Serial (unique id から生成)
 };
 
