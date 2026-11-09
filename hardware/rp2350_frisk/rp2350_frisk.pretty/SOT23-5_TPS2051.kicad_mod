@@ -2,7 +2,7 @@
   (version 20221018)
   (generator "handwritten")
   (layer "F.Cu")
-  (descr "SOT23-5 for TPS2051BDBVR load switch, pitch 0.95mm, hand-solderable, JLC Basic C51187. Pin1 at top-left with dot.")
+  (descr "SOT23-5 for TPS2051BDBVR load switch, pitch 0.95mm, hand-solderable, JLC C24593. Pin1 at top-left with dot.")
   (tags "SOT23-5 TPS2051")
   (attr smd)
   (fp_text reference "REF**" (at 0 -2.0) (layer "F.SilkS")

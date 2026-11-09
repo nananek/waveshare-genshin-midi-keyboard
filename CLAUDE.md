@@ -97,8 +97,8 @@ CH345 は **UART1**(TX=GP4 / RX=GP5, 31250 8N1)。
 - U1 pin22 と J3 A7/B7 に via-in-pad（0.3/0.2、0.45/0.2）を使用。
   JLCPCB の DFM で resin fill / via-in-pad の要否を確認する。
 - DRC は 0 violations / 0 unconnected。`fab/` に Gerber / BOM / CPL あり。
-- BOM の `TBD`（CH345T、RP2350A、W25Q128、NCP1117、水晶、USB-A など）は
-  発注前に確定する。回路図と ERC は未作成。
+- BOM の LCSC 型番は JLC の在庫・パッケージで確認済み。J1/J2 は JLC 在庫が
+  ないため手はんだする。回路図と ERC は未作成。
 
 ## キャリブレーション
 

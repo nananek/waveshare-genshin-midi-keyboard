@@ -24,8 +24,10 @@ QFN-60 ベアチップ、CH345T を UART 31250 で接続し、USB-C ×2 + USB-A 
 載せています。
 
 U1 pin22 と J3 A7/B7 に via-in-pad を使用しています。JLCPCB の DFM で
-resin fill / via-in-pad の要否を確認してください。BOM の `TBD`（CH345T、
-RP2350A、W25Q128、NCP1117、水晶、USB-A など）は発注前に確定してください。
+resin fill / via-in-pad の要否を確認してください。BOM の LCSC 型番は在庫と
+パッケージで確認済みです。J1 (Amphenol 10103594-0001LF) と J2 (Neltron
+5075AR-04-WH) は JLC に在庫がないため、BOM では `TBD` のままにして手はんだ
+してください。
 
 旧 `rp2350_zero_carrier` の製造データは履歴として添付しています。旧基板は
 廃止済みで、v2.0.0 の実装対象ではありません。

@@ -101,8 +101,9 @@ J3 VBUS ── D2 ──┘         │
 - `fab/jlc_cpl.csv` … JLCPCB アップロード用 CPL（基板左下原点、Y 上向き）
 - `fab/bom_full.csv` … 参考用の全部品表
 
-`TBD` の LCSC は発注前に確定してください。とくに RP2350A、W25Q128、
-NCP1117、水晶、USB-A コネクタは JLCPCB の在庫・実装可否を確認してください。
+`fab/jlc_bom.csv` の LCSC 型番は JLC の在庫とパッケージで確認済みです。
+J1 (Amphenol 10103594-0001LF) と J2 (Neltron 5075AR-04-WH) は JLC に在庫が
+ないため `TBD` のままで、手はんだしてください。
 
 ## CH345 版の変更点
 
@@ -139,9 +140,9 @@ J1 は native USB の NKRO HID、J2 は USB-A ホスト、J3 は CH345 の USB-M
 1. **via-in-pad / 0.2 mm ドリル**: U1 pin22 と J3 A7/B7 に小さな via-in-pad を
    使っています。JLCPCB の DFM プレビューで resin fill / via-in-pad の要否を
    確認してください。
-2. **BOM の TBD**: `fab/jlc_bom.csv` の `TBD` は JLCPCB の在庫確認後に
-   LCSC 型番を確定する。とくに CH345T、RP2350A、W25Q128、NCP1117、水晶、
-   USB-A コネクタ。
+2. **BOM**: `fab/jlc_bom.csv` の LCSC 型番は JLC の在庫とパッケージで確認済み。
+   J1 (Amphenol 10103594-0001LF) と J2 (Neltron 5075AR-04-WH) は JLC に在庫が
+   ないため `TBD` のままにし、手はんだする。詳細は `fab/ORDER_NOTES_JA.md`。
 3. **CH345 の水晶負荷容量**: C26/C27 は 22 pF の暫定値。データシート推奨値で
    確定する。
 4. **ERC**: 回路図は未作成。KiCad の回路図 → PCB パリティは未確認。
